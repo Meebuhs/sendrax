@@ -9,9 +9,7 @@ class LocationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Expanded(
+    return Center(
           child: Container(
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
             child: Text(
@@ -22,8 +20,6 @@ class LocationItem extends StatelessWidget {
                   color: Colors.blueAccent),
             ),
           ),
-        ),
-      ],
     );
   }
 }

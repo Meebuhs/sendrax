@@ -63,8 +63,10 @@ class MainWidget extends StatelessWidget {
                 ),
               );
             } else {
-              content = ListView.builder(
+              content = GridView.builder(
                 padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
                 itemBuilder: (context, index) {
                   return InkWell(
                     child: _buildItem(state.locations[index]),
