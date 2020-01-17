@@ -9,7 +9,7 @@ class MainState {
   MainState._internal(this.isLoading, this.locations,
       {this.loggedIn = true, this.selected});
 
-  factory MainState.initial() => MainState._internal(false, <Location>[]);
+  factory MainState.initial() => MainState._internal(true, <Location>[]);
 
   factory MainState.isLoading(bool isLoading, MainState state) =>
       MainState._internal(isLoading, state.locations);

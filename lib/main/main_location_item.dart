@@ -17,7 +17,7 @@ class LocationItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   fontSize: UIConstants.BIGGER_FONT_SIZE,
-                  color: Colors.blueAccent),
+                  color: Colors.pinkAccent),
             ),
           ),
     );

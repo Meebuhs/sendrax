@@ -34,7 +34,8 @@ class _LocationState extends State<LocationScreen> {
 }
 
 class LocationWidget extends StatelessWidget {
-  const LocationWidget({Key key, @required this.widget}) : super(key: key);
+  const LocationWidget({Key key, @required this.widget})
+      : super(key: key);
 
   final LocationScreen widget;
 
@@ -63,9 +64,9 @@ class LocationWidget extends StatelessWidget {
               content = ListView.builder(
                 padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
                 itemBuilder: (context, index) {
-                  return InkWell(child: _buildItem(state.climbs[index]));
+                  return _buildSection(state.sections[index], state.climbs);
                 },
-                itemCount: state.climbs.length,
+                itemCount: state.sections.length,
               );
             }
             return _wrapContentWithFab(context, content);
@@ -90,7 +91,44 @@ class LocationWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildSection(String section, List<Climb> climbs) {
+    List<Climb> climbsToInclude = List.from(
+        climbs.where((climb) => climb.section == section));
+    if (climbsToInclude.isNotEmpty) {
+      return Column(
+          children: <Widget>[
+            Row(
+                children: <Widget>[
+
+                  Expanded(
+                    child: Container(
+                      color: Colors.pinkAccent,
+                      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                      child: Text(
+                          section,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: UIConstants.BIGGER_FONT_SIZE,
+                              color: Colors.white)
+                      ),
+                    ),
+                  ),
+                ]),
+            Column(
+                children:
+                climbsToInclude.map((climb) =>
+                new InkWell(
+                    child: _buildItem(climb)
+                )).toList()
+            )
+          ]);
+    } else {
+      return Column();
+    }
+  }
+
   ClimbItem _buildItem(Climb climb) {
     return ClimbItem(climb: climb);
   }
+
 }

@@ -16,7 +16,7 @@ class ClimbItem extends StatelessWidget {
           "${climb.grade} - ${climb.section}",
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.blueAccent),
+              fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
         ),
       ),
     );
