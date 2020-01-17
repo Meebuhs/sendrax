@@ -16,7 +16,9 @@ class Deserializer {
 
   static Location deserializeLocationClimbs(DocumentSnapshot document) {
     Location location = deserializeLocation(document);
-    location.climbs.addAll(deserializeClimbs(document['climbs']));
+    if (document['climbs'] != null) {
+      location.climbs.addAll(deserializeClimbs(document['climbs']));
+    }
     return location;
   }
 
@@ -29,4 +31,14 @@ class Deserializer {
     return Climb(
         document['grade'], document['section'], <String>[], <Attempt>[]);
   }
+
+  static Location deserializeLocationSections(DocumentSnapshot document) {
+    Location location = deserializeLocation(document);
+    if (document['sections'] != null) {
+      location.sections.addAll(List.from(document['sections']));
+    }
+    return location;
+  }
+
+
 }

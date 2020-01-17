@@ -55,4 +55,15 @@ class LocationRepo {
     });
   }
 
+  Stream<Location> getSectionsForLocation(String locationId, User user) {
+    return _firestore
+        .collection("${FirestorePaths.ROOT_PATH}/${user.uid}")
+        .document(locationId)
+        .snapshots()
+        .map((data) {
+      return Deserializer.deserializeLocationSections(
+          data);
+    });
+  }
+
 }
