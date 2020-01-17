@@ -70,6 +70,10 @@ class MainWidget extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return InkWell(
                     child: _buildItem(state.locations[index]),
+                      onTap: () {
+                        BlocProvider.of<MainBloc>(context).retrieveLocation(
+                            state.locations[index], this);
+                      }
                   );
                 },
                 itemCount: state.locations.length,
@@ -90,7 +94,7 @@ class MainWidget extends StatelessWidget {
           child: FloatingActionButton(
               onPressed: null,
               child: Icon(Icons.add, color: Colors.white),
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: Colors.pinkAccent,
               elevation: UIConstants.STANDARD_ELEVATION),
         )
       ],
@@ -103,5 +107,11 @@ class MainWidget extends StatelessWidget {
 
   void navigateToLogin() {
     NavigationHelper.navigateToLogin(widgetState.context);
+  }
+
+  void navigateToLocation(SelectedLocation location) {
+    NavigationHelper.navigateToLocation(
+        widgetState.context, location.displayName, location.id,
+        addToBackStack: true);
   }
 }

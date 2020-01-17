@@ -28,4 +28,31 @@ class LocationRepo {
         .snapshots()
         .map((data) => Deserializer.deserializeLocations(data.documents));
   }
+
+  Future<SelectedLocation> getLocation(Location location, User user) async {
+    DocumentReference locationRef = _firestore
+        .document("${FirestorePaths.ROOT_PATH}/${user.uid}/${location.id}");
+    if (locationRef != null) {
+      try {
+        return SelectedLocation(location.id, location.displayName);
+      } catch (error) {
+        print(error);
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Stream<Location> getClimbsForLocation(String locationId, User user) {
+    return _firestore
+        .collection("${FirestorePaths.ROOT_PATH}/${user.uid}")
+        .document(locationId)
+        .snapshots()
+        .map((data) {
+      return Deserializer.deserializeLocationClimbs(
+          data);
+    });
+  }
+
 }

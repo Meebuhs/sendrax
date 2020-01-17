@@ -34,11 +34,21 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       locationsSubscription =
           LocationRepo.getInstance().getLocationsForUser(user).listen((
               locations) {
-            add(LocationsUpdatedEvent(locations));
+            add(LocationsUpdatedEvent(locations
+              ..sort((a, b) => a.displayName.compareTo(b.displayName))
+            ));
           });
     } else {
       add(MainErrorEvent());
     }
+  }
+
+  void retrieveLocation(Location location, MainWidget view) async {
+    final currentUser = await UserRepo.getInstance().getCurrentUser();
+    LocationRepo.getInstance().getLocation(location, currentUser).then((
+        location) {
+      view.navigateToLocation(location);
+    });
   }
 
   @override
