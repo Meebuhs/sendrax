@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/util/constants.dart';
 import 'package:sendrax/util/serialization_util.dart';
 
@@ -24,14 +25,19 @@ class LocationRepo {
 
   Stream<List<Location>> getLocationsForUser(User user) {
     return _firestore
-        .collection("${FirestorePaths.ROOT_PATH}/${user.uid}")
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths
+            .LOCATIONS_SUBPATH}")
         .snapshots()
         .map((data) => Deserializer.deserializeLocations(data.documents));
   }
 
   Future<SelectedLocation> getLocation(Location location, User user) async {
     DocumentReference locationRef = _firestore
-        .document("${FirestorePaths.ROOT_PATH}/${user.uid}/${location.id}");
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths
+            .LOCATIONS_SUBPATH}")
+        .document(location.id);
     if (locationRef != null) {
       try {
         return SelectedLocation(location.id, location.displayName);
@@ -44,26 +50,25 @@ class LocationRepo {
     }
   }
 
-  Stream<Location> getClimbsForLocation(String locationId, User user) {
+  Stream<List<Climb>> getClimbsForLocation(String locationId, User user) {
     return _firestore
-        .collection("${FirestorePaths.ROOT_PATH}/${user.uid}")
-        .document(locationId)
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths
+            .CLIMBS_SUBPATH}")
+        .where("locationId", isEqualTo: locationId)
         .snapshots()
-        .map((data) {
-      return Deserializer.deserializeLocationClimbs(
-          data);
-    });
+        .map((data) => Deserializer.deserializeClimbs(data.documents));
   }
 
   Stream<Location> getSectionsForLocation(String locationId, User user) {
     return _firestore
-        .collection("${FirestorePaths.ROOT_PATH}/${user.uid}")
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths
+            .LOCATIONS_SUBPATH}")
         .document(locationId)
         .snapshots()
         .map((data) {
-      return Deserializer.deserializeLocationSections(
-          data);
+      return Deserializer.deserializeLocationSections(data);
     });
   }
-
 }

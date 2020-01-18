@@ -9,28 +9,24 @@ class Deserializer {
   }
 
   static Location deserializeLocation(DocumentSnapshot document) {
-    return Location(
-        document['id'], document['displayName'], <String>[], <String>[],
-        <Climb>[]);
+    return Location(document['id'], document['displayName'], <String>[],
+        <String>[], <Climb>[]);
   }
 
-  static Location deserializeLocationClimbs(DocumentSnapshot document) {
-    Location location = deserializeLocation(document);
-    if (document['climbs'] != null) {
-      location.climbs.addAll(deserializeClimbs(document['climbs']));
-    }
-    return location;
+  static List<Climb> deserializeClimbs(List<DocumentSnapshot> climbs) {
+    return climbs.map((document) => deserializeClimb(document)).toList();
   }
 
-  static List<Climb> deserializeClimbs(List<dynamic> climbs) {
-    return climbs.map((document) => deserializeClimb(document))
-        .toList();
-  }
-
-  static Climb deserializeClimb(Map<dynamic, dynamic> document) {
+  static Climb deserializeClimb(DocumentSnapshot document) {
     return Climb(
-        document['displayName'], document['grade'], document['section'],
-        <String>[], <Attempt>[]);
+        document['id'],
+        document['displayName'],
+        document['grade'],
+        document['locationId'],
+        document['section'],
+        document['archived'],
+        <String>[],
+        <Attempt>[]);
   }
 
   static Location deserializeLocationSections(DocumentSnapshot document) {
@@ -40,6 +36,4 @@ class Deserializer {
     }
     return location;
   }
-
-
 }

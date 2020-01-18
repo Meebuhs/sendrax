@@ -26,4 +26,6 @@ class UIConstants {
 class FirestorePaths {
   static const String ROOT_PATH = "";
   static const String USERS_COLLECTION = ROOT_PATH + "users";
+  static const String CLIMBS_SUBPATH = "climbs";
+  static const String LOCATIONS_SUBPATH = "locations";
 }

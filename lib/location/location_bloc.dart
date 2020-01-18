@@ -15,17 +15,18 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   LocationBloc(this.locationId);
 
   final String locationId;
+  StreamSubscription<List<Climb>> climbSubscription;
   StreamSubscription<Location> locationSubscription;
 
   void _retrieveClimbsForThisLocation() async {
     add(ClearClimbsEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
-      locationSubscription = LocationRepo.getInstance()
+      climbSubscription = LocationRepo.getInstance()
           .getClimbsForLocation(locationId, user)
-          .listen((location) {
+          .listen((climbs) {
         add(ClimbsUpdatedEvent(
-            location.climbs..sort((a, b) => a.section.compareTo(b.section))));
+            climbs..sort((a, b) => a.section.compareTo(b.section))));
       });
     } else {
       add(LocationErrorEvent());
@@ -39,8 +40,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       locationSubscription = LocationRepo.getInstance()
           .getSectionsForLocation(locationId, user)
           .listen((location) {
-        add(SectionsUpdatedEvent(
-            location.sections));
+        add(SectionsUpdatedEvent(location.sections));
       });
     } else {
       add(LocationErrorEvent());
@@ -78,6 +78,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   Future<void> close() {
     if (locationSubscription != null) {
       locationSubscription.cancel();
+    }
+    if (climbSubscription != null) {
+      climbSubscription.cancel();
     }
     return super.close();
   }

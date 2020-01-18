@@ -8,8 +8,8 @@ class SelectedLocation {
 }
 
 class Location {
-  Location(this.id, this.displayName, this.grades,
-      [this.sections, this.climbs]);
+  Location(this.id, this.displayName,
+      [this.grades, this.sections, this.climbs]);
 
   final String id;
   final String displayName;
