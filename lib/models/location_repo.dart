@@ -40,7 +40,6 @@ class LocationRepo {
       try {
         return SelectedLocation(location.id, location.displayName);
       } catch (error) {
-        print(error);
         return null;
       }
     } else {

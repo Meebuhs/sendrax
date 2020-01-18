@@ -16,8 +16,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   void setupAuthStateListener(LoginWidget view) {
     if (_authStateListener == null) {
-      _authStateListener =
-          FirebaseAuth.instance.onAuthStateChanged.listen((user) {
+      _authStateListener = FirebaseAuth.instance.onAuthStateChanged.listen((user) {
         if (user != null) {
           UserRepo.getInstance().setCurrentUser(User.fromFirebaseUser(user));
           view.navigateToMain();
@@ -44,8 +43,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
         state.loading = false;
       } catch (e) {
-        print('Error: $e');
         state.formKey.currentState.reset();
+        state.passwordKey.currentState.reset();
         state.loading = false;
         state.errorMessage = e.message;
       }
@@ -63,10 +62,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   void toggleFormMode(LoginState state) {
     state.formKey.currentState.reset();
+    state.passwordKey.currentState.reset();
     state.errorMessage = "";
     state.isLogin = !state.isLogin;
     isLoginFormStream.add(state.isLogin);
-    print("toggled ${state.isLogin}");
   }
 
   void onLogout() async {

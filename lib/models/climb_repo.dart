@@ -32,7 +32,6 @@ class ClimbRepo {
       try {
         return SelectedClimb(climb.id, climb.displayName);
       } catch (error) {
-        print(error);
         return null;
       }
     } else {

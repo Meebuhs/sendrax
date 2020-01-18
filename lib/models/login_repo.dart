@@ -45,7 +45,6 @@ class LoginRepo {
 
   Future<bool> signOut() async {
     return _auth.signOut().catchError((error) {
-      print("LoginRepo::logOut() encountered an error:\n${error.error}");
       return false;
     }).then((value) {
       return true;

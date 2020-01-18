@@ -16,15 +16,12 @@ class _LoginState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc(),
-        child: LoginWidget(widget: widget, widgetState: this));
+        create: (context) => LoginBloc(), child: LoginWidget(widget: widget, widgetState: this));
   }
 }
 
 class LoginWidget extends StatelessWidget {
-  const LoginWidget(
-      {Key key, @required this.widget, @required this.widgetState})
-      : super(key: key);
+  const LoginWidget({Key key, @required this.widget, @required this.widgetState}) : super(key: key);
 
   final LoginScreen widget;
   final _LoginState widgetState;
@@ -63,7 +60,7 @@ class LoginWidget extends StatelessWidget {
             shrinkWrap: true,
             children: <Widget>[
               showUsernameInput(state),
-              showPasswordInput(state),
+              showPasswordInputs(state, context),
               showPrimaryButton(state, context),
               showSecondaryButton(state, context),
               showErrorMessage(state),
@@ -96,10 +93,31 @@ class LoginWidget extends StatelessWidget {
     );
   }
 
+  Widget showPasswordInputs(LoginState state, BuildContext context) {
+    return StreamBuilder(
+        stream: BlocProvider
+            .of<LoginBloc>(context)
+            .isLoginFormStream
+            .stream,
+        builder: (BuildContext context, snapshot) {
+          Widget content = showPasswordInput(state);
+          if (snapshot.data == false) {
+            content = Column(
+              children: <Widget>[
+                showPasswordInput(state),
+                showConfirmPasswordInput(state),
+              ],
+            );
+          }
+          return content;
+        });
+  }
+
   Widget showPasswordInput(LoginState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
+        key: state.passwordKey,
         maxLines: 1,
         obscureText: true,
         autofocus: false,
@@ -120,6 +138,30 @@ class LoginWidget extends StatelessWidget {
     );
   }
 
+  Widget showConfirmPasswordInput(LoginState state) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+      child: new TextFormField(
+        maxLines: 1,
+        obscureText: true,
+        autofocus: false,
+        decoration: new InputDecoration(
+            hintText: 'Confirm Password',
+            icon: new Icon(
+              Icons.lock,
+              color: Colors.grey,
+            )),
+        validator: (String value) {
+          if (value.trim() != state.passwordKey.currentState.value) {
+            return 'Passwords do not match';
+          }
+          return null;
+        },
+        onSaved: (value) => state.confirmPassword = value.trim(),
+      ),
+    );
+  }
+
   Widget showPrimaryButton(LoginState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
@@ -127,15 +169,15 @@ class LoginWidget extends StatelessWidget {
           height: 40.0,
           child: new RaisedButton(
             elevation: 5.0,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0)),
+            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.pink,
             child: StreamBuilder(
-              stream:
-                  BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
+              stream: BlocProvider
+                  .of<LoginBloc>(context)
+                  .isLoginFormStream
+                  .stream,
               builder: (BuildContext context, snapshot) {
-                String buttonText =
-                    'Login'; // Button text if snapshot is true (login form)
+                String buttonText = 'Login'; // Button text if snapshot is true (login form)
                 if (snapshot.data == false) {
                   buttonText = 'Create account';
                 }
@@ -143,8 +185,7 @@ class LoginWidget extends StatelessWidget {
                     style: new TextStyle(fontSize: 20.0, color: Colors.white));
               },
             ),
-            onPressed: () =>
-                BlocProvider.of<LoginBloc>(context).validateAndSubmit(state),
+            onPressed: () => BlocProvider.of<LoginBloc>(context).validateAndSubmit(state),
           ),
         ));
   }
@@ -154,29 +195,23 @@ class LoginWidget extends StatelessWidget {
         child: StreamBuilder(
           stream: BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
           builder: (BuildContext context, snapshot) {
-            String buttonText =
-                'Create an account'; // Button text if snapshot is true (login form)
+            String buttonText = 'Create an account'; // Button text if snapshot is true (login form)
             if (snapshot.data == false) {
               buttonText = 'Have an account? Sign in';
             }
             return new Text(buttonText,
-                style:
-                    new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300));
+                style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300));
           },
         ),
-        onPressed: () =>
-            BlocProvider.of<LoginBloc>(context).toggleFormMode(state));
+        onPressed: () => BlocProvider.of<LoginBloc>(context).toggleFormMode(state));
   }
 
   Widget showErrorMessage(LoginState state) {
     if (state.errorMessage.length > 0 && state.errorMessage != null) {
       return new Text(
         state.errorMessage,
-        style: TextStyle(
-            fontSize: 13.0,
-            color: Colors.red,
-            height: 1.0,
-            fontWeight: FontWeight.w300),
+        style:
+        TextStyle(fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w300),
       );
     } else {
       return new Container(
