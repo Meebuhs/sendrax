@@ -29,7 +29,8 @@ class Deserializer {
 
   static Climb deserializeClimb(Map<dynamic, dynamic> document) {
     return Climb(
-        document['grade'], document['section'], <String>[], <Attempt>[]);
+        document['displayName'], document['grade'], document['section'],
+        <String>[], <Attempt>[]);
   }
 
   static Location deserializeLocationSections(DocumentSnapshot document) {

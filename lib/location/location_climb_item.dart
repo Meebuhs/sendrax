@@ -13,7 +13,7 @@ class ClimbItem extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
         child: Text(
-          "${climb.grade} - ${climb.section}",
+          "${climb.grade} - ${climb.displayName}",
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
               fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
