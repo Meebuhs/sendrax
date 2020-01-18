@@ -1,6 +1,5 @@
 class ErrorMessages {
-  static const String NO_USER_FOUND =
-      "Login failed because there is no user in the database";
+  static const String NO_USER_FOUND = "Login failed because there is no user in the database";
 }
 
 class StorageKeys {
@@ -28,4 +27,5 @@ class FirestorePaths {
   static const String USERS_COLLECTION = ROOT_PATH + "users";
   static const String CLIMBS_SUBPATH = "climbs";
   static const String LOCATIONS_SUBPATH = "locations";
+  static const String ATTEMPTS_SUBPATH = "attempts";
 }

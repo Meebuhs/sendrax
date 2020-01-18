@@ -9,8 +9,7 @@ class Deserializer {
   }
 
   static Location deserializeLocation(DocumentSnapshot document) {
-    return Location(document['id'], document['displayName'], <String>[],
-        <String>[], <Climb>[]);
+    return Location(document['id'], document['displayName'], <String>[], <String>[], <Climb>[]);
   }
 
   static List<Climb> deserializeClimbs(List<DocumentSnapshot> climbs) {
@@ -35,5 +34,14 @@ class Deserializer {
       location.sections.addAll(List.from(document['sections']));
     }
     return location;
+  }
+
+  static List<Attempt> deserializeAttempts(List<DocumentSnapshot> attempts) {
+    return attempts.map((document) => deserializeAttempt(document)).toList();
+  }
+
+  static Attempt deserializeAttempt(DocumentSnapshot document) {
+    return Attempt(document['id'], document['timestamp'], document['sendType'], document['warmup'],
+        <String>[], document['notes']);
   }
 }

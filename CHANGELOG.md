@@ -10,6 +10,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Firebase account creation and authentication
-- Retrieval of user's locations from firebase
-- Retrieval of a location's climbs and sections from firebase
-- Page to view location details
+- Retrieval of locations, climbs and attempts from firebase
+- Views for locations and climbs

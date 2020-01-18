@@ -1,8 +1,16 @@
 import 'attempt.dart';
 
+class SelectedClimb {
+  SelectedClimb(this.id, this.displayName);
+
+  final String id;
+  final String displayName;
+}
+
 class Climb {
-  Climb(this.id, this.displayName, this.grade, this.locationId, this.section,
-      this.archived, this.categories, [this.attempts]);
+  Climb(this.id, this.displayName, this.grade, this.locationId, this.section, this.archived,
+      this.categories,
+      [this.attempts]);
 
   final String id;
   final String displayName;

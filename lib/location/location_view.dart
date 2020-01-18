@@ -4,12 +4,12 @@ import 'package:sendrax/location/location_climb_item.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/util/constants.dart';
 
+import '../navigation_helper.dart';
 import 'location_bloc.dart';
 import 'location_state.dart';
 
 class LocationScreen extends StatefulWidget {
-  LocationScreen(
-      {Key key, @required this.displayName, @required this.locationId})
+  LocationScreen({Key key, @required this.displayName, @required this.locationId})
       : super(key: key);
 
   final String displayName;
@@ -28,16 +28,20 @@ class _LocationState extends State<LocationScreen> {
   Widget build(BuildContext context) {
     return BlocProvider<LocationBloc>(
       create: (context) => LocationBloc(locationId),
-      child: LocationWidget(widget: widget),
+      child: LocationWidget(
+        widget: widget,
+        widgetState: this,
+      ),
     );
   }
 }
 
 class LocationWidget extends StatelessWidget {
-  const LocationWidget({Key key, @required this.widget})
+  const LocationWidget({Key key, @required this.widget, @required this.widgetState})
       : super(key: key);
 
   final LocationScreen widget;
+  final _LocationState widgetState;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +68,7 @@ class LocationWidget extends StatelessWidget {
               content = ListView.builder(
                 padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
                 itemBuilder: (context, index) {
-                  return _buildSection(state.sections[index], state.climbs);
+                  return _buildSection(context, state, index);
                 },
                 itemCount: state.sections.length,
               );
@@ -91,37 +95,33 @@ class LocationWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String section, List<Climb> climbs) {
-    List<Climb> climbsToInclude = List.from(
-        climbs.where((climb) => climb.section == section));
+  Widget _buildSection(BuildContext context, LocationState state, int index) {
+    List<Climb> climbsToInclude =
+    List.from(state.climbs.where((climb) => climb.section == state.sections[index]));
     if (climbsToInclude.isNotEmpty) {
-      return Column(
-          children: <Widget>[
-            Row(
-                children: <Widget>[
-
-                  Expanded(
-                    child: Container(
-                      color: Colors.pinkAccent,
-                      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-                      child: Text(
-                          section,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: UIConstants.BIGGER_FONT_SIZE,
-                              color: Colors.white)
-                      ),
-                    ),
-                  ),
-                ]),
-            Column(
-                children:
-                climbsToInclude.map((climb) =>
-                new InkWell(
-                    child: _buildItem(climb)
-                )).toList()
-            )
-          ]);
+      return Column(children: <Widget>[
+        Row(children: <Widget>[
+          Expanded(
+            child: Container(
+              color: Colors.pinkAccent,
+              padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+              child: Text(state.sections[index],
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.white)),
+            ),
+          ),
+        ]),
+        Column(
+            children: climbsToInclude
+                .map((climb) =>
+            new InkWell(
+                child: _buildItem(climb),
+                onTap: () {
+                  BlocProvider.of<LocationBloc>(context)
+                      .retrieveClimb(state.climbs[index], this);
+                }))
+                .toList())
+      ]);
     } else {
       return Column();
     }
@@ -131,4 +131,8 @@ class LocationWidget extends StatelessWidget {
     return ClimbItem(climb: climb);
   }
 
+  void navigateToClimb(SelectedClimb climb) {
+    NavigationHelper.navigateToClimb(widgetState.context, climb.displayName, climb.id,
+        addToBackStack: true);
+  }
 }
