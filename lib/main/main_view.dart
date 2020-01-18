@@ -19,14 +19,12 @@ class _MainState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<MainBloc>(
-        create: (context) => MainBloc(),
-        child: MainWidget(widget: widget, widgetState: this));
+        create: (context) => MainBloc(), child: MainWidget(widget: widget, widgetState: this));
   }
 }
 
 class MainWidget extends StatelessWidget {
-  const MainWidget({Key key, @required this.widget, @required this.widgetState})
-      : super(key: key);
+  const MainWidget({Key key, @required this.widget, @required this.widgetState}) : super(key: key);
 
   final MainScreen widget;
   final _MainState widgetState;
@@ -65,16 +63,14 @@ class MainWidget extends StatelessWidget {
             } else {
               content = GridView.builder(
                 padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                 itemBuilder: (context, index) {
                   return InkWell(
-                    child: _buildItem(state.locations[index]),
+                      child: _buildItem(state.locations[index]),
                       onTap: () {
-                        BlocProvider.of<MainBloc>(context).retrieveLocation(
-                            state.locations[index], this);
-                      }
-                  );
+                        BlocProvider.of<MainBloc>(context)
+                            .retrieveLocation(state.locations[index], this);
+                      });
                 },
                 itemCount: state.locations.length,
               );
@@ -92,7 +88,7 @@ class MainWidget extends StatelessWidget {
           alignment: Alignment.bottomRight,
           padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
           child: FloatingActionButton(
-              onPressed: null,
+              onPressed: _createLocation,
               child: Icon(Icons.add, color: Colors.white),
               backgroundColor: Colors.pinkAccent,
               elevation: UIConstants.STANDARD_ELEVATION),
@@ -105,13 +101,16 @@ class MainWidget extends StatelessWidget {
     return LocationItem(location: location);
   }
 
+  void _createLocation() {
+    NavigationHelper.navigateToCreateLocation(widgetState.context, addToBackStack: true);
+  }
+
   void navigateToLogin() {
     NavigationHelper.navigateToLogin(widgetState.context);
   }
 
   void navigateToLocation(SelectedLocation location) {
-    NavigationHelper.navigateToLocation(
-        widgetState.context, location.displayName, location.id,
+    NavigationHelper.navigateToLocation(widgetState.context, location.displayName, location.id,
         addToBackStack: true);
   }
 }

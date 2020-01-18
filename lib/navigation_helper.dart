@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'climb/climb_view.dart';
+import 'create_location/create_location_view.dart';
 import 'location/location_view.dart';
 import 'login/login_view.dart';
 import 'main/main_view.dart';
@@ -36,6 +37,15 @@ class NavigationHelper {
           MaterialPageRoute(
               builder: (context) =>
                   LocationScreen(displayName: displayName, locationId: locationId)));
+    }
+  }
+
+  static void navigateToCreateLocation(BuildContext context, {bool addToBackStack: false}) {
+    if (addToBackStack) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateLocationScreen()));
+    } else {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => CreateLocationScreen()));
     }
   }
 
