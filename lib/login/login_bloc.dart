@@ -32,7 +32,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   // Perform login or signup
-  void validateAndSubmit(LoginState state) async {
+  void validateAndSubmit(LoginState state, BuildContext context) async {
+    FocusScope.of(context).unfocus();
     state.errorMessage = "";
     state.loading = true;
 

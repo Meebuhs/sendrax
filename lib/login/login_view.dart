@@ -40,14 +40,13 @@ class LoginWidget extends StatelessWidget {
               return Center(child: CircularProgressIndicator(strokeWidth: 4.0));
             } else {
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: ListView(
                   children: <Widget>[showForm(state, context)],
                 ),
               );
             }
           }),
+      resizeToAvoidBottomPadding: false,
     );
   }
 
@@ -185,7 +184,7 @@ class LoginWidget extends StatelessWidget {
                     style: new TextStyle(fontSize: 20.0, color: Colors.white));
               },
             ),
-            onPressed: () => BlocProvider.of<LoginBloc>(context).validateAndSubmit(state),
+            onPressed: () => BlocProvider.of<LoginBloc>(context).validateAndSubmit(state, context),
           ),
         ));
   }
