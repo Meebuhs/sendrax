@@ -99,11 +99,11 @@ class LoginWidget extends StatelessWidget {
             .isLoginFormStream
             .stream,
         builder: (BuildContext context, snapshot) {
-          Widget content = showPasswordInput(state);
+          Widget content = showSignInPasswordInput(state, context);
           if (snapshot.data == false) {
             content = Column(
               children: <Widget>[
-                showPasswordInput(state),
+                showSignUpPasswordInput(state, context),
                 showConfirmPasswordInput(state),
               ],
             );
@@ -112,7 +112,7 @@ class LoginWidget extends StatelessWidget {
         });
   }
 
-  Widget showPasswordInput(LoginState state) {
+  Widget showSignInPasswordInput(LoginState state, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
@@ -126,8 +126,30 @@ class LoginWidget extends StatelessWidget {
               Icons.lock,
               color: Colors.grey,
             )),
+        onSaved: (value) => state.password = value.trim(),
+      ),
+    );
+  }
+
+  Widget showSignUpPasswordInput(LoginState state, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+      child: new TextFormField(
+        key: state.passwordKey,
+        maxLines: 1,
+        obscureText: true,
+        autofocus: false,
+        decoration: new InputDecoration(
+            hintText: 'Password',
+            helperText: 'Must be at least 6 characters',
+            icon: new Icon(
+              Icons.lock,
+              color: Colors.grey,
+            )),
         validator: (String value) {
-          if (value.trim().length < 6) {
+          if (value
+              .trim()
+              .length < 6) {
             return 'Password must be at least 6 characters';
           }
           return null;
