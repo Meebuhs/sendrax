@@ -16,7 +16,7 @@ class LoginState {
 
   factory LoginState.initial() =>
       LoginState._internal(
-          false,
+          true,
           true,
           new GlobalKey<FormState>(),
           new GlobalKey<FormFieldState>(),

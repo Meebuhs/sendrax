@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:sendrax/models/login_repo.dart';
 import 'package:sendrax/models/user.dart';
 import 'package:sendrax/models/user_repo.dart';
@@ -13,6 +14,7 @@ import 'login_view.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   StreamSubscription<FirebaseUser> _authStateListener;
   StreamController isLoginFormStream = StreamController<bool>.broadcast();
+  StreamController errorMessageStream = StreamController<String>();
 
   void setupAuthStateListener(LoginWidget view) {
     if (_authStateListener == null) {
@@ -46,7 +48,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         state.formKey.currentState.reset();
         state.passwordKey.currentState.reset();
         state.loading = false;
-        state.errorMessage = e.message;
+        state.errorMessage = e.message.replaceAll('email address', 'username');
+        errorMessageStream.sink.add(state.errorMessage);
       }
     }
   }
@@ -94,6 +97,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> close() {
     _authStateListener.cancel();
     isLoginFormStream.close();
+    errorMessageStream.close();
     return super.close();
   }
 }

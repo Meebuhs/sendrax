@@ -63,7 +63,7 @@ class LoginWidget extends StatelessWidget {
               showPasswordInputs(state, context),
               showPrimaryButton(state, context),
               showSecondaryButton(state, context),
-              showErrorMessage(state),
+              showErrorMessage(state, context),
             ],
           ),
         ));
@@ -88,7 +88,7 @@ class LoginWidget extends StatelessWidget {
           }
           return null;
         },
-        onSaved: (value) => state.username = value.trim(),
+        onSaved: (value) => state.username = value.trim().toLowerCase(),
       ),
     );
   }
@@ -206,18 +206,26 @@ class LoginWidget extends StatelessWidget {
         onPressed: () => BlocProvider.of<LoginBloc>(context).toggleFormMode(state));
   }
 
-  Widget showErrorMessage(LoginState state) {
-    if (state.errorMessage.length > 0 && state.errorMessage != null) {
-      return new Text(
-        state.errorMessage,
-        style:
-        TextStyle(fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w300),
-      );
-    } else {
-      return new Container(
-        height: 0.0,
-      );
-    }
+  Widget showErrorMessage(LoginState state, BuildContext context) {
+    return StreamBuilder(
+        stream: BlocProvider
+            .of<LoginBloc>(context)
+            .errorMessageStream
+            .stream,
+        builder: (BuildContext context, snapshot) {
+          if (snapshot.data != null && snapshot.data.length > 0) {
+            return new Center(
+                child: Text(
+                  snapshot.data,
+                  style: TextStyle(
+                      fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w300),
+                ));
+          } else {
+            return new Container(
+              height: 0.0,
+            );
+          }
+        });
   }
 
   void navigateToMain() {
