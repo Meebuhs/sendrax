@@ -28,4 +28,5 @@ class FirestorePaths {
   static const String CLIMBS_SUBPATH = "climbs";
   static const String LOCATIONS_SUBPATH = "locations";
   static const String ATTEMPTS_SUBPATH = "attempts";
+  static const String GRADES_SUBPATH = "grades";
 }

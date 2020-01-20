@@ -63,4 +63,8 @@ class NavigationHelper {
               builder: (context) => ClimbScreen(displayName: displayName, climbId: climbId)));
     }
   }
+
+  static void navigateBackOne(BuildContext context) {
+    Navigator.pop(context);
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/util/constants.dart';
 import 'package:sendrax/util/serialization_util.dart';
 
@@ -65,5 +66,14 @@ class LocationRepo {
         .map((data) {
       return Deserializer.deserializeLocationSections(data);
     });
+  }
+
+  void setLocation(Location location) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
+        .document(location.id)
+        .setData(location.map, merge: true);
   }
 }

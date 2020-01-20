@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sendrax/models/login_repo.dart';
 import 'package:sendrax/models/user.dart';
 import 'package:sendrax/models/user_repo.dart';
