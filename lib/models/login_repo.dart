@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sendrax/models/gradeset.dart';
 import 'package:sendrax/models/login_response.dart';
 import 'package:sendrax/models/user.dart';
 import 'package:sendrax/util/constants.dart';
+import 'package:sendrax/util/default_grades.dart';
 
 import 'firebase_repo.dart';
 
@@ -40,7 +42,17 @@ class LoginRepo {
         .collection(FirestorePaths.USERS_COLLECTION)
         .document(result.user.uid)
         .setData(user.map, merge: true);
+    _setDefaultGrades(result.user.uid);
     return result.user.uid;
+  }
+
+  void _setDefaultGrades(String userId) async {
+    for (GradeSet gradeSet in DefaultGrades.defaultGrades) {
+      await _firestore
+          .collection("${FirestorePaths.USERS_COLLECTION}/$userId/${FirestorePaths.GRADES_SUBPATH}")
+          .document(gradeSet.id)
+          .setData(gradeSet.map, merge: true);
+    }
   }
 
   Future<bool> signOut() async {
