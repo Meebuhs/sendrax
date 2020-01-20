@@ -63,15 +63,15 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   @override
   Stream<LocationState> mapEventToState(LocationEvent event) async* {
     if (event is ClearClimbsEvent) {
-      yield LocationState.isLoading(true, <Climb>[], state.sections, state.grades);
+      yield LocationState.loading(true, <Climb>[], state.sections, state.grades);
     } else if (event is ClimbsUpdatedEvent) {
-      yield LocationState.isLoading(false, event.climbs, state.sections, state.grades);
+      yield LocationState.loading(false, event.climbs, state.sections, state.grades);
     } else if (event is ClearSectionsEvent) {
-      yield LocationState.isLoading(true, state.climbs, <String>[], state.grades);
+      yield LocationState.loading(true, state.climbs, <String>[], state.grades);
     } else if (event is SectionsUpdatedEvent) {
-      yield LocationState.isLoading(false, state.climbs, event.sections, state.grades);
+      yield LocationState.loading(false, state.climbs, event.sections, state.grades);
     } else if (event is LocationErrorEvent) {
-      yield LocationState.isLoading(false, state.climbs, state.sections, state.grades);
+      yield LocationState.loading(false, state.climbs, state.sections, state.grades);
     }
   }
 

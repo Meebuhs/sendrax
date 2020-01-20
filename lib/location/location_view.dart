@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/location/location_climb_item.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
-import '../navigation_helper.dart';
 import 'location_bloc.dart';
 import 'location_state.dart';
 
@@ -51,7 +51,7 @@ class LocationWidget extends StatelessWidget {
           bloc: BlocProvider.of<LocationBloc>(context),
           builder: (context, LocationState state) {
             Widget content;
-            if (state.isLoading) {
+            if (state.loading) {
               content = Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 4.0,

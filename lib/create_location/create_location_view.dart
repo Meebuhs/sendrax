@@ -47,7 +47,7 @@ class CreateLocationWidget extends StatelessWidget {
             } else {
               return Center(
                 child: ListView(
-                  children: <Widget>[showForm(state, context)],
+                  children: <Widget>[_showForm(state, context)],
                 ),
               );
             }
@@ -55,7 +55,7 @@ class CreateLocationWidget extends StatelessWidget {
     );
   }
 
-  Widget showForm(CreateLocationState state, BuildContext context) {
+  Widget _showForm(CreateLocationState state, BuildContext context) {
     return new Container(
         padding: EdgeInsets.all(16.0),
         child: new Form(
@@ -63,23 +63,23 @@ class CreateLocationWidget extends StatelessWidget {
           child: new ListView(
             shrinkWrap: true,
             children: <Widget>[
-              showDisplayNameInput(state),
+              _showDisplayNameInput(state),
               Row(children: <Widget>[
                 Expanded(
-                  child: showGradesDropdown(state, context),
+                  child: _showGradesDropdown(state, context),
                 ),
                 Expanded(
-                  child: showGradeCreationButton(state),
+                  child: _showGradeCreationButton(state),
                 )
               ]),
-              showSectionCreator(state),
-              showSubmitButton(state, context)
+              _showSectionCreator(state),
+              _showSubmitButton(state, context)
             ],
           ),
         ));
   }
 
-  Widget showDisplayNameInput(CreateLocationState state) {
+  Widget _showDisplayNameInput(CreateLocationState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 50.0),
@@ -106,7 +106,7 @@ class CreateLocationWidget extends StatelessWidget {
     );
   }
 
-  Widget showGradesDropdown(CreateLocationState state, BuildContext context) {
+  Widget _showGradesDropdown(CreateLocationState state, BuildContext context) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(
             UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
@@ -136,7 +136,7 @@ class CreateLocationWidget extends StatelessWidget {
     }).toList();
   }
 
-  Widget showGradeCreationButton(CreateLocationState state) {
+  Widget _showGradeCreationButton(CreateLocationState state) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(
             UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
@@ -153,7 +153,7 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  Widget showSectionCreator(CreateLocationState state) {
+  Widget _showSectionCreator(CreateLocationState state) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
@@ -169,7 +169,7 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  Widget showSubmitButton(CreateLocationState state, BuildContext context) {
+  Widget _showSubmitButton(CreateLocationState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(

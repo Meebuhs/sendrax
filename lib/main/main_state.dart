@@ -6,8 +6,7 @@ class MainState {
   final SelectedLocation selected;
   final bool loggedIn;
 
-  MainState._internal(this.isLoading, this.locations,
-      {this.loggedIn = true, this.selected});
+  MainState._internal(this.isLoading, this.locations, {this.loggedIn = true, this.selected});
 
   factory MainState.initial() => MainState._internal(true, <Location>[]);
 
@@ -23,6 +22,5 @@ class MainState {
   factory MainState.logout(MainState state) =>
       MainState._internal(false, state.locations, loggedIn: false);
 
-  factory MainState.reset(MainState state) =>
-      MainState._internal(state.isLoading, state.locations);
+  factory MainState.reset(MainState state) => MainState._internal(state.isLoading, state.locations);
 }

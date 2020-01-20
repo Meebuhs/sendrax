@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Attempt {
-  Attempt(this.id, this.timestamp, this.sendType, this.warmup,
-      this.drills, this.notes);
+  Attempt(this.id, this.timestamp, this.sendType, this.warmup, this.drills, this.notes);
 
   final String id;
   final Timestamp timestamp;

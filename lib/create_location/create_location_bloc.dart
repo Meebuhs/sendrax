@@ -28,10 +28,9 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     add(ClearGradesEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
-      gradesSubscription =
-          GradeRepo.getInstance().getGradeIds(user).listen((grades) {
-            add(GradesUpdatedEvent(grades));
-          });
+      gradesSubscription = GradeRepo.getInstance().getGradeIds(user).listen((grades) {
+        add(GradesUpdatedEvent(grades));
+      });
     } else {
       add(GradesErrorEvent());
     }
@@ -43,7 +42,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     state.errorMessage = "";
     state.loading = true;
 
-    if (validateAndSave(state)) {
+    if (_validateAndSave(state)) {
       Location location = new Location(
           "location-${uuid.v1()}", state.displayName, state.gradeId, state.sections, <Climb>[]);
       try {
@@ -59,7 +58,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     view.navigateToMain();
   }
 
-  bool validateAndSave(CreateLocationState state) {
+  bool _validateAndSave(CreateLocationState state) {
     final form = state.formKey.currentState;
     if (form.validate()) {
       form.save();

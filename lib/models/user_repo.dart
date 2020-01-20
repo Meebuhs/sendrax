@@ -29,8 +29,9 @@ class UserRepo {
 
   void setCurrentUser(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(StorageKeys.USER_ID_KEY, user.uid).then((value) =>
-        prefs.setString(StorageKeys.USER_DISPLAY_NAME_KEY, user.displayName));
+    await prefs
+        .setString(StorageKeys.USER_ID_KEY, user.uid)
+        .then((value) => prefs.setString(StorageKeys.USER_DISPLAY_NAME_KEY, user.displayName));
   }
 
   void clearCurrentUser() async {

@@ -32,11 +32,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       locationsSubscription =
-          LocationRepo.getInstance().getLocationsForUser(user).listen((
-              locations) {
-            add(LocationsUpdatedEvent(locations
-              ..sort((a, b) => a.displayName.compareTo(b.displayName))
-            ));
+          LocationRepo.getInstance().getLocationsForUser(user).listen((locations) {
+            add(LocationsUpdatedEvent(
+                locations..sort((a, b) => a.displayName.compareTo(b.displayName))));
           });
     } else {
       add(MainErrorEvent());
@@ -45,8 +43,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   void retrieveLocation(Location location, MainWidget view) async {
     final currentUser = await UserRepo.getInstance().getCurrentUser();
-    LocationRepo.getInstance().getLocation(location, currentUser).then((
-        location) {
+    LocationRepo.getInstance().getLocation(location, currentUser).then((location) {
       view.navigateToLocation(location);
     });
   }
@@ -56,8 +53,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     if (event is ClearLocationsEvent) {
       yield MainState.isLoading(true, MainState.initial());
     } else if (event is LocationsUpdatedEvent) {
-      yield MainState.isLoading(
-          false, MainState.locations(event.locations, state));
+      yield MainState.isLoading(false, MainState.locations(event.locations, state));
     } else if (event is MainErrorEvent) {
       yield MainState.isLoading(false, state);
     }

@@ -58,17 +58,17 @@ class LoginWidget extends StatelessWidget {
           child: new ListView(
             shrinkWrap: true,
             children: <Widget>[
-              showUsernameInput(state),
-              showPasswordInputs(state, context),
-              showPrimaryButton(state, context),
-              showSecondaryButton(state, context),
-              showErrorMessage(state, context),
+              _showUsernameInput(state),
+              _showPasswordInputs(state, context),
+              _showPrimaryButton(state, context),
+              _showSecondaryButton(state, context),
+              _showErrorMessage(state, context),
             ],
           ),
         ));
   }
 
-  Widget showUsernameInput(LoginState state) {
+  Widget _showUsernameInput(LoginState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: new TextFormField(
@@ -92,19 +92,19 @@ class LoginWidget extends StatelessWidget {
     );
   }
 
-  Widget showPasswordInputs(LoginState state, BuildContext context) {
+  Widget _showPasswordInputs(LoginState state, BuildContext context) {
     return StreamBuilder(
         stream: BlocProvider
             .of<LoginBloc>(context)
             .isLoginFormStream
             .stream,
         builder: (BuildContext context, snapshot) {
-          Widget content = showSignInPasswordInput(state, context);
+          Widget content = _showSignInPasswordInput(state, context);
           if (snapshot.data == false) {
             content = Column(
               children: <Widget>[
-                showSignUpPasswordInput(state, context),
-                showConfirmPasswordInput(state),
+                _showSignUpPasswordInput(state, context),
+                _showConfirmPasswordInput(state),
               ],
             );
           }
@@ -112,7 +112,7 @@ class LoginWidget extends StatelessWidget {
         });
   }
 
-  Widget showSignInPasswordInput(LoginState state, BuildContext context) {
+  Widget _showSignInPasswordInput(LoginState state, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
@@ -131,7 +131,7 @@ class LoginWidget extends StatelessWidget {
     );
   }
 
-  Widget showSignUpPasswordInput(LoginState state, BuildContext context) {
+  Widget _showSignUpPasswordInput(LoginState state, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
@@ -159,7 +159,7 @@ class LoginWidget extends StatelessWidget {
     );
   }
 
-  Widget showConfirmPasswordInput(LoginState state) {
+  Widget _showConfirmPasswordInput(LoginState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
@@ -183,7 +183,7 @@ class LoginWidget extends StatelessWidget {
     );
   }
 
-  Widget showPrimaryButton(LoginState state, BuildContext context) {
+  Widget _showPrimaryButton(LoginState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
@@ -211,7 +211,7 @@ class LoginWidget extends StatelessWidget {
         ));
   }
 
-  Widget showSecondaryButton(LoginState state, BuildContext context) {
+  Widget _showSecondaryButton(LoginState state, BuildContext context) {
     return new FlatButton(
         child: StreamBuilder(
           stream: BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
@@ -227,7 +227,7 @@ class LoginWidget extends StatelessWidget {
         onPressed: () => BlocProvider.of<LoginBloc>(context).toggleFormMode(state));
   }
 
-  Widget showErrorMessage(LoginState state, BuildContext context) {
+  Widget _showErrorMessage(LoginState state, BuildContext context) {
     return StreamBuilder(
         stream: BlocProvider
             .of<LoginBloc>(context)
