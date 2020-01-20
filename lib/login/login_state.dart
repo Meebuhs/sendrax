@@ -11,83 +11,36 @@ class LoginState {
   String confirmPassword;
   String errorMessage;
 
+  // @formatter:off
   LoginState._internal(this.loading, this.isLogin, this.formKey, this.passwordKey, this.username,
       this.password, this.confirmPassword, this.errorMessage);
 
   factory LoginState.initial() =>
-      LoginState._internal(
-          true,
-          true,
-          new GlobalKey<FormState>(),
-          new GlobalKey<FormFieldState>(),
-          "",
-          "",
-          "",
-          "");
+      LoginState._internal(true, true, new GlobalKey<FormState>(), new GlobalKey<FormFieldState>(),
+          "", "", "", "");
 
   factory LoginState.loading(bool loading, LoginState state) =>
-      LoginState._internal(
-          loading,
-          state.isLogin,
-          state.formKey,
-          state.passwordKey,
-          state.username,
-          state.password,
-          state.confirmPassword,
-          state.errorMessage);
+      LoginState._internal(loading, state.isLogin, state.formKey, state.passwordKey, state.username,
+          state.password, state.confirmPassword, state.errorMessage);
 
   factory LoginState.isLogin(bool isLogin, LoginState state) =>
-      LoginState._internal(
-          state.loading,
-          isLogin,
-          state.formKey,
-          state.passwordKey,
-          state.username,
-          state.password,
-          state.confirmPassword,
-          state.errorMessage);
+      LoginState._internal(state.loading, isLogin, state.formKey, state.passwordKey, state.username,
+          state.password, state.confirmPassword, state.errorMessage);
 
   factory LoginState.username(String email, LoginState state) =>
-      LoginState._internal(
-          state.loading,
-          state.isLogin,
-          state.formKey,
-          state.passwordKey,
-          email,
-          state.password,
-          state.confirmPassword,
-          state.errorMessage);
+      LoginState._internal(state.loading, state.isLogin, state.formKey, state.passwordKey, email,
+          state.password, state.confirmPassword, state.errorMessage);
 
   factory LoginState.password(String password, LoginState state) =>
-      LoginState._internal(
-          state.loading,
-          state.isLogin,
-          state.formKey,
-          state.passwordKey,
-          state.username,
-          password,
-          state.confirmPassword,
-          state.errorMessage);
+      LoginState._internal(state.loading, state.isLogin, state.formKey, state.passwordKey,
+          state.username, password, state.confirmPassword, state.errorMessage);
 
   factory LoginState.confirmPassword(String confirmPassword, LoginState state) =>
-      LoginState._internal(
-          state.loading,
-          state.isLogin,
-          state.formKey,
-          state.passwordKey,
-          state.username,
-          state.password,
-          confirmPassword,
-          state.errorMessage);
+      LoginState._internal(state.loading, state.isLogin, state.formKey, state.passwordKey,
+          state.username, state.password, confirmPassword, state.errorMessage);
 
   factory LoginState.errorMessage(String errorMessage, LoginState state) =>
-      LoginState._internal(
-          state.loading,
-          state.isLogin,
-          state.formKey,
-          state.passwordKey,
-          state.username,
-          state.password,
-          state.confirmPassword,
-          errorMessage);
+      LoginState._internal(state.loading, state.isLogin, state.formKey, state.passwordKey,
+          state.username, state.password, state.confirmPassword, errorMessage);
 }
+// @formatter:on
