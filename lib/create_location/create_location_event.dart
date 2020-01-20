@@ -1,7 +1,11 @@
 abstract class CreateLocationEvent {}
 
-class CreateLocationErrorEvent extends CreateLocationEvent {
-  CreateLocationErrorEvent(this.error);
+class ClearGradesEvent extends CreateLocationEvent {}
 
-  final dynamic error;
+class GradesUpdatedEvent extends CreateLocationEvent {
+  GradesUpdatedEvent(this.gradeIds);
+
+  final List<String> gradeIds;
 }
+
+class GradesErrorEvent extends CreateLocationEvent {}

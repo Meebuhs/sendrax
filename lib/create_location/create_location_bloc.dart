@@ -6,17 +6,36 @@ import 'package:sendrax/create_location/create_location_event.dart';
 import 'package:sendrax/create_location/create_location_state.dart';
 import 'package:sendrax/create_location/create_location_view.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/models/grade_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
+import 'package:sendrax/models/user_repo.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> {
   StreamController gradeIdStream = StreamController<String>();
   StreamController errorMessageStream = StreamController<String>();
+  StreamSubscription<List<String>> gradesSubscription;
   var uuid = new Uuid();
 
   @override
-  CreateLocationState get initialState => CreateLocationState.initial();
+  CreateLocationState get initialState {
+    _retrieveAvailableGradeSets();
+    return CreateLocationState.initial();
+  }
+
+  void _retrieveAvailableGradeSets() async {
+    add(ClearGradesEvent());
+    final user = await UserRepo.getInstance().getCurrentUser();
+    if (user != null) {
+      gradesSubscription =
+          GradeRepo.getInstance().getGradeIds(user).listen((grades) {
+            add(GradesUpdatedEvent(grades));
+          });
+    } else {
+      add(GradesErrorEvent());
+    }
+  }
 
   void validateAndSubmit(CreateLocationState state, BuildContext context,
       CreateLocationWidget view) async {
@@ -56,13 +75,20 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
 
   @override
   Stream<CreateLocationState> mapEventToState(CreateLocationEvent event) async* {
-    if (event is CreateLocationErrorEvent) {}
+    if (event is ClearGradesEvent) {
+      yield CreateLocationState.loading(true, <String>[], state);
+    } else if (event is GradesUpdatedEvent) {
+      yield CreateLocationState.loading(false, event.gradeIds, state);
+    } else if (event is GradesErrorEvent) {
+      yield CreateLocationState.loading(false, state.gradeIds, state);
+    }
   }
 
   @override
   Future<void> close() {
     gradeIdStream.close();
     errorMessageStream.close();
+    gradesSubscription.cancel();
     return super.close();
   }
 }

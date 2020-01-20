@@ -14,8 +14,6 @@ class CreateLocationScreen extends StatefulWidget {
 }
 
 class _CreateLocationState extends State<CreateLocationScreen> {
-  _CreateLocationState();
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateLocationBloc>(
@@ -119,7 +117,7 @@ class CreateLocationWidget extends StatelessWidget {
               .stream,
           builder: (BuildContext context, snapshot) {
             return new DropdownButton<String>(
-              items: _createDropdownItems(),
+              items: _createDropdownItems(state),
               value: snapshot.data,
               hint: Text("Grades"),
               isExpanded: true,
@@ -129,8 +127,8 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  List<DropdownMenuItem> _createDropdownItems() {
-    return <String>['V Scale', 'Font', 'YDS', 'French', 'Ewbanks'].map((String value) {
+  List<DropdownMenuItem> _createDropdownItems(CreateLocationState state) {
+    return state.gradeIds.map((String value) {
       return new DropdownMenuItem<String>(
         value: value,
         child: new Text(value),
