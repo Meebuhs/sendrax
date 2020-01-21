@@ -46,7 +46,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
       Location location = new Location(
           "location-${uuid.v1()}", state.displayName, state.gradeId, state.sections, <Climb>[]);
       try {
-        await LocationRepo.getInstance().setLocation(location);
+        LocationRepo.getInstance().setLocation(location);
         state.loading = false;
       } catch (e) {
         state.formKey.currentState.reset();

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sendrax/models/user.dart';
+import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/util/constants.dart';
 import 'package:sendrax/util/serialization_util.dart';
 
@@ -35,5 +36,14 @@ class GradeRepo {
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
         .snapshots()
         .map((data) => Deserializer.deserializeGradeIds(data.documents));
+  }
+
+  void setGradeSet(GradeSet gradeSet) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
+        .document(gradeSet.id)
+        .setData(gradeSet.map, merge: true);
   }
 }

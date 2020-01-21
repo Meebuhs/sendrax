@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
+import 'create_gradeset/create_gradeset_view.dart';
 import 'create_location_bloc.dart';
 import 'create_location_state.dart';
 
@@ -69,7 +70,7 @@ class CreateLocationWidget extends StatelessWidget {
                   child: _showGradesDropdown(state, context),
                 ),
                 Expanded(
-                  child: _showGradeCreationButton(state),
+                  child: _showGradeCreationButton(state, context),
                 )
               ]),
               _showSectionCreator(state),
@@ -136,7 +137,7 @@ class CreateLocationWidget extends StatelessWidget {
     }).toList();
   }
 
-  Widget _showGradeCreationButton(CreateLocationState state) {
+  Widget _showGradeCreationButton(CreateLocationState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(
             UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
@@ -146,11 +147,22 @@ class CreateLocationWidget extends StatelessWidget {
             elevation: 5.0,
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.pink,
-            child: new Text('Create a gradeset',
+            child: new Text('Create a grade set',
                 style: new TextStyle(fontSize: 14.0, color: Colors.white)),
-            onPressed: () => null,
+            onPressed: () => _showDialog(context),
           ),
         ));
+  }
+
+  _showDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //Here we will build the content of the dialog
+          return SimpleDialog(title: Text("Create a grade set"), children: <Widget>[
+            CreateGradeSet(),
+          ]);
+        });
   }
 
   Widget _showSectionCreator(CreateLocationState state) {

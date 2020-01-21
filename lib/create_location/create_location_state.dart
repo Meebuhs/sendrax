@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:uuid/uuid.dart';
 
 class CreateLocationState {
   bool loading;
@@ -10,7 +9,6 @@ class CreateLocationState {
   final List<String> sections;
   String gradeId;
   List<String> gradeIds;
-  var uuid = Uuid();
 
   // @formatter:off
   CreateLocationState._internal(this.loading, this.formKey, this.id, this.displayName,
