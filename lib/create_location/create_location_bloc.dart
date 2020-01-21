@@ -15,7 +15,7 @@ import 'package:uuid/uuid.dart';
 class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> {
   StreamController gradeIdStream = StreamController<String>();
   StreamController errorMessageStream = StreamController<String>();
-  StreamController sectionsStream = StreamController<List<String>>();
+  StreamController sectionsStream = StreamController<List<String>>.broadcast();
   StreamSubscription<List<String>> gradesSubscription;
   var uuid = new Uuid();
 

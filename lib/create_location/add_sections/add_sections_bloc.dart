@@ -17,7 +17,7 @@ class AddSectionsBloc extends Bloc<AddSectionsEvent, AddSectionsState> {
 
   @override
   AddSectionsState get initialState {
-    return AddSectionsState.itemList(itemList, AddSectionsState.initial());
+    return AddSectionsState.initial(itemList);
   }
 
   void addItem(String item) {

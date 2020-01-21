@@ -76,6 +76,7 @@ class CreateLocationWidget extends StatelessWidget {
                   child: _showGradeCreationButton(state, context),
                 )
               ]),
+              Center(child: _showSectionsText(state, context)),
               _showSectionCreator(state, context),
               _showSubmitButton(state, context)
             ],
@@ -85,8 +86,8 @@ class CreateLocationWidget extends StatelessWidget {
 
   Widget _showDisplayNameInput(CreateLocationState state) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-          UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 50.0),
+      padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
+          UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
       child: new TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.text,
@@ -98,9 +99,7 @@ class CreateLocationWidget extends StatelessWidget {
               color: Colors.grey,
             )),
         validator: (String value) {
-          if (value
-              .trim()
-              .isEmpty) {
+          if (value.trim().isEmpty) {
             return 'Location must have a name';
           }
           return null;
@@ -112,13 +111,10 @@ class CreateLocationWidget extends StatelessWidget {
 
   Widget _showGradesDropdown(CreateLocationState state, BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.fromLTRB(
-            UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
+        padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
+            UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: new StreamBuilder(
-          stream: BlocProvider
-              .of<CreateLocationBloc>(context)
-              .gradeIdStream
-              .stream,
+          stream: BlocProvider.of<CreateLocationBloc>(context).gradeIdStream.stream,
           builder: (BuildContext context, snapshot) {
             return new DropdownButton<String>(
               items: _createDropdownItems(state),
@@ -142,8 +138,8 @@ class CreateLocationWidget extends StatelessWidget {
 
   Widget _showGradeCreationButton(CreateLocationState state, BuildContext context) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(
-            UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
+        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
+            UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
@@ -167,9 +163,26 @@ class CreateLocationWidget extends StatelessWidget {
         });
   }
 
+  Widget _showSectionsText(CreateLocationState state, BuildContext context) {
+    return StreamBuilder(
+        stream: BlocProvider.of<CreateLocationBloc>(context).sectionsStream.stream,
+        initialData: <String>[],
+        builder: (BuildContext context, snapshot) {
+          return Padding(
+              padding: EdgeInsets.fromLTRB(
+                  UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
+              child: Text(
+                (snapshot.data.isEmpty) ? "No sections added" : snapshot.data.join(', '),
+                style: TextStyle(
+                    fontSize: 13.0, color: Colors.grey, height: 1.0, fontWeight: FontWeight.w400),
+              ));
+        });
+  }
+
   Widget _showSectionCreator(CreateLocationState state, BuildContext context) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, UIConstants.SMALLER_PADDING,
+            UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
@@ -183,25 +196,22 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  _showAddSectionsDialog(CreateLocationState state, BuildContext context) {
-    StreamController<List<String>> stream = BlocProvider
-        .of<CreateLocationBloc>(context)
-        .sectionsStream;
+  void _showAddSectionsDialog(CreateLocationState state, BuildContext context) {
+    StreamController<List<String>> stream =
+        BlocProvider.of<CreateLocationBloc>(context).sectionsStream;
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(title: Text("Edit this location's sections"), children: <Widget>[
-            AddSections(
-                itemList: state.sections,
-                sectionsStream: stream
-            ),
+            AddSections(itemList: state.sections, sectionsStream: stream),
           ]);
         });
   }
 
   Widget _showSubmitButton(CreateLocationState state, BuildContext context) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(
+            UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
@@ -209,9 +219,8 @@ class CreateLocationWidget extends StatelessWidget {
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.pink,
             child: new Text('Submit', style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-            onPressed: () =>
-                BlocProvider.of<CreateLocationBloc>(context)
-                    .validateAndSubmit(state, context, this),
+            onPressed: () => BlocProvider.of<CreateLocationBloc>(context)
+                .validateAndSubmit(state, context, this),
           ),
         ));
   }
