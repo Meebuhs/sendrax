@@ -98,6 +98,7 @@ class LoginWidget extends StatelessWidget {
             .of<LoginBloc>(context)
             .isLoginFormStream
             .stream,
+        initialData: true,
         builder: (BuildContext context, snapshot) {
           Widget content = _showSignInPasswordInput(state, context);
           if (snapshot.data == false) {
@@ -197,11 +198,9 @@ class LoginWidget extends StatelessWidget {
                   .of<LoginBloc>(context)
                   .isLoginFormStream
                   .stream,
+              initialData: true,
               builder: (BuildContext context, snapshot) {
-                String buttonText = 'Login'; // Button text if snapshot is true (login form)
-                if (snapshot.data == false) {
-                  buttonText = 'Create account';
-                }
+                String buttonText = snapshot.data ? 'Login' : 'Create account';
                 return new Text(buttonText,
                     style: new TextStyle(fontSize: 20.0, color: Colors.white));
               },
@@ -215,11 +214,9 @@ class LoginWidget extends StatelessWidget {
     return new FlatButton(
         child: StreamBuilder(
           stream: BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
+          initialData: true,
           builder: (BuildContext context, snapshot) {
-            String buttonText = 'Create an account'; // Button text if snapshot is true (login form)
-            if (snapshot.data == false) {
-              buttonText = 'Have an account? Sign in';
-            }
+            String buttonText = snapshot.data ? 'Create an account' : 'Have an account? Sign in';
             return new Text(buttonText,
                 style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300));
           },
@@ -233,8 +230,9 @@ class LoginWidget extends StatelessWidget {
             .of<LoginBloc>(context)
             .errorMessageStream
             .stream,
+        initialData: "",
         builder: (BuildContext context, snapshot) {
-          if (snapshot.data != null && snapshot.data.length > 0) {
+          if (snapshot.data.length > 0) {
             return new Center(
                 child: Text(
                   snapshot.data,

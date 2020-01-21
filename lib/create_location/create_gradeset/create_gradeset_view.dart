@@ -91,13 +91,12 @@ class CreateGradeSetWidget extends StatelessWidget {
   Widget _showItemList(CreateGradeSetState state, BuildContext context) {
     return StreamBuilder(
         stream: BlocProvider.of<CreateGradeSetBloc>(context).itemStream.stream,
+        initialData: <String>[],
         builder: (BuildContext context, snapshot) {
           List<Widget> itemChips = List<Widget>();
-          if (snapshot.data != null) {
             snapshot.data.forEach((item) {
               itemChips.add(_buildItemChip(state, context, item));
             });
-          }
           return Container(
               constraints: BoxConstraints(
                 minHeight: 85.0,
@@ -166,8 +165,9 @@ class CreateGradeSetWidget extends StatelessWidget {
   Widget _showErrorMessage(CreateGradeSetState state, BuildContext context) {
     return StreamBuilder(
         stream: BlocProvider.of<CreateGradeSetBloc>(context).errorMessageStream.stream,
+        initialData: "",
         builder: (BuildContext context, snapshot) {
-          if (snapshot.data != null && snapshot.data.length > 0) {
+          if (snapshot.data.length > 0) {
             return Align(
                 alignment: Alignment.bottomLeft,
                 child: Padding(
