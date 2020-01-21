@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sendrax/create_location/add_sections/add_sections_view.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
@@ -73,7 +76,7 @@ class CreateLocationWidget extends StatelessWidget {
                   child: _showGradeCreationButton(state, context),
                 )
               ]),
-              _showSectionCreator(state),
+              _showSectionCreator(state, context),
               _showSubmitButton(state, context)
             ],
           ),
@@ -149,23 +152,22 @@ class CreateLocationWidget extends StatelessWidget {
             color: Colors.pink,
             child: new Text('Create a grade set',
                 style: new TextStyle(fontSize: 14.0, color: Colors.white)),
-            onPressed: () => _showDialog(context),
+            onPressed: () => _showCreateGradeSetDialog(context),
           ),
         ));
   }
 
-  _showDialog(BuildContext context) {
+  _showCreateGradeSetDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          //Here we will build the content of the dialog
           return SimpleDialog(title: Text("Create a grade set"), children: <Widget>[
             CreateGradeSet(),
           ]);
         });
   }
 
-  Widget _showSectionCreator(CreateLocationState state) {
+  Widget _showSectionCreator(CreateLocationState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
@@ -176,9 +178,25 @@ class CreateLocationWidget extends StatelessWidget {
             color: Colors.pink,
             child: new Text('Create sections',
                 style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-            onPressed: () => null,
+            onPressed: () => _showAddSectionsDialog(state, context),
           ),
         ));
+  }
+
+  _showAddSectionsDialog(CreateLocationState state, BuildContext context) {
+    StreamController<List<String>> stream = BlocProvider
+        .of<CreateLocationBloc>(context)
+        .sectionsStream;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(title: Text("Edit this location's sections"), children: <Widget>[
+            AddSections(
+                itemList: state.sections,
+                sectionsStream: stream
+            ),
+          ]);
+        });
   }
 
   Widget _showSubmitButton(CreateLocationState state, BuildContext context) {

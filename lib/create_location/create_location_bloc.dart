@@ -15,6 +15,7 @@ import 'package:uuid/uuid.dart';
 class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> {
   StreamController gradeIdStream = StreamController<String>();
   StreamController errorMessageStream = StreamController<String>();
+  StreamController sectionsStream = StreamController<List<String>>();
   StreamSubscription<List<String>> gradesSubscription;
   var uuid = new Uuid();
 
@@ -72,6 +73,12 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     gradeIdStream.add(grade);
   }
 
+  void setSectionsList(List<String> sections) {
+    sectionsStream.stream.listen((sections) {
+      state.sections = sections;
+    });
+  }
+
   @override
   Stream<CreateLocationState> mapEventToState(CreateLocationEvent event) async* {
     if (event is ClearGradesEvent) {
@@ -87,6 +94,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   Future<void> close() {
     gradeIdStream.close();
     errorMessageStream.close();
+    sectionsStream.close();
     gradesSubscription.cancel();
     return super.close();
   }

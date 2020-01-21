@@ -6,7 +6,7 @@ class CreateLocationState {
   String id;
   String displayName;
   String errorMessage;
-  final List<String> sections;
+  List<String> sections;
   String gradeId;
   List<String> gradeIds;
 
