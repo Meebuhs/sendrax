@@ -48,7 +48,7 @@ class MainWidget extends StatelessWidget {
           bloc: BlocProvider.of<MainBloc>(context),
           builder: (context, MainState state) {
             Widget content;
-            if (state.isLoading) {
+            if (state.loading) {
               content = Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 4.0,

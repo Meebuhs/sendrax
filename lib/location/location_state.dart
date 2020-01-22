@@ -5,24 +5,23 @@ class LocationState {
   final List<Climb> climbs;
   final List<String> sections;
   final List<String> grades;
-  final bool error;
 
-  LocationState._internal(this.loading, this.climbs, this.sections,
-      this.grades, {this.error = false});
+  // @formatter:off
+  LocationState._internal(this.loading, this.climbs, this.sections, this.grades);
 
   factory LocationState.initial() =>
       LocationState._internal(true, <Climb>[], <String>[], <String>[]);
 
-  factory LocationState.loading(bool isLoading, List<Climb> climbs,
-      List<String> sections, List<String> grades) =>
-      LocationState._internal(isLoading, climbs, sections, grades);
+  factory LocationState.loading(bool isLoading, LocationState state) =>
+      LocationState._internal(isLoading, state.climbs, state.sections, state.grades);
 
-  factory LocationState.climbs(List<Climb> climbs, LocationState state) =>
-      LocationState._internal(
-          state.loading, climbs, state.sections, state.grades);
+  factory LocationState.updateClimbs(bool loading, List<Climb> climbs, LocationState state) =>
+      LocationState._internal(loading, climbs, state.sections, state.grades);
 
-  factory LocationState.error(LocationState state) =>
-      LocationState._internal(
-          state.loading, state.climbs, state.sections, state.grades,
-          error: true);
+  factory LocationState.updateSections(bool loading, List<String> sections, LocationState state) =>
+      LocationState._internal(loading, state.climbs, sections, state.grades);
+
+  factory LocationState.clearData(bool loading,) =>
+      LocationState._internal(loading, <Climb>[], <String>[], <String>[]);
 }
+// @formatter:on

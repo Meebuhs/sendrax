@@ -22,25 +22,5 @@ class LoginState {
   factory LoginState.loading(bool loading, LoginState state) =>
       LoginState._internal(loading, state.isLogin, state.formKey, state.passwordKey, state.username,
           state.password, state.confirmPassword, state.errorMessage);
-
-  factory LoginState.isLogin(bool isLogin, LoginState state) =>
-      LoginState._internal(state.loading, isLogin, state.formKey, state.passwordKey, state.username,
-          state.password, state.confirmPassword, state.errorMessage);
-
-  factory LoginState.username(String email, LoginState state) =>
-      LoginState._internal(state.loading, state.isLogin, state.formKey, state.passwordKey, email,
-          state.password, state.confirmPassword, state.errorMessage);
-
-  factory LoginState.password(String password, LoginState state) =>
-      LoginState._internal(state.loading, state.isLogin, state.formKey, state.passwordKey,
-          state.username, password, state.confirmPassword, state.errorMessage);
-
-  factory LoginState.confirmPassword(String confirmPassword, LoginState state) =>
-      LoginState._internal(state.loading, state.isLogin, state.formKey, state.passwordKey,
-          state.username, state.password, confirmPassword, state.errorMessage);
-
-  factory LoginState.errorMessage(String errorMessage, LoginState state) =>
-      LoginState._internal(state.loading, state.isLogin, state.formKey, state.passwordKey,
-          state.username, state.password, state.confirmPassword, errorMessage);
 }
 // @formatter:on

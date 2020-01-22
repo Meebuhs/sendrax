@@ -20,37 +20,19 @@ class CreateLocationState {
       CreateLocationState._internal(true, isEdit, new GlobalKey<FormState>(), location.id,
           location.displayName, location.sections, location.gradesId, <String>[], "");
 
-  factory CreateLocationState.loading(
-          bool loading, List<String> availableGradeSets, CreateLocationState state) =>
+    factory CreateLocationState.loading(bool loading, CreateLocationState state) =>
       CreateLocationState._internal(loading, state.isEdit, state.formKey, state.id,
-          state.displayName, state.sections, state.gradesId, availableGradeSets,
-          state.errorMessage);
+          state.displayName, state.sections, state.gradesId, state.gradeIds, state.errorMessage);
 
-  factory CreateLocationState.location(bool loading, Location location, CreateLocationState state) =>
+  factory CreateLocationState.updateGrades(
+          bool loading, List<String> gradeIds, CreateLocationState state) =>
+      CreateLocationState._internal(loading, state.isEdit, state.formKey, state.id,
+          state.displayName, state.sections, state.gradesId, gradeIds, state.errorMessage);
+
+  factory CreateLocationState.updateLocation(
+      bool loading, Location location, CreateLocationState state) =>
   CreateLocationState._internal(loading, state.isEdit, state.formKey, state.id,
           state.displayName, location.sections, location.gradesId, state.gradeIds,
           state.errorMessage);
-
-  factory CreateLocationState.displayName(String displayName, CreateLocationState state) =>
-      CreateLocationState._internal(state.loading, state.isEdit, state.formKey, state.id,
-          displayName, state.sections, state.gradesId, state.gradeIds, state.errorMessage);
-
-  factory CreateLocationState.sections(List<String> sections, CreateLocationState state) =>
-      CreateLocationState._internal(state.loading, state.isEdit, state.formKey, state.id,
-          state.displayName, sections, state.gradesId, state.gradeIds, state.errorMessage);
-
-  factory CreateLocationState.gradesId(String gradeId, CreateLocationState state) =>
-      CreateLocationState._internal(state.loading, state.isEdit, state.formKey, state.id,
-          state.displayName, state.sections, gradeId, state.gradeIds, state.errorMessage);
-
-  factory CreateLocationState.gradeIds(
-          List<String> availableGradeSets, CreateLocationState state) =>
-      CreateLocationState._internal(state.loading, state.isEdit, state.formKey, state.id,
-          state.displayName, state.sections, state.gradesId, availableGradeSets,
-          state.errorMessage);
-
-  factory CreateLocationState.errorMessage(String errorMessage, CreateLocationState state) =>
-      CreateLocationState._internal(state.loading, state.isEdit, state.formKey, state.id,
-          state.displayName, state.sections, state.gradesId, state.gradeIds, errorMessage);
 }
 // @formatter:on

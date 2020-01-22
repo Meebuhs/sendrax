@@ -15,11 +15,6 @@ class CreateGradeSetState {
   factory CreateGradeSetState.initial() => CreateGradeSetState._internal(
       "", <String>[], new GlobalKey<FormFieldState>(), new GlobalKey<FormState>(), "");
 
-  factory CreateGradeSetState.name(
-          String name, CreateGradeSetState state) =>
-      CreateGradeSetState._internal(name, state.itemList, state.itemInputKey, state.formKey,
-          state.errorMessage);
-
   factory CreateGradeSetState.itemList(List<String> itemList, CreateGradeSetState state) =>
       CreateGradeSetState._internal(state.name, itemList, state.itemInputKey, state.formKey,
           state.errorMessage);

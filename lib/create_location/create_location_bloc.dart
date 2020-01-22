@@ -102,15 +102,15 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   @override
   Stream<CreateLocationState> mapEventToState(CreateLocationEvent event) async* {
     if (event is ClearGradesEvent) {
-      yield CreateLocationState.loading(true, <String>[], state);
+      yield CreateLocationState.updateGrades(true, <String>[], state);
     } else if (event is ClearLocationEvent) {
-      yield CreateLocationState.location(true, new Location(state.id, state.displayName), state);
+      yield CreateLocationState.updateLocation(true, new Location(state.id, state.displayName), state);
     } else if (event is GradesUpdatedEvent) {
-      yield CreateLocationState.loading(event.isEdit, event.gradeIds, state);
+      yield CreateLocationState.updateGrades(event.isEdit, event.gradeIds, state);
     } else if (event is LocationUpdatedEvent) {
-      yield CreateLocationState.location(false, event.location, state);
+      yield CreateLocationState.updateLocation(false, event.location, state);
     } else if (event is CreateLocationErrorEvent) {
-      yield CreateLocationState.loading(false, state.gradeIds, state);
+      yield CreateLocationState.loading(false, state);
     }
   }
 

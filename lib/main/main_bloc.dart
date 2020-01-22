@@ -51,11 +51,11 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   @override
   Stream<MainState> mapEventToState(MainEvent event) async* {
     if (event is ClearLocationsEvent) {
-      yield MainState.isLoading(true, MainState.initial());
+      yield MainState.updateLocations(true, <Location>[], state);
     } else if (event is LocationsUpdatedEvent) {
-      yield MainState.isLoading(false, MainState.locations(event.locations, state));
+      yield MainState.updateLocations(false, event.locations, state);
     } else if (event is MainErrorEvent) {
-      yield MainState.isLoading(false, state);
+      yield MainState.loading(false, state);
     }
   }
 

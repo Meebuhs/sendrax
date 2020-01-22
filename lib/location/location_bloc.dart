@@ -8,6 +8,7 @@ import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
+import 'package:sendrax/models/user.dart';
 import 'package:sendrax/models/user_repo.dart';
 
 import 'location_event.dart';
@@ -20,38 +21,41 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   StreamSubscription<List<Climb>> climbSubscription;
   StreamSubscription<Location> locationSubscription;
 
-  void _retrieveClimbsForThisLocation() async {
-    add(ClearClimbsEvent());
+  @override
+  LocationState get initialState {
+    _retrieveLocationData();
+    return LocationState.initial();
+  }
+
+  void _retrieveLocationData() async {
+    add(ClearDataEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
+    _retrieveClimbsForThisLocation(user);
+    _retrieveSectionsForThisLocation(user);
+  }
+
+  void _retrieveClimbsForThisLocation(User user) async {
     if (user != null) {
       climbSubscription =
           LocationRepo.getInstance().getClimbsForLocation(locationId, user).listen((climbs) {
             add(ClimbsUpdatedEvent(climbs..sort((a, b) => a.section.compareTo(b.section))));
-      });
+          });
     } else {
       add(LocationErrorEvent());
     }
   }
 
-  void _retrieveSectionsForThisLocation() async {
-    add(ClearSectionsEvent());
-    final user = await UserRepo.getInstance().getCurrentUser();
+  void _retrieveSectionsForThisLocation(User user) async {
     if (user != null) {
       locationSubscription =
           LocationRepo.getInstance().getSectionsForLocation(locationId, user).listen((location) {
-        add(SectionsUpdatedEvent(location.sections));
-      });
+            add(SectionsUpdatedEvent(location.sections));
+          });
     } else {
       add(LocationErrorEvent());
     }
   }
 
-  @override
-  LocationState get initialState {
-    _retrieveClimbsForThisLocation();
-    _retrieveSectionsForThisLocation();
-    return LocationState.initial();
-  }
 
   void retrieveClimb(Climb climb, LocationWidget view) async {
     final currentUser = await UserRepo.getInstance().getCurrentUser();
@@ -62,16 +66,14 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   @override
   Stream<LocationState> mapEventToState(LocationEvent event) async* {
-    if (event is ClearClimbsEvent) {
-      yield LocationState.loading(true, <Climb>[], state.sections, state.grades);
+    if (event is ClearDataEvent) {
+      yield LocationState.clearData(true);
     } else if (event is ClimbsUpdatedEvent) {
-      yield LocationState.loading(false, event.climbs, state.sections, state.grades);
-    } else if (event is ClearSectionsEvent) {
-      yield LocationState.loading(true, state.climbs, <String>[], state.grades);
+      yield LocationState.updateClimbs(true, event.climbs, state);
     } else if (event is SectionsUpdatedEvent) {
-      yield LocationState.loading(false, state.climbs, event.sections, state.grades);
+      yield LocationState.updateSections(false, event.sections, state);
     } else if (event is LocationErrorEvent) {
-      yield LocationState.loading(false, state.climbs, state.sections, state.grades);
+      yield LocationState.loading(false, state);
     }
   }
 

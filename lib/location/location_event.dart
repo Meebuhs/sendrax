@@ -2,9 +2,7 @@ import 'package:sendrax/models/climb.dart';
 
 abstract class LocationEvent {}
 
-class ClearClimbsEvent extends LocationEvent {}
-
-class ClearSectionsEvent extends LocationEvent {}
+class ClearDataEvent extends LocationEvent {}
 
 class ClimbsUpdatedEvent extends LocationEvent {
   ClimbsUpdatedEvent(this.climbs);

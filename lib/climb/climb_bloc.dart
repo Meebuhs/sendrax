@@ -37,11 +37,11 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
   @override
   Stream<ClimbState> mapEventToState(ClimbEvent event) async* {
     if (event is ClearAttemptsEvent) {
-      yield ClimbState.isLoading(true, state.attempts, state);
+      yield ClimbState.updateAttempts(true, state.attempts, state);
     } else if (event is AttemptsUpdatedEvent) {
-      yield ClimbState.isLoading(false, event.attempts, state);
+      yield ClimbState.updateAttempts(false, event.attempts, state);
     } else if (event is ClimbErrorEvent) {
-      yield ClimbState.isLoading(false, state.attempts, state);
+      yield ClimbState.loading(false, state);
     }
   }
 

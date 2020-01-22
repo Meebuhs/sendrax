@@ -94,10 +94,7 @@ class LoginWidget extends StatelessWidget {
 
   Widget _showPasswordInputs(LoginState state, BuildContext context) {
     return StreamBuilder(
-        stream: BlocProvider
-            .of<LoginBloc>(context)
-            .isLoginFormStream
-            .stream,
+        stream: BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
         initialData: true,
         builder: (BuildContext context, snapshot) {
           Widget content = _showSignInPasswordInput(state, context);
@@ -148,9 +145,7 @@ class LoginWidget extends StatelessWidget {
               color: Colors.grey,
             )),
         validator: (String value) {
-          if (value
-              .trim()
-              .length < 6) {
+          if (value.trim().length < 6) {
             return 'Password must be at least 6 characters';
           }
           return null;
@@ -194,10 +189,7 @@ class LoginWidget extends StatelessWidget {
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.pink,
             child: StreamBuilder(
-              stream: BlocProvider
-                  .of<LoginBloc>(context)
-                  .isLoginFormStream
-                  .stream,
+              stream: BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
               initialData: true,
               builder: (BuildContext context, snapshot) {
                 String buttonText = snapshot.data ? 'Login' : 'Create account';
@@ -226,19 +218,16 @@ class LoginWidget extends StatelessWidget {
 
   Widget _showErrorMessage(LoginState state, BuildContext context) {
     return StreamBuilder(
-        stream: BlocProvider
-            .of<LoginBloc>(context)
-            .errorMessageStream
-            .stream,
+        stream: BlocProvider.of<LoginBloc>(context).errorMessageStream.stream,
         initialData: "",
         builder: (BuildContext context, snapshot) {
           if (snapshot.data.length > 0) {
             return new Center(
                 child: Text(
-                  snapshot.data,
-                  style: TextStyle(
-                      fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w300),
-                ));
+              snapshot.data,
+              style: TextStyle(
+                  fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w300),
+            ));
           } else {
             return new Container(
               height: 0.0,

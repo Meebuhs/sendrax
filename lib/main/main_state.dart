@@ -1,26 +1,18 @@
 import 'package:sendrax/models/location.dart';
 
 class MainState {
-  final bool isLoading;
+  final bool loading;
   final List<Location> locations;
   final SelectedLocation selected;
   final bool loggedIn;
 
-  MainState._internal(this.isLoading, this.locations, {this.loggedIn = true, this.selected});
+  MainState._internal(this.loading, this.locations, {this.loggedIn = true, this.selected});
 
   factory MainState.initial() => MainState._internal(true, <Location>[]);
 
-  factory MainState.isLoading(bool isLoading, MainState state) =>
-      MainState._internal(isLoading, state.locations);
+  factory MainState.loading(bool loading, MainState state) =>
+      MainState._internal(loading, state.locations);
 
-  factory MainState.locations(List<Location> locations, MainState state) =>
-      MainState._internal(state.isLoading, locations);
-
-  factory MainState.openLocation(SelectedLocation location, MainState state) =>
-      MainState._internal(false, state.locations, selected: location);
-
-  factory MainState.logout(MainState state) =>
-      MainState._internal(false, state.locations, loggedIn: false);
-
-  factory MainState.reset(MainState state) => MainState._internal(state.isLoading, state.locations);
+  factory MainState.updateLocations(bool loading, List<Location> locations, MainState state) =>
+      MainState._internal(loading, locations);
 }

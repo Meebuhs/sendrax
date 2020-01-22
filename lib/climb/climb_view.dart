@@ -44,7 +44,7 @@ class ClimbWidget extends StatelessWidget {
           bloc: BlocProvider.of<ClimbBloc>(context),
           builder: (context, ClimbState state) {
             Widget content;
-            if (state.isLoading) {
+            if (state.loading) {
               content = Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 4.0,
