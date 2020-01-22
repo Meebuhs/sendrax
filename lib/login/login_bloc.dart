@@ -14,6 +14,7 @@ import 'login_view.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   StreamSubscription<FirebaseUser> _authStateListener;
   StreamController isLoginFormStream = StreamController<bool>.broadcast();
+  StreamController loadingStream = StreamController<bool>();
   StreamController errorMessageStream = StreamController<String>();
 
   @override
@@ -39,6 +40,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     FocusScope.of(context).unfocus();
     state.errorMessage = "";
     state.loading = true;
+    loadingStream.add(state.loading);
 
     if (_validateAndSave(state)) {
       try {
@@ -52,11 +54,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         state.formKey.currentState.reset();
         state.passwordKey.currentState.reset();
         state.loading = false;
+        loadingStream.add(state.loading);
         state.errorMessage = e.message.replaceAll('email address', 'username');
         errorMessageStream.sink.add(state.errorMessage);
       }
     } else {
       state.loading = false;
+      loadingStream.add(state.loading);
     }
   }
 
@@ -100,6 +104,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> close() {
     _authStateListener.cancel();
     isLoginFormStream.close();
+    loadingStream.close();
     errorMessageStream.close();
     return super.close();
   }

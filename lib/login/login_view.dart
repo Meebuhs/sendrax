@@ -36,15 +36,20 @@ class LoginWidget extends StatelessWidget {
       body: BlocBuilder(
           bloc: BlocProvider.of<LoginBloc>(context),
           builder: (context, LoginState state) {
-            if (state.loading) {
-              return Center(child: CircularProgressIndicator(strokeWidth: 4.0));
-            } else {
-              return Center(
-                child: ListView(
-                  children: <Widget>[showForm(state, context)],
-                ),
-              );
-            }
+            return StreamBuilder(
+                stream: BlocProvider.of<LoginBloc>(context).loadingStream.stream,
+                initialData: false,
+                builder: (BuildContext context, snapshot) {
+                  if (snapshot.data) {
+                    return Center(child: CircularProgressIndicator(strokeWidth: 4.0));
+                  } else {
+                    return Center(
+                      child: ListView(
+                        children: <Widget>[showForm(state, context)],
+                      ),
+                    );
+                  }
+                });
           }),
       resizeToAvoidBottomPadding: false,
     );
