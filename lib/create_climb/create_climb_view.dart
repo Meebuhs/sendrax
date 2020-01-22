@@ -8,7 +8,9 @@ import 'create_climb_bloc.dart';
 import 'create_climb_state.dart';
 
 class CreateClimbScreen extends StatefulWidget {
-  CreateClimbScreen({Key key, @required this.climb, @required this.availableSections, @required this.isEdit}) : super(key: key);
+  CreateClimbScreen(
+      {Key key, @required this.climb, @required this.availableSections, @required this.isEdit})
+      : super(key: key);
 
   final Climb climb;
   final List<String> availableSections;
@@ -48,9 +50,8 @@ class CreateClimbWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text((widgetState.isEdit)
-            ? "Edit ${widgetState.climb.displayName}"
-            : "Create a climb"),
+        title:
+            Text((widgetState.isEdit) ? "Edit ${widgetState.climb.displayName}" : "Create a climb"),
       ),
       body: BlocBuilder(
           bloc: BlocProvider.of<CreateClimbBloc>(context),
@@ -126,11 +127,17 @@ class CreateClimbWidget extends StatelessWidget {
           stream: BlocProvider.of<CreateClimbBloc>(context).gradeStream.stream,
           initialData: state.grade,
           builder: (BuildContext context, snapshot) {
-            return new DropdownButton<String>(
+            return new DropdownButtonFormField<String>(
               items: _createDropdownItems(state.availableGrades),
               value: snapshot.data,
               hint: Text("Grade"),
               isExpanded: true,
+              validator: (String value) {
+                if (value == null) {
+                  return 'A grade must be selected';
+                }
+                return null;
+              },
               onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectGrade(value),
             );
           },
@@ -145,11 +152,17 @@ class CreateClimbWidget extends StatelessWidget {
           stream: BlocProvider.of<CreateClimbBloc>(context).sectionStream.stream,
           initialData: state.section,
           builder: (BuildContext context, snapshot) {
-            return new DropdownButton<String>(
+            return new DropdownButtonFormField<String>(
               items: _createDropdownItems(state.availableSections),
               value: snapshot.data,
               hint: Text("Section"),
               isExpanded: true,
+              validator: (String value) {
+                if (value == null) {
+                  return 'A section must be selected';
+                }
+                return null;
+              },
               onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectSection(value),
             );
           },
@@ -182,8 +195,8 @@ class CreateClimbWidget extends StatelessWidget {
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.pink,
             child: new Text('Submit', style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-            onPressed: () => BlocProvider.of<CreateClimbBloc>(context)
-                .validateAndSubmit(state, context, this),
+            onPressed: () =>
+                BlocProvider.of<CreateClimbBloc>(context).validateAndSubmit(state, context, this),
           ),
         ));
   }

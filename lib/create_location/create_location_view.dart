@@ -129,11 +129,17 @@ class CreateLocationWidget extends StatelessWidget {
           stream: BlocProvider.of<CreateLocationBloc>(context).gradesIdStream.stream,
           initialData: state.gradesId,
           builder: (BuildContext context, snapshot) {
-            return new DropdownButton<String>(
+            return new DropdownButtonFormField<String>(
               items: _createDropdownItems(state),
               value: snapshot.data,
               hint: Text("Grades"),
               isExpanded: true,
+              validator: (String value) {
+                if (value == null) {
+                  return 'A grade set must be selected';
+                }
+                return null;
+              },
               onChanged: (value) => BlocProvider.of<CreateLocationBloc>(context).selectGrade(value),
             );
           },
