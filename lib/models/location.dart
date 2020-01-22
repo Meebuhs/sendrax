@@ -9,11 +9,12 @@ class SelectedLocation {
 }
 
 class Location {
-  Location(this.id, this.displayName, this.gradesId, [this.sections, this.climbs]);
+  Location(this.id, this.displayName, this.gradesId, this.categories, [this.sections, this.climbs]);
 
   final String id;
   final String displayName;
   final String gradesId;
+  final List<String> categories;
   final List<String> sections;
   final List<Climb> climbs;
 

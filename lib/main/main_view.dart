@@ -70,18 +70,18 @@ class MainWidget extends StatelessWidget {
                       child: _buildItem(state.locations[index]),
                       onTap: () {
                         BlocProvider.of<MainBloc>(context)
-                            .retrieveLocation(state.locations[index], this);
+                            .retrieveLocation(state.locations[index], this, state.categories);
                       });
                 },
                 itemCount: state.locations.length,
               );
             }
-            return _wrapContentWithFab(context, content);
+            return _wrapContentWithFab(context, state, content);
           }),
     );
   }
 
-  Widget _wrapContentWithFab(BuildContext context, Widget content) {
+  Widget _wrapContentWithFab(BuildContext context, MainState state, Widget content) {
     return Stack(
       children: <Widget>[
         content,
@@ -89,7 +89,7 @@ class MainWidget extends StatelessWidget {
           alignment: Alignment.bottomRight,
           padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
           child: FloatingActionButton(
-              onPressed: _createLocation,
+              onPressed: () => _createLocation(state),
               child: Icon(Icons.add, color: Colors.white),
               backgroundColor: Colors.pinkAccent,
               elevation: UIConstants.STANDARD_ELEVATION),
@@ -102,9 +102,10 @@ class MainWidget extends StatelessWidget {
     return LocationItem(location: location);
   }
 
-  void _createLocation() {
+  void _createLocation(MainState state) {
     var uuid = new Uuid();
-    Location location = new Location("location-${uuid.v1()}", "", null, <String>[], null);
+    Location location =
+        new Location("location-${uuid.v1()}", "", null, state.categories, <String>[], null);
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
         addToBackStack: true);
   }
@@ -113,8 +114,8 @@ class MainWidget extends StatelessWidget {
     NavigationHelper.navigateToLogin(widgetState.context);
   }
 
-  void navigateToLocation(SelectedLocation location) {
-    NavigationHelper.navigateToLocation(widgetState.context, location,
+  void navigateToLocation(SelectedLocation location, List<String> categories) {
+    NavigationHelper.navigateToLocation(widgetState.context, location, categories,
         addToBackStack: true);
   }
 }

@@ -81,8 +81,15 @@ class LocationRepo {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
         .document(locationId)
         .delete();
+  }
+
+  Stream<List<String>> getUserCategories(User user) {
+    return _firestore
+        .document("${FirestorePaths.USERS_COLLECTION}/${user.uid}/")
+        .snapshots()
+        .map((data) => Deserializer.deserializeCategories(data));
   }
 }

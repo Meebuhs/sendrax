@@ -11,24 +11,25 @@ import 'location_bloc.dart';
 import 'location_state.dart';
 
 class LocationScreen extends StatefulWidget {
-  LocationScreen({Key key, @required this.location})
-      : super(key: key);
+  LocationScreen({Key key, @required this.location, @required this.categories}) : super(key: key);
 
   final SelectedLocation location;
+  final List<String> categories;
 
   @override
-  State<StatefulWidget> createState() => _LocationState(location);
+  State<StatefulWidget> createState() => _LocationState(location, categories);
 }
 
 class _LocationState extends State<LocationScreen> {
   final SelectedLocation location;
+  final List<String> categories;
 
-  _LocationState(this.location);
+  _LocationState(this.location, this.categories);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LocationBloc>(
-      create: (context) => LocationBloc(location),
+      create: (context) => LocationBloc(location, categories),
       child: LocationWidget(
         widget: widget,
         widgetState: this,
@@ -52,7 +53,8 @@ class LocationWidget extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () => _editLocation(widget.location.id, widget.location.displayName, widget.location.gradesId),
+            onPressed: () => _editLocation(
+                widget.location.id, widget.location.displayName, widget.location.gradesId),
           )
         ],
       ),
@@ -143,14 +145,15 @@ class LocationWidget extends StatelessWidget {
     var uuid = new Uuid();
     // the null values for grade and section here are required as they are used as the initial
     // values for the dropdowns
-    Climb climb = new Climb("climb-${uuid.v1()}", "", state.locationId, null, state.gradesId, null, false,
-        <String>[]);
-    NavigationHelper.navigateToCreateClimb(widgetState.context, climb, state.sections, false,
+    Climb climb = new Climb(
+        "climb-${uuid.v1()}", "", state.locationId, null, state.gradesId, null, false, <String>[]);
+    NavigationHelper.navigateToCreateClimb(
+        widgetState.context, climb, state.sections, state.categories, false,
         addToBackStack: true);
   }
 
   void _editLocation(String locationId, String displayName, String gradesId) {
-    Location location = new Location(locationId, displayName, gradesId);
+    Location location = new Location(locationId, displayName, gradesId, <String>[]);
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, true,
         addToBackStack: true);
   }

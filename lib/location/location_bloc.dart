@@ -15,16 +15,17 @@ import 'location_event.dart';
 import 'location_state.dart';
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
-  LocationBloc(this.location);
+  LocationBloc(this.location, this.categories);
 
   final SelectedLocation location;
+  final List<String> categories;
   StreamSubscription<List<Climb>> climbSubscription;
   StreamSubscription<Location> locationSubscription;
 
   @override
   LocationState get initialState {
     _retrieveLocationData();
-    return LocationState.initial(location);
+    return LocationState.initial(location, categories);
   }
 
   void _retrieveLocationData() async {
@@ -38,8 +39,8 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     if (user != null) {
       climbSubscription =
           LocationRepo.getInstance().getClimbsForLocation(location.id, user).listen((climbs) {
-            add(ClimbsUpdatedEvent(climbs..sort((a, b) => a.section.compareTo(b.section))));
-          });
+        add(ClimbsUpdatedEvent(climbs..sort((a, b) => a.section.compareTo(b.section))));
+      });
     } else {
       add(LocationErrorEvent());
     }
@@ -49,13 +50,12 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     if (user != null) {
       locationSubscription =
           LocationRepo.getInstance().getSectionsForLocation(location.id, user).listen((location) {
-            add(SectionsUpdatedEvent(location.sections));
-          });
+        add(SectionsUpdatedEvent(location.sections));
+      });
     } else {
       add(LocationErrorEvent());
     }
   }
-
 
   void retrieveClimb(Climb climb, LocationWidget view) async {
     final currentUser = await UserRepo.getInstance().getCurrentUser();

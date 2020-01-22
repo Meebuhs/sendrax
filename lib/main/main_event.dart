@@ -10,4 +10,12 @@ class LocationsUpdatedEvent extends MainEvent {
   final List<Location> locations;
 }
 
+class ClearCategoriesEvent extends MainEvent {}
+
+class CategoriesUpdatedEvent extends MainEvent {
+  CategoriesUpdatedEvent(this.categories);
+
+  final List<String> categories;
+}
+
 class MainErrorEvent extends MainEvent {}

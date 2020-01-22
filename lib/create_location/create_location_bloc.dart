@@ -65,8 +65,8 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     state.loading = true;
 
     if (_validateAndSave(state)) {
-      Location location =
-          new Location(state.id, state.displayName, state.gradesId, state.sections, <Climb>[]);
+      Location location = new Location(
+          state.id, state.displayName, state.gradesId, <String>[], state.sections, <Climb>[]);
       try {
         LocationRepo.getInstance().setLocation(location);
         state.loading = false;
@@ -112,7 +112,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
       yield CreateLocationState.updateGrades(true, <String>[], state);
     } else if (event is ClearLocationEvent) {
       yield CreateLocationState.updateLocation(
-          true, new Location(state.id, state.displayName, state.gradesId), state);
+          true, new Location(state.id, state.displayName, state.gradesId, <String>[]), state);
     } else if (event is GradesUpdatedEvent) {
       yield CreateLocationState.updateGrades(event.isEdit, event.gradeIds, state);
     } else if (event is LocationUpdatedEvent) {

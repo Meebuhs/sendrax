@@ -13,21 +13,23 @@ import 'create_climb_state.dart';
 import 'create_climb_view.dart';
 
 class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
-  CreateClimbBloc(this.climb, this.availableSections, this.isEdit);
+  CreateClimbBloc(this.climb, this.availableSections, this.categories, this.isEdit);
 
   final Climb climb;
   final List<String> availableSections;
+  final List<String> categories;
   final bool isEdit;
 
   StreamController gradeStream = StreamController<String>();
   StreamController sectionStream = StreamController<String>();
+  StreamController selectedCategoriesStream = StreamController<List<String>>.broadcast();
   StreamController errorMessageStream = StreamController<String>();
   StreamSubscription<List<String>> gradesSubscription;
 
   @override
   CreateClimbState get initialState {
     _retrieveGrades(climb.gradesId);
-    return CreateClimbState.initial(climb, availableSections, isEdit);
+    return CreateClimbState.initial(climb, availableSections, categories, isEdit);
   }
 
   void _retrieveGrades(String gradesId) async {
@@ -84,6 +86,15 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
     sectionStream.add(section);
   }
 
+  void toggleCategory(bool selected, String category) {
+    if (selected) {
+      state.selectedCategories.add(category);
+    } else {
+      state.selectedCategories.remove(category);
+    }
+    selectedCategoriesStream.add(state.selectedCategories);
+  }
+
   @override
   Stream<CreateClimbState> mapEventToState(CreateClimbEvent event) async* {
     if (event is ClearGradesEvent) {
@@ -99,6 +110,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
   Future<void> close() {
     gradeStream.close();
     sectionStream.close();
+    selectedCategoriesStream.close();
     errorMessageStream.close();
     if (gradesSubscription != null) {
       gradesSubscription.cancel();

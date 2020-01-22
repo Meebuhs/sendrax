@@ -9,28 +9,35 @@ import 'create_climb_state.dart';
 
 class CreateClimbScreen extends StatefulWidget {
   CreateClimbScreen(
-      {Key key, @required this.climb, @required this.availableSections, @required this.isEdit})
+      {Key key,
+      @required this.climb,
+      @required this.availableSections,
+      @required this.categories,
+      @required this.isEdit})
       : super(key: key);
 
   final Climb climb;
   final List<String> availableSections;
+  final List<String> categories;
   final bool isEdit;
 
   @override
-  State<StatefulWidget> createState() => _CreateClimbState(climb, availableSections, isEdit);
+  State<StatefulWidget> createState() =>
+      _CreateClimbState(climb, availableSections, categories, isEdit);
 }
 
 class _CreateClimbState extends State<CreateClimbScreen> {
   final Climb climb;
   final List<String> availableSections;
+  final List<String> categories;
   final bool isEdit;
 
-  _CreateClimbState(this.climb, this.availableSections, this.isEdit);
+  _CreateClimbState(this.climb, this.availableSections, this.categories, this.isEdit);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateClimbBloc>(
-      create: (context) => CreateClimbBloc(climb, availableSections, isEdit),
+      create: (context) => CreateClimbBloc(climb, availableSections, categories, isEdit),
       child: CreateClimbWidget(
         widget: widget,
         widgetState: this,
@@ -179,9 +186,39 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   Widget _showCategorySelection(CreateClimbState state, BuildContext context) {
+    List<Widget> itemChips = List<Widget>();
+    state.categories.forEach((item) {
+      itemChips.add(_buildItemChip(state, context, item));
+    });
     return Container(
-      height: 0,
-    );
+        constraints: BoxConstraints(
+          minHeight: 140.0,
+          maxHeight: 140.0,
+          maxWidth: 300.0,
+          minWidth: 300.0,
+        ),
+        child: SingleChildScrollView(
+            child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: UIConstants.SMALLER_PADDING,
+                runSpacing: 0.0,
+                children: itemChips)));
+  }
+
+  Widget _buildItemChip(CreateClimbState state, BuildContext context, String item) {
+    return StreamBuilder(
+        stream: BlocProvider.of<CreateClimbBloc>(context).selectedCategoriesStream.stream,
+        initialData: state.selectedCategories,
+        builder: (BuildContext context, snapshot) {
+          return Container(
+            child: InputChip(
+              label: Text(item),
+              selected: snapshot.data.contains(item),
+              onSelected: (selected) =>
+                  BlocProvider.of<CreateClimbBloc>(context).toggleCategory(selected, item),
+            ),
+          );
+        });
   }
 
   Widget _showSubmitButton(CreateClimbState state, BuildContext context) {
