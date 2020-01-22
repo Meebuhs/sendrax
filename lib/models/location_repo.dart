@@ -76,4 +76,13 @@ class LocationRepo {
         .document(location.id)
         .setData(location.map, merge: true);
   }
+
+  void deleteLocation(String locationId) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
+        .document(locationId)
+        .delete();
+  }
 }

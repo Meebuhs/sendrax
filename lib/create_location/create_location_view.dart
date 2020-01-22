@@ -53,6 +53,15 @@ class CreateLocationWidget extends StatelessWidget {
         title: Text((widgetState.isEdit)
             ? "Edit ${widgetState.location.displayName}"
             : "Create a location"),
+        actions: <Widget>[
+          (widgetState.isEdit)
+              ? IconButton(
+                  icon: Icon(Icons.delete_forever),
+                  onPressed: () => _showDeleteLocationDialog(widget.location.id, context, this,
+                      BlocProvider.of<CreateLocationBloc>(context)),
+                )
+              : Container()
+        ],
       ),
       body: BlocBuilder(
           bloc: BlocProvider.of<CreateLocationBloc>(context),
@@ -245,7 +254,28 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  void navigateToMain() {
+  void _showDeleteLocationDialog(String locationId, BuildContext upperContext,
+      CreateLocationWidget view, CreateLocationBloc bloc) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Are you sure you want to delete this location?"),
+              content: Text("There is no way to get it back"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: navigateBackOne,
+                ),
+                FlatButton(
+                  child: Text("Delete"),
+                  onPressed: () => bloc.deleteLocation(locationId, upperContext, view),
+                )
+              ]);
+        });
+  }
+
+  void navigateBackOne() {
     NavigationHelper.navigateBackOne(widgetState.context);
   }
 }

@@ -10,8 +10,8 @@ class Deserializer {
   }
 
   static Location _deserializeLocation(DocumentSnapshot location) {
-    return Location(
-        location['id'], location['displayName'], location['gradesId'], <String>[], <Climb>[]);
+      return Location(
+          location['id'], location['displayName'], location['gradesId'], <String>[], <Climb>[]);
   }
 
   static List<Climb> deserializeClimbs(List<DocumentSnapshot> climbs) {
@@ -32,11 +32,17 @@ class Deserializer {
   }
 
   static Location deserializeLocationSections(DocumentSnapshot locationDocument) {
-    Location location = _deserializeLocation(locationDocument);
-    if (locationDocument['sections'] != null) {
-      location.sections.addAll(List.from(locationDocument['sections']));
+    if (locationDocument.data != null) {
+      Location location = _deserializeLocation(locationDocument);
+      if (locationDocument['sections'] != null) {
+        location.sections.addAll(List.from(locationDocument['sections']));
+      }
+      return location;
+    } else {
+      // This occurs when a location is deleted and the pages in the stack try to load it
+      // It is discarded immediately and thus an empty placeholder is safe here
+      return Location("", "", "");
     }
-    return location;
   }
 
   static List<Attempt> deserializeAttempts(List<DocumentSnapshot> attempts) {

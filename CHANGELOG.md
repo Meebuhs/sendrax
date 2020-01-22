@@ -13,4 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Retrieval of locations, climbs and attempts from firebase
 - Views for locations and climbs
 - Location, climb, sections and grade set creation
-- Location editing
+- Location editing and deletion

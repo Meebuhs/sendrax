@@ -94,4 +94,8 @@ class NavigationHelper {
   static void navigateBackOne(BuildContext context) {
     Navigator.pop(context);
   }
+
+  static void resetToMain(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
+  }
 }

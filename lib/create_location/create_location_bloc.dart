@@ -10,6 +10,7 @@ import 'package:sendrax/models/grade_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
+import 'package:sendrax/navigation_helper.dart';
 
 class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> {
   CreateLocationBloc(this.location, this.isEdit);
@@ -75,7 +76,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
         state.errorMessage = e.message;
         errorMessageStream.sink.add(state.errorMessage);
       }
-      view.navigateToMain();
+      view.navigateBackOne();
     }
     state.loading = false;
   }
@@ -98,6 +99,11 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     sectionsStream.stream.listen((sections) {
       state.sections = sections;
     });
+  }
+
+  void deleteLocation(String locationId, BuildContext context, CreateLocationWidget view) {
+    LocationRepo.getInstance().deleteLocation(locationId);
+    NavigationHelper.resetToMain(context);
   }
 
   @override

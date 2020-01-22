@@ -104,7 +104,7 @@ class MainWidget extends StatelessWidget {
 
   void _createLocation() {
     var uuid = new Uuid();
-    Location location = new Location(uuid.v1(), "", null);
+    Location location = new Location("location-${uuid.v1()}", "", null, <String>[], null);
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
         addToBackStack: true);
   }
