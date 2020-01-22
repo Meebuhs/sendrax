@@ -179,7 +179,7 @@ class CreateLocationWidget extends StatelessWidget {
   Widget _showSectionsText(CreateLocationState state, BuildContext context) {
     return StreamBuilder(
         stream: BlocProvider.of<CreateLocationBloc>(context).sectionsStream.stream,
-        initialData: state.sections,
+        initialData: (state.sections == null) ? <String>[] : state.sections,
         builder: (BuildContext context, snapshot) {
           return Padding(
               padding: EdgeInsets.fromLTRB(
