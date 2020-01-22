@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/util/constants.dart';
 import 'package:sendrax/util/serialization_util.dart';
 
@@ -47,5 +48,14 @@ class ClimbRepo {
         .map((data) {
       return Deserializer.deserializeAttempts(data.documents);
     });
+  }
+
+  void setClimb(Climb climb) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
+        .document(climb.id)
+        .setData(climb.map, merge: true);
   }
 }

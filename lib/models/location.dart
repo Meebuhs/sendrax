@@ -1,14 +1,15 @@
 import 'climb.dart';
 
 class SelectedLocation {
-  SelectedLocation(this.id, this.displayName);
+  SelectedLocation(this.id, this.displayName, this.gradesId);
 
   final String id;
   final String displayName;
+  final String gradesId;
 }
 
 class Location {
-  Location(this.id, this.displayName, [this.gradesId, this.sections, this.climbs]);
+  Location(this.id, this.displayName, this.gradesId, [this.sections, this.climbs]);
 
   final String id;
   final String displayName;

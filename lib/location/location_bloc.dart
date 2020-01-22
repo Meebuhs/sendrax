@@ -15,16 +15,16 @@ import 'location_event.dart';
 import 'location_state.dart';
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
-  LocationBloc(this.locationId);
+  LocationBloc(this.location);
 
-  final String locationId;
+  final SelectedLocation location;
   StreamSubscription<List<Climb>> climbSubscription;
   StreamSubscription<Location> locationSubscription;
 
   @override
   LocationState get initialState {
     _retrieveLocationData();
-    return LocationState.initial();
+    return LocationState.initial(location);
   }
 
   void _retrieveLocationData() async {
@@ -37,7 +37,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   void _retrieveClimbsForThisLocation(User user) async {
     if (user != null) {
       climbSubscription =
-          LocationRepo.getInstance().getClimbsForLocation(locationId, user).listen((climbs) {
+          LocationRepo.getInstance().getClimbsForLocation(location.id, user).listen((climbs) {
             add(ClimbsUpdatedEvent(climbs..sort((a, b) => a.section.compareTo(b.section))));
           });
     } else {
@@ -48,7 +48,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   void _retrieveSectionsForThisLocation(User user) async {
     if (user != null) {
       locationSubscription =
-          LocationRepo.getInstance().getSectionsForLocation(locationId, user).listen((location) {
+          LocationRepo.getInstance().getSectionsForLocation(location.id, user).listen((location) {
             add(SectionsUpdatedEvent(location.sections));
           });
     } else {
@@ -67,9 +67,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   @override
   Stream<LocationState> mapEventToState(LocationEvent event) async* {
     if (event is ClearDataEvent) {
-      yield LocationState.clearData(true);
+      yield LocationState.clearData(true, state);
     } else if (event is ClimbsUpdatedEvent) {
-      yield LocationState.updateClimbs(true, event.climbs, state);
+      yield LocationState.updateClimbs(false, event.climbs, state);
     } else if (event is SectionsUpdatedEvent) {
       yield LocationState.updateSections(false, event.sections, state);
     } else if (event is LocationErrorEvent) {

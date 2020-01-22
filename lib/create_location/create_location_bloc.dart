@@ -75,8 +75,9 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
         state.errorMessage = e.message;
         errorMessageStream.sink.add(state.errorMessage);
       }
+      view.navigateToMain();
     }
-    view.navigateToMain();
+    state.loading = false;
   }
 
   bool _validateAndSave(CreateLocationState state) {
@@ -104,7 +105,8 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     if (event is ClearGradesEvent) {
       yield CreateLocationState.updateGrades(true, <String>[], state);
     } else if (event is ClearLocationEvent) {
-      yield CreateLocationState.updateLocation(true, new Location(state.id, state.displayName), state);
+      yield CreateLocationState.updateLocation(
+          true, new Location(state.id, state.displayName, state.gradesId), state);
     } else if (event is GradesUpdatedEvent) {
       yield CreateLocationState.updateGrades(event.isEdit, event.gradeIds, state);
     } else if (event is LocationUpdatedEvent) {
@@ -119,8 +121,12 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     gradesIdStream.close();
     errorMessageStream.close();
     sectionsStream.close();
-    gradesSubscription.cancel();
-    locationSubscription.cancel();
+    if (gradesSubscription != null) {
+      gradesSubscription.cancel();
+    }
+    if (locationSubscription != null) {
+      locationSubscription.cancel();
+    }
     return super.close();
   }
 }

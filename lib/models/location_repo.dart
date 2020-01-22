@@ -27,7 +27,7 @@ class LocationRepo {
   Stream<List<Location>> getLocationsForUser(User user) {
     return _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
         .snapshots()
         .map((data) => Deserializer.deserializeLocations(data.documents));
   }
@@ -35,11 +35,11 @@ class LocationRepo {
   Future<SelectedLocation> getLocation(Location location, User user) async {
     DocumentReference locationRef = _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
         .document(location.id);
     if (locationRef != null) {
       try {
-        return SelectedLocation(location.id, location.displayName);
+        return SelectedLocation(location.id, location.displayName, location.gradesId);
       } catch (error) {
         return null;
       }
@@ -51,7 +51,7 @@ class LocationRepo {
   Stream<List<Climb>> getClimbsForLocation(String locationId, User user) {
     return _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
         .where("locationId", isEqualTo: locationId)
         .snapshots()
         .map((data) => Deserializer.deserializeClimbs(data.documents));
@@ -60,7 +60,7 @@ class LocationRepo {
   Stream<Location> getSectionsForLocation(String locationId, User user) {
     return _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
         .document(locationId)
         .snapshots()
         .map((data) {
@@ -72,7 +72,7 @@ class LocationRepo {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
         .document(location.id)
         .setData(location.map, merge: true);
   }

@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/create_location/add_sections/add_sections_view.dart';
+import 'package:sendrax/create_location/create_gradeset/create_gradeset_view.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
-import 'create_gradeset/create_gradeset_view.dart';
 import 'create_location_bloc.dart';
 import 'create_location_state.dart';
 

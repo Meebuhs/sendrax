@@ -30,6 +30,15 @@ class GradeRepo {
         .map((data) => Deserializer.deserializeGradeSets(data.documents));
   }
 
+  Stream<List<String>> getGradesForId(User user, String gradesId) {
+    return _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
+        .document(gradesId)
+        .snapshots()
+        .map((data) => Deserializer.deserializeGradeSet(data).grades);
+  }
+
   Stream<List<String>> getGradeIds(User user) {
     return _firestore
         .collection(
@@ -42,7 +51,7 @@ class GradeRepo {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
         .document(gradeSet.id)
         .setData(gradeSet.map, merge: true);
   }

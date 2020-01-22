@@ -22,8 +22,9 @@ class Deserializer {
     return Climb(
         climb['id'],
         climb['displayName'],
-        climb['grade'],
         climb['locationId'],
+        climb['grade'],
+        climb['gradesId'],
         climb['section'],
         climb['archived'],
         <String>[],
@@ -48,10 +49,10 @@ class Deserializer {
   }
 
   static List<GradeSet> deserializeGradeSets(List<DocumentSnapshot> grades) {
-    return grades.map((grade) => _deserializeGradeSet(grade)).toList();
+    return grades.map((grade) => deserializeGradeSet(grade)).toList();
   }
 
-  static GradeSet _deserializeGradeSet(DocumentSnapshot grade) {
+  static GradeSet deserializeGradeSet(DocumentSnapshot grade) {
     return GradeSet(grade['displayName'], List.from(grade['grades']));
   }
 
