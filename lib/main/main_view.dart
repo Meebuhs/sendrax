@@ -4,6 +4,7 @@ import 'package:sendrax/main/main_location_item.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
+import 'package:uuid/uuid.dart';
 
 import 'main_bloc.dart';
 import 'main_state.dart';
@@ -102,7 +103,10 @@ class MainWidget extends StatelessWidget {
   }
 
   void _createLocation() {
-    NavigationHelper.navigateToCreateLocation(widgetState.context, addToBackStack: true);
+    var uuid = new Uuid();
+    Location location = new Location(uuid.v1(), "");
+    NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
+        addToBackStack: true);
   }
 
   void navigateToLogin() {

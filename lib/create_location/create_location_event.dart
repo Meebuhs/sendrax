@@ -1,11 +1,22 @@
+import 'package:sendrax/models/location.dart';
+
 abstract class CreateLocationEvent {}
 
 class ClearGradesEvent extends CreateLocationEvent {}
 
-class GradesUpdatedEvent extends CreateLocationEvent {
-  GradesUpdatedEvent(this.gradeIds);
+class ClearLocationEvent extends CreateLocationEvent {}
 
+class GradesUpdatedEvent extends CreateLocationEvent {
+  GradesUpdatedEvent(this.isEdit, this.gradeIds);
+
+  final bool isEdit;
   final List<String> gradeIds;
 }
 
-class GradesErrorEvent extends CreateLocationEvent {}
+class LocationUpdatedEvent extends CreateLocationEvent {
+  LocationUpdatedEvent(this.location);
+
+  final Location location;
+}
+
+class CreateLocationErrorEvent extends CreateLocationEvent {}

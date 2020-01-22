@@ -20,7 +20,7 @@ class Location {
     return {
       "id": id,
       "displayName": displayName,
-      "grades": gradesId,
+      "gradesId": gradesId,
       "sections": sections,
       "climbs": climbs
     };

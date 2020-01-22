@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/create_location/add_sections/add_sections_view.dart';
+import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
@@ -11,17 +12,25 @@ import 'create_location_bloc.dart';
 import 'create_location_state.dart';
 
 class CreateLocationScreen extends StatefulWidget {
-  CreateLocationScreen({Key key}) : super(key: key);
+  CreateLocationScreen({Key key, @required this.location, @required this.isEdit}) : super(key: key);
+
+  final Location location;
+  final bool isEdit;
 
   @override
-  State<StatefulWidget> createState() => _CreateLocationState();
+  State<StatefulWidget> createState() => _CreateLocationState(location, isEdit);
 }
 
 class _CreateLocationState extends State<CreateLocationScreen> {
+  final Location location;
+  final bool isEdit;
+
+  _CreateLocationState(this.location, this.isEdit);
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateLocationBloc>(
-      create: (context) => CreateLocationBloc(),
+      create: (context) => CreateLocationBloc(location, isEdit),
       child: CreateLocationWidget(
         widget: widget,
         widgetState: this,
@@ -41,7 +50,9 @@ class CreateLocationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create a location"),
+        title: Text((widgetState.isEdit)
+            ? "Edit ${widgetState.location.displayName}"
+            : "Create a location"),
       ),
       body: BlocBuilder(
           bloc: BlocProvider.of<CreateLocationBloc>(context),
@@ -92,6 +103,7 @@ class CreateLocationWidget extends StatelessWidget {
         maxLines: 1,
         keyboardType: TextInputType.text,
         autofocus: false,
+        initialValue: state.displayName,
         decoration: new InputDecoration(
             hintText: 'Location name',
             icon: new Icon(
@@ -114,7 +126,8 @@ class CreateLocationWidget extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: new StreamBuilder(
-          stream: BlocProvider.of<CreateLocationBloc>(context).gradeIdStream.stream,
+          stream: BlocProvider.of<CreateLocationBloc>(context).gradesIdStream.stream,
+          initialData: state.gradesId,
           builder: (BuildContext context, snapshot) {
             return new DropdownButton<String>(
               items: _createDropdownItems(state),
@@ -166,7 +179,7 @@ class CreateLocationWidget extends StatelessWidget {
   Widget _showSectionsText(CreateLocationState state, BuildContext context) {
     return StreamBuilder(
         stream: BlocProvider.of<CreateLocationBloc>(context).sectionsStream.stream,
-        initialData: <String>[],
+        initialData: state.sections,
         builder: (BuildContext context, snapshot) {
           return Padding(
               padding: EdgeInsets.fromLTRB(
@@ -175,6 +188,7 @@ class CreateLocationWidget extends StatelessWidget {
                 (snapshot.data.isEmpty) ? "No sections added" : snapshot.data.join(', '),
                 style: TextStyle(
                     fontSize: 13.0, color: Colors.grey, height: 1.0, fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
               ));
         });
   }

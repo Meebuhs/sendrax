@@ -10,42 +10,62 @@ import 'package:sendrax/models/grade_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
-import 'package:uuid/uuid.dart';
 
 class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> {
-  StreamController gradeIdStream = StreamController<String>();
+  CreateLocationBloc(this.location, this.isEdit);
+
+  final Location location;
+  final bool isEdit;
+
+  StreamController gradesIdStream = StreamController<String>();
   StreamController errorMessageStream = StreamController<String>();
   StreamController sectionsStream = StreamController<List<String>>.broadcast();
   StreamSubscription<List<String>> gradesSubscription;
-  var uuid = new Uuid();
+  StreamSubscription<Location> locationSubscription;
 
   @override
   CreateLocationState get initialState {
-    _retrieveAvailableGradeSets();
-    return CreateLocationState.initial();
+    _retrieveAvailableGradeSets(isEdit);
+    if (isEdit) {
+      _retrieveDataForThisLocation();
+    }
+    return CreateLocationState.initial(location, isEdit);
   }
 
-  void _retrieveAvailableGradeSets() async {
+  void _retrieveAvailableGradeSets(bool isEdit) async {
     add(ClearGradesEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       gradesSubscription = GradeRepo.getInstance().getGradeIds(user).listen((grades) {
-        add(GradesUpdatedEvent(grades));
+        add(GradesUpdatedEvent(isEdit, grades));
       });
     } else {
-      add(GradesErrorEvent());
+      add(CreateLocationErrorEvent());
     }
   }
 
-  void validateAndSubmit(CreateLocationState state, BuildContext context,
-      CreateLocationWidget view) async {
+  void _retrieveDataForThisLocation() async {
+    add(ClearLocationEvent());
+    final user = await UserRepo.getInstance().getCurrentUser();
+    if (user != null) {
+      locationSubscription =
+          LocationRepo.getInstance().getSectionsForLocation(location.id, user).listen((location) {
+        add(LocationUpdatedEvent(location));
+      });
+    } else {
+      add(CreateLocationErrorEvent());
+    }
+  }
+
+  void validateAndSubmit(
+      CreateLocationState state, BuildContext context, CreateLocationWidget view) async {
     FocusScope.of(context).unfocus();
     state.errorMessage = "";
     state.loading = true;
 
     if (_validateAndSave(state)) {
-      Location location = new Location(
-          "location-${uuid.v1()}", state.displayName, state.gradeId, state.sections, <Climb>[]);
+      Location location =
+          new Location(state.id, state.displayName, state.gradesId, state.sections, <Climb>[]);
       try {
         LocationRepo.getInstance().setLocation(location);
         state.loading = false;
@@ -69,8 +89,8 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   }
 
   void selectGrade(String grade) {
-    state.gradeId = grade;
-    gradeIdStream.add(grade);
+    state.gradesId = grade;
+    gradesIdStream.add(grade);
   }
 
   void setSectionsList(List<String> sections) {
@@ -83,19 +103,24 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   Stream<CreateLocationState> mapEventToState(CreateLocationEvent event) async* {
     if (event is ClearGradesEvent) {
       yield CreateLocationState.loading(true, <String>[], state);
+    } else if (event is ClearLocationEvent) {
+      yield CreateLocationState.location(true, new Location(state.id, state.displayName), state);
     } else if (event is GradesUpdatedEvent) {
-      yield CreateLocationState.loading(false, event.gradeIds, state);
-    } else if (event is GradesErrorEvent) {
+      yield CreateLocationState.loading(event.isEdit, event.gradeIds, state);
+    } else if (event is LocationUpdatedEvent) {
+      yield CreateLocationState.location(false, event.location, state);
+    } else if (event is CreateLocationErrorEvent) {
       yield CreateLocationState.loading(false, state.gradeIds, state);
     }
   }
 
   @override
   Future<void> close() {
-    gradeIdStream.close();
+    gradesIdStream.close();
     errorMessageStream.close();
     sectionsStream.close();
     gradesSubscription.cancel();
+    locationSubscription.cancel();
     return super.close();
   }
 }

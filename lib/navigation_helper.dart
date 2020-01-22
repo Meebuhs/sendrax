@@ -5,6 +5,7 @@ import 'create_location/create_location_view.dart';
 import 'location/location_view.dart';
 import 'login/login_view.dart';
 import 'main/main_view.dart';
+import 'models/location.dart';
 
 class NavigationHelper {
   static void navigateToLogin(BuildContext context, {bool addToBackStack: false}) {
@@ -40,12 +41,12 @@ class NavigationHelper {
     }
   }
 
-  static void navigateToCreateLocation(BuildContext context, {bool addToBackStack: false}) {
+  static void navigateToCreateLocation(BuildContext context, Location location, bool isEdit, {bool addToBackStack: false}) {
     if (addToBackStack) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateLocationScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateLocationScreen(location: location, isEdit: isEdit)));
     } else {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => CreateLocationScreen()));
+          context, MaterialPageRoute(builder: (context) => CreateLocationScreen(location: location, isEdit: isEdit)));
     }
   }
 

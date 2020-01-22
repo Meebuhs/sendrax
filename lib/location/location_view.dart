@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/location/location_climb_item.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
@@ -46,7 +47,15 @@ class LocationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.displayName)),
+      appBar: AppBar(
+        title: Text(widget.displayName),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => _editLocation(widget.locationId, widget.displayName),
+          )
+        ],
+      ),
       body: BlocBuilder(
           bloc: BlocProvider.of<LocationBloc>(context),
           builder: (context, LocationState state) {
@@ -97,7 +106,7 @@ class LocationWidget extends StatelessWidget {
 
   Widget _buildSection(BuildContext context, LocationState state, int index) {
     List<Climb> climbsToInclude =
-    List.from(state.climbs.where((climb) => climb.section == state.sections[index]));
+        List.from(state.climbs.where((climb) => climb.section == state.sections[index]));
     if (climbsToInclude.isNotEmpty) {
       return Column(children: <Widget>[
         Row(children: <Widget>[
@@ -113,13 +122,12 @@ class LocationWidget extends StatelessWidget {
         ]),
         Column(
             children: climbsToInclude
-                .map((climb) =>
-            new InkWell(
-                child: _buildItem(climb),
-                onTap: () {
-                  BlocProvider.of<LocationBloc>(context)
-                      .retrieveClimb(state.climbs[index], this);
-                }))
+                .map((climb) => new InkWell(
+                    child: _buildItem(climb),
+                    onTap: () {
+                      BlocProvider.of<LocationBloc>(context)
+                          .retrieveClimb(state.climbs[index], this);
+                    }))
                 .toList())
       ]);
     } else {
@@ -129,6 +137,12 @@ class LocationWidget extends StatelessWidget {
 
   ClimbItem _buildItem(Climb climb) {
     return ClimbItem(climb: climb);
+  }
+
+  void _editLocation(String locationId, String displayName) {
+    Location location = new Location(locationId, displayName);
+    NavigationHelper.navigateToCreateLocation(widgetState.context, location, true,
+        addToBackStack: true);
   }
 
   void navigateToClimb(SelectedClimb climb) {
