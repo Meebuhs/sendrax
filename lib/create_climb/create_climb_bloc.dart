@@ -52,7 +52,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
 
     if (_validateAndSave(state)) {
       Climb climb = new Climb(state.id, state.displayName, state.locationId, state.grade,
-          state.gradesId, state.section, false, state.categories, <Attempt>[]);
+          state.gradesId, state.section, false, state.selectedCategories, <Attempt>[]);
       try {
         ClimbRepo.getInstance().setClimb(climb);
         state.loading = false;

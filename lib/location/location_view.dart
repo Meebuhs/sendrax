@@ -75,13 +75,21 @@ class LocationWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               );
-            } else {
+            } else if (state.sections.isNotEmpty) {
               content = ListView.builder(
                 padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
                 itemBuilder: (context, index) {
                   return _buildSection(context, state, index);
                 },
                 itemCount: state.sections.length,
+              );
+            } else {
+              content = ListView.builder(
+                padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                itemBuilder: (context, index) {
+                  return _buildClimb(context, state, index);
+                },
+                itemCount: state.climbs.length,
               );
             }
             return _wrapContentWithFab(state, context, content);
@@ -110,10 +118,23 @@ class LocationWidget extends StatelessWidget {
                 .map((climb) => new InkWell(
                     child: _buildItem(climb),
                     onTap: () {
-                      BlocProvider.of<LocationBloc>(context)
-                          .retrieveClimb(state.climbs[index], this);
+                      BlocProvider.of<LocationBloc>(context).retrieveClimb(climb, this);
                     }))
                 .toList())
+      ]);
+    } else {
+      return Column();
+    }
+  }
+
+  Widget _buildClimb(BuildContext context, LocationState state, int index) {
+    if (state.climbs.isNotEmpty) {
+      return Column(children: [
+        new InkWell(
+            child: _buildItem(state.climbs[index]),
+            onTap: () {
+              BlocProvider.of<LocationBloc>(context).retrieveClimb(state.climbs[index], this);
+            })
       ]);
     } else {
       return Column();

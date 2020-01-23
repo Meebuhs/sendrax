@@ -39,7 +39,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     if (user != null) {
       climbSubscription =
           LocationRepo.getInstance().getClimbsForLocation(location.id, user).listen((climbs) {
-        add(ClimbsUpdatedEvent(climbs..sort((a, b) => a.section.compareTo(b.section))));
+        add(ClimbsUpdatedEvent(climbs));
       });
     } else {
       add(LocationErrorEvent());

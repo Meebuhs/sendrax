@@ -160,13 +160,21 @@ class CreateClimbWidget extends StatelessWidget {
           initialData: state.section,
           builder: (BuildContext context, snapshot) {
             return new DropdownButtonFormField<String>(
+              disabledHint:
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
+                Icon(Icons.cancel, color: Colors.grey),
+                Text("No sections"),
+              ]),
+              iconDisabledColor: Colors.grey,
               items: _createDropdownItems(state.availableSections),
               value: snapshot.data,
               hint: Text("Section"),
               isExpanded: true,
               validator: (String value) {
-                if (value == null) {
-                  return 'A section must be selected';
+                if (state.availableSections.isNotEmpty) {
+                  if (value == null) {
+                    return 'A section must be selected';
+                  }
                 }
                 return null;
               },
@@ -177,12 +185,17 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
-    return items.map((String value) {
-      return new DropdownMenuItem<String>(
-        value: value,
-        child: new Text(value),
-      );
-    }).toList();
+    if (items.isNotEmpty) {
+      return items.map((String value) {
+        return new DropdownMenuItem<String>(
+          value: value,
+          child: new Text(value),
+        );
+      }).toList();
+    } else {
+      // null disables the dropdown
+      return null;
+    }
   }
 
   Widget _showCategorySelection(CreateClimbState state, BuildContext context) {
