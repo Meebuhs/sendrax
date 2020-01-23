@@ -1,5 +1,6 @@
 class ErrorMessages {
   static const String NO_USER_FOUND = "Login failed because there is no user in the database";
+  static const String USER_TAKEN = "Signup failed because this user already exists";
 }
 
 class StorageKeys {
@@ -33,6 +34,12 @@ class FirestorePaths {
 
 class SendTypes {
   static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt",
-    "Red point", "Hang dog", "Second", "Top rope onsight", "Top rope flash", "Top rope",
-    "Top rope solo onsight", "Top rope solo flash", "Top rope solo", "First ascent"];
+    "Red Point", "Hang Dog", "Second", "Top Rope Onsight", "Top Rope Flash", "Top Rope",
+    "Top Rope Solo Onsight", "Top Rope Solo Flash", "Top Sope Solo", "First Ascent"];
+}
+
+class ClimbCategories {
+  static const List<String> CATEGORIES = const ["Crimps", "Edges", "Slopers", "Pinches", "Pockets",
+    "Slopey Crimps", "Jugs", "Volumes", "Bad Feet", "Roof", "Overhung", "Slab", "Mantle", "Powerful",
+    "Technical", "Sustained", "Compression", "Dyno", "Run and Jump", "Arete", "Dihedral"];
 }

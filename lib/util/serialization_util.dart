@@ -15,7 +15,11 @@ class Deserializer {
   }
 
   static List<String> deserializeCategories(DocumentSnapshot user) {
-    return List.from(user['categories']);
+    if (user['categories'] != null) {
+      return List.from(user['categories']);
+    } else {
+      return <String>[];
+    }
   }
 
   static List<Climb> deserializeClimbs(List<DocumentSnapshot> climbs) {

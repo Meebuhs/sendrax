@@ -204,18 +204,24 @@ class CreateClimbWidget extends StatelessWidget {
       itemChips.add(_buildItemChip(state, context, item));
     });
     return Container(
+        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, UIConstants.SMALLER_PADDING),
         constraints: BoxConstraints(
           minHeight: 140.0,
           maxHeight: 140.0,
           maxWidth: 300.0,
           minWidth: 300.0,
         ),
-        child: SingleChildScrollView(
-            child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: UIConstants.SMALLER_PADDING,
-                runSpacing: 0.0,
-                children: itemChips)));
+        child: (itemChips.isNotEmpty)
+            ? SingleChildScrollView(
+                child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: UIConstants.SMALLER_PADDING,
+                    runSpacing: 0.0,
+                    children: itemChips))
+            : Center(
+                child: Container(
+                    child: Text("You don't currently have any climb categories",
+                        textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)))));
   }
 
   Widget _buildItemChip(CreateClimbState state, BuildContext context, String item) {

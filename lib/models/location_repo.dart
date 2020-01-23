@@ -85,11 +85,4 @@ class LocationRepo {
         .document(locationId)
         .delete();
   }
-
-  Stream<List<String>> getUserCategories(User user) {
-    return _firestore
-        .document("${FirestorePaths.USERS_COLLECTION}/${user.uid}/")
-        .snapshots()
-        .map((data) => Deserializer.deserializeCategories(data));
-  }
 }
