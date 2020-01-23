@@ -54,8 +54,17 @@ class ClimbRepo {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
         .document(climb.id)
         .setData(climb.map, merge: true);
+  }
+
+  void setAttempt(Attempt attempt, String climbId) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .document(attempt.id)
+        .setData(attempt.map, merge: true);
   }
 }

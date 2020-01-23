@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
+import 'package:uuid/uuid.dart';
 
 import 'climb_event.dart';
 import 'climb_state.dart';
@@ -12,7 +15,17 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
   ClimbBloc(this.climbId);
 
   final String climbId;
+  final Uuid uuid = Uuid();
+  StreamController sendTypeStream = StreamController<String>();
+  StreamController warmupStream = StreamController<bool>();
+  StreamController downclimbedStream = StreamController<bool>();
   StreamSubscription<List<Attempt>> climbSubscription;
+
+  @override
+  ClimbState get initialState {
+    _retrieveAttemptsForThisClimb();
+    return ClimbState.initial();
+  }
 
   void _retrieveAttemptsForThisClimb() async {
     add(ClearAttemptsEvent());
@@ -28,10 +41,50 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     }
   }
 
-  @override
-  ClimbState get initialState {
-    _retrieveAttemptsForThisClimb();
-    return ClimbState.initial();
+  void selectSendType(String sendType) {
+    state.sendType = sendType;
+    sendTypeStream.add(sendType);
+  }
+
+  void toggleWarmupCheckbox(bool value) {
+    state.warmup = value;
+    warmupStream.add(value);
+  }
+
+  void toggleDownclimbedCheckbox(bool value) {
+    state.downclimbed = value;
+    downclimbedStream.add(value);
+  }
+
+  void validateAndSubmit(ClimbState state, BuildContext context) async {
+    FocusScope.of(context).unfocus();
+    state.loading = true;
+
+    if (_validateAndSave(state)) {
+      Attempt attempt = new Attempt("attempt-${uuid.v1()}", new Timestamp.now(), state.sendType,
+          state.warmup, state.downclimbed, state.notes);
+      try {
+        ClimbRepo.getInstance().setAttempt(attempt, climbId);
+        state.loading = false;
+      } catch (e) {
+        state.loading = false;
+      }
+    }
+    state.loading = false;
+  }
+
+  bool _validateAndSave(ClimbState state) {
+    final form = state.formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      state.notes = state.notesInputController.text;
+      return true;
+    }
+    return false;
+  }
+
+  void resetNotesInput() {
+    state.notesInputController.clear();
   }
 
   @override
@@ -47,6 +100,9 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
   @override
   Future<void> close() {
+    sendTypeStream.close();
+    warmupStream.close();
+    downclimbedStream.close();
     if (climbSubscription != null) {
       climbSubscription.cancel();
     }

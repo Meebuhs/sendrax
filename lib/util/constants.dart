@@ -30,3 +30,9 @@ class FirestorePaths {
   static const String ATTEMPTS_SUBPATH = "attempts";
   static const String GRADES_SUBPATH = "grades";
 }
+
+class SendTypes {
+  static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt",
+    "Red point", "Hang dog", "Second", "Top rope onsight", "Top rope flash", "Top rope",
+    "Top rope solo onsight", "Top rope solo flash", "Top rope solo", "First ascent"];
+}
