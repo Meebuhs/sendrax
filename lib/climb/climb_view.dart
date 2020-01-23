@@ -54,7 +54,7 @@ class ClimbWidget extends StatelessWidget {
               );
             } else {
               content = Column(
-                children: <Widget>[_showListView(state), _showForm(state, context)],
+                children: <Widget>[Expanded(child: _showListView(state)), _showForm(state, context)],
               );
             }
             return content;
@@ -103,6 +103,7 @@ class ClimbWidget extends StatelessWidget {
   Widget _showForm(ClimbState state, BuildContext context) {
     return new Container(
         padding: EdgeInsets.all(16.0),
+        alignment: Alignment.bottomCenter,
         child: new Form(
           key: state.formKey,
           child: new ListView(

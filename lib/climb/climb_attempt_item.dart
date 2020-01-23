@@ -9,13 +9,18 @@ class AttemptItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-      child: Text(
-        "${attempt.sendType}",
+    return ListTile(
+      title: Text(
+        "${formatDate(attempt.timestamp.toDate())} ${attempt.sendType}",
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
+        style: TextStyle(fontSize: UIConstants.STANDARD_FONT_SIZE, color: Colors.pinkAccent),
       ),
+      subtitle: Text(attempt.notes)
     );
+  }
+
+  String formatDate(DateTime time) {
+    String ampm = (time.hour < 12) ? "AM" : "PM";
+    return "${time.day}/${time.month} ${time.hour % 12}:${time.minute.toString().padLeft(2, '0')} $ampm";
   }
 }
