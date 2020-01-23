@@ -40,14 +40,33 @@ class LoginWidget extends StatelessWidget {
                 stream: BlocProvider.of<LoginBloc>(context).loadingStream.stream,
                 initialData: false,
                 builder: (BuildContext context, snapshot) {
+                  Widget content = ListView(
+                    children: <Widget>[showForm(state, context)],
+                  );
                   if (snapshot.data) {
-                    return Center(child: CircularProgressIndicator(strokeWidth: 4.0));
+                    return Stack(children: <Widget>[
+                      content,
+                      Center(
+                        child: Stack(children: <Widget>[
+                          Opacity(
+                              opacity: 0.4,
+                              child: Container(
+                                  height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ))),
+                          Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 4.0,
+                              )),
+                        ]),
+                      )
+                    ]);
                   } else {
-                    return Center(
-                      child: ListView(
-                        children: <Widget>[showForm(state, context)],
-                      ),
-                    );
+                    return content;
                   }
                 });
           }),
@@ -74,26 +93,23 @@ class LoginWidget extends StatelessWidget {
   }
 
   Widget _showUsernameInput(LoginState state) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Username',
-            icon: new Icon(
-              Icons.mail,
-              color: Colors.grey,
-            )),
-        validator: (String value) {
-          if (value.trim().isEmpty) {
-            return 'Username cannot be empty';
-          }
-          return null;
-        },
-        onSaved: (value) => state.username = value.trim().toLowerCase(),
-      ),
+    return new TextFormField(
+      maxLines: 1,
+      keyboardType: TextInputType.text,
+      autofocus: false,
+      decoration: new InputDecoration(
+          hintText: 'Username',
+          icon: new Icon(
+            Icons.mail,
+            color: Colors.grey,
+          )),
+      validator: (String value) {
+        if (value.trim().isEmpty) {
+          return 'Username cannot be empty';
+        }
+        return null;
+      },
+      onSaved: (value) => state.username = value.trim().toLowerCase(),
     );
   }
 
