@@ -26,7 +26,7 @@ class CreateClimbState {
       Climb climb, List<String> availableSections, List<String> categories, bool isEdit) =>
       CreateClimbState._internal(true, isEdit, new GlobalKey<FormState>(), climb.id,
           climb.displayName, climb.locationId, climb.grade, climb.gradesId, <String>[],
-          climb.section, availableSections, categories, <String>[], "");
+          climb.section, availableSections, categories, climb.categories, "");
 
   factory CreateClimbState.loading(bool loading, CreateClimbState state) =>
       CreateClimbState._internal(loading, state.isEdit, state.formKey, state.id, state.displayName,

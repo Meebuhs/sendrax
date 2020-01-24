@@ -87,18 +87,21 @@ class NavigationHelper {
     }
   }
 
-  static void navigateToClimb(BuildContext context, String displayName, String climbId,
+  static void navigateToClimb(
+      BuildContext context, Climb climb, List<String> sections, List<String> categories,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ClimbScreen(displayName: displayName, climbId: climbId)));
+              builder: (context) =>
+                  ClimbScreen(climb: climb, sections: sections, categories: categories)));
     } else {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => ClimbScreen(displayName: displayName, climbId: climbId)));
+              builder: (context) =>
+                  ClimbScreen(climb: climb, sections: sections, categories: categories)));
     }
   }
 

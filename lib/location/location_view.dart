@@ -118,7 +118,7 @@ class LocationWidget extends StatelessWidget {
                 .map((climb) => new InkWell(
                     child: _buildItem(climb),
                     onTap: () {
-                      BlocProvider.of<LocationBloc>(context).retrieveClimb(climb, this);
+                      navigateToClimb(climb, state);
                     }))
                 .toList())
       ]);
@@ -133,7 +133,7 @@ class LocationWidget extends StatelessWidget {
         new InkWell(
             child: _buildItem(state.climbs[index]),
             onTap: () {
-              BlocProvider.of<LocationBloc>(context).retrieveClimb(state.climbs[index], this);
+              navigateToClimb(state.climbs[index], state);
             })
       ]);
     } else {
@@ -179,8 +179,8 @@ class LocationWidget extends StatelessWidget {
         addToBackStack: true);
   }
 
-  void navigateToClimb(SelectedClimb climb) {
-    NavigationHelper.navigateToClimb(widgetState.context, climb.displayName, climb.id,
+  void navigateToClimb(Climb climb, LocationState state) {
+    NavigationHelper.navigateToClimb(widgetState.context, climb, state.sections, state.categories,
         addToBackStack: true);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/models/attempt.dart';
+import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
@@ -9,13 +10,15 @@ import 'climb_bloc.dart';
 import 'climb_state.dart';
 
 class ClimbScreen extends StatefulWidget {
-  ClimbScreen({Key key, @required this.displayName, @required this.climbId}) : super(key: key);
+  ClimbScreen({Key key, @required this.climb, @required this.sections, @required this.categories})
+      : super(key: key);
 
-  final String displayName;
-  final String climbId;
+  final Climb climb;
+  final List<String> sections;
+  final List<String> categories;
 
   @override
-  State<StatefulWidget> createState() => _ClimbState(climbId);
+  State<StatefulWidget> createState() => _ClimbState(climb.id);
 }
 
 class _ClimbState extends State<ClimbScreen> {
@@ -41,7 +44,16 @@ class ClimbWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.displayName)),
+      appBar: AppBar(
+        title: Text(widget.climb.displayName),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => _editClimb(
+                widget.climb, widget.sections, widget.categories),
+          )
+        ],
+      ),
       body: BlocBuilder(
           bloc: BlocProvider.of<ClimbBloc>(context),
           builder: (context, ClimbState state) {
@@ -54,7 +66,10 @@ class ClimbWidget extends StatelessWidget {
               );
             } else {
               content = Column(
-                children: <Widget>[Expanded(child: _showListView(state)), _showForm(state, context)],
+                children: <Widget>[
+                  Expanded(child: _showListView(state)),
+                  _showForm(state, context)
+                ],
               );
             }
             return content;
@@ -235,6 +250,11 @@ class ClimbWidget extends StatelessWidget {
             onPressed: () => BlocProvider.of<ClimbBloc>(context).validateAndSubmit(state, context),
           ),
         ));
+  }
+
+  void _editClimb(Climb climb, List<String> sections, List<String> categories) {
+    NavigationHelper.navigateToCreateClimb(widgetState.context, climb, sections, categories, true,
+        addToBackStack: true);
   }
 
   void navigateToLocation() {

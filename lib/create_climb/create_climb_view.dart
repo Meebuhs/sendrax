@@ -8,12 +8,11 @@ import 'create_climb_bloc.dart';
 import 'create_climb_state.dart';
 
 class CreateClimbScreen extends StatefulWidget {
-  CreateClimbScreen(
-      {Key key,
-      @required this.climb,
-      @required this.availableSections,
-      @required this.categories,
-      @required this.isEdit})
+  CreateClimbScreen({Key key,
+    @required this.climb,
+    @required this.availableSections,
+    @required this.categories,
+    @required this.isEdit})
       : super(key: key);
 
   final Climb climb;
@@ -55,10 +54,13 @@ class CreateClimbWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String editTitleText = (widgetState.climb.displayName == "")
+        ? "Edit climb"
+        : "Edit ${widgetState.climb.displayName}";
     return Scaffold(
       appBar: AppBar(
         title:
-            Text((widgetState.isEdit) ? "Edit ${widgetState.climb.displayName}" : "Create a climb"),
+        Text((widgetState.isEdit) ? editTitleText : "Create a climb"),
       ),
       body: BlocBuilder(
           bloc: BlocProvider.of<CreateClimbBloc>(context),
@@ -125,7 +127,10 @@ class CreateClimbWidget extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: new StreamBuilder(
-          stream: BlocProvider.of<CreateClimbBloc>(context).gradeStream.stream,
+          stream: BlocProvider
+              .of<CreateClimbBloc>(context)
+              .gradeStream
+              .stream,
           initialData: state.grade,
           builder: (BuildContext context, snapshot) {
             return new DropdownButtonFormField<String>(
@@ -150,12 +155,15 @@ class CreateClimbWidget extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: new StreamBuilder(
-          stream: BlocProvider.of<CreateClimbBloc>(context).sectionStream.stream,
+          stream: BlocProvider
+              .of<CreateClimbBloc>(context)
+              .sectionStream
+              .stream,
           initialData: state.section,
           builder: (BuildContext context, snapshot) {
             return new DropdownButtonFormField<String>(
               disabledHint:
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
                 Icon(Icons.cancel, color: Colors.grey),
                 Text("No sections"),
               ]),
@@ -206,20 +214,23 @@ class CreateClimbWidget extends StatelessWidget {
         ),
         child: (itemChips.isNotEmpty)
             ? SingleChildScrollView(
-                child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: UIConstants.SMALLER_PADDING,
-                    runSpacing: 0.0,
-                    children: itemChips))
+            child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: UIConstants.SMALLER_PADDING,
+                runSpacing: 0.0,
+                children: itemChips))
             : Center(
-                child: Container(
-                    child: Text("You don't currently have any climb categories",
-                        textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)))));
+            child: Container(
+                child: Text("You don't currently have any climb categories",
+                    textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)))));
   }
 
   Widget _buildItemChip(CreateClimbState state, BuildContext context, String item) {
     return StreamBuilder(
-        stream: BlocProvider.of<CreateClimbBloc>(context).selectedCategoriesStream.stream,
+        stream: BlocProvider
+            .of<CreateClimbBloc>(context)
+            .selectedCategoriesStream
+            .stream,
         initialData: state.selectedCategories,
         builder: (BuildContext context, snapshot) {
           return Container(

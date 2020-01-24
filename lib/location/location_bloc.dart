@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:sendrax/location/location_event.dart';
 import 'package:sendrax/location/location_state.dart';
-import 'package:sendrax/location/location_view.dart';
 import 'package:sendrax/models/climb.dart';
-import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
 import 'package:sendrax/models/user.dart';
@@ -55,13 +53,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     } else {
       add(LocationErrorEvent());
     }
-  }
-
-  void retrieveClimb(Climb climb, LocationWidget view) async {
-    final currentUser = await UserRepo.getInstance().getCurrentUser();
-    ClimbRepo.getInstance().getClimb(climb, currentUser).then((climb) {
-      view.navigateToClimb(climb);
-    });
   }
 
   @override
