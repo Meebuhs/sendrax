@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
@@ -8,14 +9,17 @@ import 'create_climb_bloc.dart';
 import 'create_climb_state.dart';
 
 class CreateClimbScreen extends StatefulWidget {
-  CreateClimbScreen({Key key,
-    @required this.climb,
-    @required this.availableSections,
-    @required this.categories,
-    @required this.isEdit})
+  CreateClimbScreen(
+      {Key key,
+      @required this.climb,
+      @required this.selectedLocation,
+      @required this.availableSections,
+      @required this.categories,
+      @required this.isEdit})
       : super(key: key);
 
   final Climb climb;
+  final SelectedLocation selectedLocation;
   final List<String> availableSections;
   final List<String> categories;
   final bool isEdit;
@@ -59,8 +63,16 @@ class CreateClimbWidget extends StatelessWidget {
         : "Edit ${widgetState.climb.displayName}";
     return Scaffold(
       appBar: AppBar(
-        title:
-        Text((widgetState.isEdit) ? editTitleText : "Create a climb"),
+        title: Text((widgetState.isEdit) ? editTitleText : "Create a climb"),
+        actions: <Widget>[
+          (widgetState.isEdit)
+              ? IconButton(
+                  icon: Icon(Icons.delete_forever),
+                  onPressed: () =>
+                      _showDeleteClimbDialog(widget.climb.id, context, this, widget.categories),
+                )
+              : Container()
+        ],
       ),
       body: BlocBuilder(
           bloc: BlocProvider.of<CreateClimbBloc>(context),
@@ -127,10 +139,7 @@ class CreateClimbWidget extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: new StreamBuilder(
-          stream: BlocProvider
-              .of<CreateClimbBloc>(context)
-              .gradeStream
-              .stream,
+          stream: BlocProvider.of<CreateClimbBloc>(context).gradeStream.stream,
           initialData: state.grade,
           builder: (BuildContext context, snapshot) {
             return new DropdownButtonFormField<String>(
@@ -155,15 +164,12 @@ class CreateClimbWidget extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: new StreamBuilder(
-          stream: BlocProvider
-              .of<CreateClimbBloc>(context)
-              .sectionStream
-              .stream,
+          stream: BlocProvider.of<CreateClimbBloc>(context).sectionStream.stream,
           initialData: state.section,
           builder: (BuildContext context, snapshot) {
             return new DropdownButtonFormField<String>(
               disabledHint:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
                 Icon(Icons.cancel, color: Colors.grey),
                 Text("No sections"),
               ]),
@@ -214,23 +220,20 @@ class CreateClimbWidget extends StatelessWidget {
         ),
         child: (itemChips.isNotEmpty)
             ? SingleChildScrollView(
-            child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: UIConstants.SMALLER_PADDING,
-                runSpacing: 0.0,
-                children: itemChips))
+                child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: UIConstants.SMALLER_PADDING,
+                    runSpacing: 0.0,
+                    children: itemChips))
             : Center(
-            child: Container(
-                child: Text("You don't currently have any climb categories",
-                    textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)))));
+                child: Container(
+                    child: Text("You don't currently have any climb categories",
+                        textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)))));
   }
 
   Widget _buildItemChip(CreateClimbState state, BuildContext context, String item) {
     return StreamBuilder(
-        stream: BlocProvider
-            .of<CreateClimbBloc>(context)
-            .selectedCategoriesStream
-            .stream,
+        stream: BlocProvider.of<CreateClimbBloc>(context).selectedCategoriesStream.stream,
         initialData: state.selectedCategories,
         builder: (BuildContext context, snapshot) {
           return Container(
@@ -259,6 +262,28 @@ class CreateClimbWidget extends StatelessWidget {
                 BlocProvider.of<CreateClimbBloc>(context).validateAndSubmit(state, context, this),
           ),
         ));
+  }
+
+  void _showDeleteClimbDialog(
+      String climbId, BuildContext upperContext, CreateClimbWidget view, List<String> categories) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Are you sure you want to delete this climb?"),
+              content: Text("There is no way to get it back"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: navigateToLocation,
+                ),
+                FlatButton(
+                  child: Text("Delete"),
+                  onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext).deleteClimb(
+                      climbId, upperContext, view, widget.selectedLocation, categories),
+                )
+              ]);
+        });
   }
 
   void navigateToLocation() {

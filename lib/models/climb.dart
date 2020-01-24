@@ -32,7 +32,6 @@ class Climb {
       "section": section,
       "archived": archived,
       "categories": categories,
-      "attempts": attempts
     };
   }
 }

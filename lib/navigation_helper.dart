@@ -63,8 +63,13 @@ class NavigationHelper {
     }
   }
 
-  static void navigateToCreateClimb(BuildContext context, Climb climb, List<String> sections,
-      List<String> categories, bool isEdit,
+  static void navigateToCreateClimb(
+      BuildContext context,
+      Climb climb,
+      SelectedLocation selectedLocation,
+      List<String> sections,
+      List<String> categories,
+      bool isEdit,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
@@ -72,6 +77,7 @@ class NavigationHelper {
           MaterialPageRoute(
               builder: (context) => CreateClimbScreen(
                   climb: climb,
+                  selectedLocation: selectedLocation,
                   availableSections: sections,
                   categories: categories,
                   isEdit: isEdit)));
@@ -81,27 +87,34 @@ class NavigationHelper {
           MaterialPageRoute(
               builder: (context) => CreateClimbScreen(
                   climb: climb,
+                  selectedLocation: selectedLocation,
                   availableSections: sections,
                   categories: categories,
                   isEdit: isEdit)));
     }
   }
 
-  static void navigateToClimb(
-      BuildContext context, Climb climb, List<String> sections, List<String> categories,
+  static void navigateToClimb(BuildContext context, Climb climb, SelectedLocation selectedLocation,
+      List<String> sections, List<String> categories,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  ClimbScreen(climb: climb, sections: sections, categories: categories)));
+              builder: (context) => ClimbScreen(
+                  climb: climb,
+                  selectedLocation: selectedLocation,
+                  sections: sections,
+                  categories: categories)));
     } else {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  ClimbScreen(climb: climb, sections: sections, categories: categories)));
+              builder: (context) => ClimbScreen(
+                  climb: climb,
+                  selectedLocation: selectedLocation,
+                  sections: sections,
+                  categories: categories)));
     }
   }
 
@@ -112,5 +125,16 @@ class NavigationHelper {
   static void resetToMain(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
+  }
+
+  static void resetToLocation(
+      BuildContext context, SelectedLocation location, List<String> categories) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (context) => LocationScreen(
+                  location: location,
+                  categories: categories,
+                )),
+        (Route<dynamic> route) => false);
   }
 }

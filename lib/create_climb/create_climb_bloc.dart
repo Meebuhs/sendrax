@@ -6,7 +6,9 @@ import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/grade_repo.dart';
+import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/user_repo.dart';
+import 'package:sendrax/navigation_helper.dart';
 
 import 'create_climb_event.dart';
 import 'create_climb_state.dart';
@@ -93,6 +95,12 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
       state.selectedCategories.remove(category);
     }
     selectedCategoriesStream.add(state.selectedCategories);
+  }
+
+  void deleteClimb(String climbId, BuildContext context, CreateClimbWidget view,
+      SelectedLocation location, List<String> categories) {
+    ClimbRepo.getInstance().deleteClimb(climbId);
+    NavigationHelper.resetToLocation(context, location, categories);
   }
 
   @override

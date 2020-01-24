@@ -169,7 +169,12 @@ class LocationWidget extends StatelessWidget {
     Climb climb = new Climb(
         "climb-${uuid.v1()}", "", state.locationId, null, state.gradesId, null, false, <String>[]);
     NavigationHelper.navigateToCreateClimb(
-        widgetState.context, climb, state.sections, state.categories, false,
+        widgetState.context,
+        climb,
+        SelectedLocation(state.locationId, widget.location.displayName, state.gradesId),
+        state.sections,
+        state.categories,
+        false,
         addToBackStack: true);
   }
 
@@ -180,7 +185,12 @@ class LocationWidget extends StatelessWidget {
   }
 
   void navigateToClimb(Climb climb, LocationState state) {
-    NavigationHelper.navigateToClimb(widgetState.context, climb, state.sections, state.categories,
+    NavigationHelper.navigateToClimb(
+        widgetState.context,
+        climb,
+        SelectedLocation(state.locationId, widget.location.displayName, state.gradesId),
+        state.sections,
+        state.categories,
         addToBackStack: true);
   }
 }

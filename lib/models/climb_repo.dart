@@ -50,15 +50,6 @@ class ClimbRepo {
     });
   }
 
-  void deleteAttempt(String attemptId, String climbId) async {
-    final user = await UserRepo.getInstance().getCurrentUser();
-    await _firestore
-        .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
-        .document(attemptId)
-        .delete();
-  }
-
   void setClimb(Climb climb) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
@@ -68,6 +59,15 @@ class ClimbRepo {
         .setData(climb.map, merge: true);
   }
 
+  void deleteClimb(String climbId) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
+        .document(climbId)
+        .delete();
+  }
+
   void setAttempt(Attempt attempt, String climbId) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
@@ -75,5 +75,14 @@ class ClimbRepo {
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .document(attempt.id)
         .setData(attempt.map, merge: true);
+  }
+
+  void deleteAttempt(String attemptId, String climbId) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .document(attemptId)
+        .delete();
   }
 }
