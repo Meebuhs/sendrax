@@ -10,13 +10,60 @@ class AttemptItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(
-        "${formatDate(attempt.timestamp.toDate())} ${attempt.sendType}",
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: UIConstants.STANDARD_FONT_SIZE, color: Colors.pinkAccent),
+        title: Text(
+          "${formatDate(attempt.timestamp.toDate())} ${attempt.sendType}",
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: UIConstants.STANDARD_FONT_SIZE, color: Colors.pinkAccent),
+        ),
+        subtitle: Text(attempt.notes),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            _showWarmupTick(),
+            _showDownclimbedTick()
+          ],
+        ));
+  }
+
+  Widget _showWarmupTick() {
+    return Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      Text(
+        "W: ",
+        style: TextStyle(fontSize: UIConstants.STANDARD_FONT_SIZE, color: Colors.grey),
       ),
-      subtitle: Text(attempt.notes)
-    );
+      (attempt.warmup)
+          ? Icon(
+        Icons.check,
+        color: Colors.grey,
+        size: UIConstants.STANDARD_FONT_SIZE,
+      )
+          : Icon(
+        Icons.close,
+        color: Colors.grey,
+        size: UIConstants.STANDARD_FONT_SIZE,
+      )
+    ]);
+  }
+
+  Widget _showDownclimbedTick() {
+    return Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      Text(
+        "D: ",
+        style: TextStyle(fontSize: UIConstants.STANDARD_FONT_SIZE, color: Colors.grey),
+      ),
+      (attempt.downclimbed)
+          ? Icon(
+        Icons.check,
+        color: Colors.grey,
+        size: UIConstants.STANDARD_FONT_SIZE,
+      )
+          : Icon(
+        Icons.close,
+        color: Colors.grey,
+        size: UIConstants.STANDARD_FONT_SIZE,
+      )
+    ]);
   }
 
   String formatDate(DateTime time) {
