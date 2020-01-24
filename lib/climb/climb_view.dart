@@ -96,7 +96,7 @@ class ClimbWidget extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
           );
         } else {
-          return _buildAttempt(state.attempts[index - 2]);
+          return _buildAttempt(state.attempts[index - 2], widgetState.climbId);
         }
       },
       itemCount: state.attempts.isEmpty ? 3 : state.attempts.length + 2,
@@ -126,8 +126,8 @@ class ClimbWidget extends StatelessWidget {
     return Column(children: <Widget>[Container(child: Row(children: rowComponents)), Divider()]);
   }
 
-  AttemptItem _buildAttempt(Attempt attempt) {
-    return AttemptItem(attempt: attempt);
+  AttemptItem _buildAttempt(Attempt attempt, String climbId) {
+    return AttemptItem(attempt: attempt, climbId: climbId);
   }
 
   Widget _showForm(ClimbState state, BuildContext context) {

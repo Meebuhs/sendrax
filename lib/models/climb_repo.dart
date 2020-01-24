@@ -50,6 +50,15 @@ class ClimbRepo {
     });
   }
 
+  void deleteAttempt(String attemptId, String climbId) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .document(attemptId)
+        .delete();
+  }
+
   void setClimb(Climb climb) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore

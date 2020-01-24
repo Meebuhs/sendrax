@@ -14,5 +14,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Views for locations and climbs
 - Location, climb, attempt, sections and grade set creation
 - Location and climb editing
-- Location deletion
+- Location and attempt deletion
 - App icon
