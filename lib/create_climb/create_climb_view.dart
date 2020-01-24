@@ -110,17 +110,11 @@ class CreateClimbWidget extends StatelessWidget {
         autofocus: false,
         initialValue: state.displayName,
         decoration: new InputDecoration(
-            hintText: 'Climb name',
+            hintText: 'Climb name (Optional)',
             icon: new Icon(
               Icons.text_fields,
               color: Colors.grey,
             )),
-        validator: (String value) {
-          if (value.trim().isEmpty) {
-            return 'Climb must have a name';
-          }
-          return null;
-        },
         onSaved: (value) => state.displayName = value.trim(),
       ),
     );
@@ -204,7 +198,6 @@ class CreateClimbWidget extends StatelessWidget {
       itemChips.add(_buildItemChip(state, context, item));
     });
     return Container(
-        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, UIConstants.SMALLER_PADDING),
         constraints: BoxConstraints(
           minHeight: 140.0,
           maxHeight: 140.0,
@@ -242,8 +235,8 @@ class CreateClimbWidget extends StatelessWidget {
 
   Widget _showSubmitButton(CreateClimbState state, BuildContext context) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(
-            UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
+        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING,
+            UIConstants.STANDARD_PADDING, 0.0),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(

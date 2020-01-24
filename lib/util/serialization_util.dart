@@ -28,7 +28,12 @@ class Deserializer {
 
   static Climb _deserializeClimb(DocumentSnapshot climb) {
     return Climb(climb['id'], climb['displayName'], climb['locationId'], climb['grade'],
-        climb['gradesId'], climb['section'], climb['archived'], <String>[], <Attempt>[]);
+        climb['gradesId'], climb['section'], climb['archived'],
+        _deserializeClimbCategories(climb['categories']), <Attempt>[]);
+  }
+
+  static List<String> _deserializeClimbCategories(List<dynamic> categories) {
+    return List.from(categories);
   }
 
   static Location deserializeLocationSections(DocumentSnapshot locationDocument) {
@@ -40,7 +45,7 @@ class Deserializer {
       return location;
     } else {
       // This occurs when a location is deleted and the pages in the stack try to load it
-      // It is discarded immediately and thus an empty placeholder is safe here
+      // It is discarded immediately without user interaction so an empty placeholder is safe here
       return Location("", "", "", <String>[]);
     }
   }

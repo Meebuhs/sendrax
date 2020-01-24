@@ -9,14 +9,25 @@ class ClimbItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String label;
+
+    if (climb.displayName == "") {
+      if (climb.categories.isEmpty) {
+        label = "${climb.grade}";
+      } else {
+        label = "${climb.grade} - ${climb.categories.join(', ')}";
+      }
+    } else {
+      label = "${climb.grade} - ${climb.displayName}";
+    }
+
     return Center(
       child: Container(
         padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
         child: Text(
-          "${climb.grade} - ${climb.displayName}",
+          label,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-              fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
+          style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
         ),
       ),
     );

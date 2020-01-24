@@ -217,7 +217,7 @@ class CreateLocationWidget extends StatelessWidget {
             elevation: 5.0,
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.pink,
-            child: new Text('Create sections',
+            child: new Text('Create sections (optional)',
                 style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: () => _showAddSectionsDialog(state, context),
           ),
