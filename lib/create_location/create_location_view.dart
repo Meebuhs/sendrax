@@ -260,7 +260,7 @@ class CreateLocationWidget extends StatelessWidget {
         builder: (BuildContext context) {
           return AlertDialog(
               title: Text("Are you sure you want to delete this location?"),
-              content: Text("There is no way to get it back"),
+              content: Text("There is no way to get it (or any of its climbs) back"),
               actions: <Widget>[
                 FlatButton(
                   child: Text("Cancel"),

@@ -84,5 +84,22 @@ class LocationRepo {
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
         .document(locationId)
         .delete();
+
+    // Delete all climbs contained in this location
+    final WriteBatch batch = _firestore.batch();
+    int docCounter = 0;
+    QuerySnapshot climbs = await _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
+        .where("locationId", isEqualTo: locationId)
+        .getDocuments();
+    climbs.documents.forEach((climb) async {
+      docCounter++;
+      batch.delete(climb.reference);
+      if (docCounter > 498) { // batches can delete 500 refs at a time
+        await batch.commit();
+      }
+    });
+    await batch.commit();
   }
 }
