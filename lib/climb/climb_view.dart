@@ -49,8 +49,7 @@ class ClimbWidget extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () => _editClimb(
-                widget.climb, widget.sections, widget.categories),
+            onPressed: () => _editClimb(widget.climb, widget.sections, widget.categories),
           )
         ],
       ),
@@ -84,18 +83,23 @@ class ClimbWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         if (index == 0) {
           return _showImage();
+        } else if (index == 1) {
+          return _showClimbInformation();
         } else if (state.attempts.isEmpty) {
-          return Center(
-            child: Text(
-              "This climb doesn't have any attempts.\nLet's create one right now!",
-              textAlign: TextAlign.center,
+          return Container(
+            child: Center(
+              child: Text(
+                "This climb doesn't have any attempts.\nLet's create one right now!",
+                textAlign: TextAlign.center,
+              ),
             ),
+            padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
           );
         } else {
-          return _buildAttempt(state.attempts[index - 1]);
+          return _buildAttempt(state.attempts[index - 2]);
         }
       },
-      itemCount: state.attempts.isEmpty ? 2 : state.attempts.length + 1,
+      itemCount: state.attempts.isEmpty ? 3 : state.attempts.length + 2,
     );
   }
 
@@ -111,13 +115,24 @@ class ClimbWidget extends StatelessWidget {
     );
   }
 
+  Widget _showClimbInformation() {
+    List<Widget> rowComponents = [];
+    String firstComponentText = (widget.climb.section == null)
+        ? "${widget.climb.grade}"
+        : "${widget.climb.grade} - ${widget.climb.section}";
+    rowComponents.add(Expanded(child: Center(child: Text(firstComponentText))));
+    rowComponents.add(Expanded(child: Text("${widget.climb.categories.join(', ')}"), flex: 2));
+
+    return Column(children: <Widget>[Container(child: Row(children: rowComponents)), Divider()]);
+  }
+
   AttemptItem _buildAttempt(Attempt attempt) {
     return AttemptItem(attempt: attempt);
   }
 
   Widget _showForm(ClimbState state, BuildContext context) {
-    return new Container(
-        padding: EdgeInsets.all(16.0),
+    return Container(
+        padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
         alignment: Alignment.bottomCenter,
         child: new Form(
           key: state.formKey,
