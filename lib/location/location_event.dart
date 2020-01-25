@@ -16,4 +16,10 @@ class SectionsUpdatedEvent extends LocationEvent {
   final List<String> sections;
 }
 
+class GradesUpdatedEvent extends LocationEvent {
+  GradesUpdatedEvent(this.grades);
+
+  final List<String> grades;
+}
+
 class LocationErrorEvent extends LocationEvent {}
