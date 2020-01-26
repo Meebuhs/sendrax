@@ -59,10 +59,6 @@ class Deserializer {
         attempt['downclimbed'], attempt['notes']);
   }
 
-  static List<GradeSet> deserializeGradeSets(List<DocumentSnapshot> grades) {
-    return grades.map((grade) => deserializeGradeSet(grade)).toList();
-  }
-
   static GradeSet deserializeGradeSet(DocumentSnapshot grade) {
     return GradeSet(grade['displayName'], List.from(grade['grades']));
   }

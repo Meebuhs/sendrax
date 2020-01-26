@@ -56,13 +56,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     }
   }
 
-  void retrieveLocation(Location location, MainWidget view, List<String> categories) async {
-    final currentUser = await UserRepo.getInstance().getCurrentUser();
-    LocationRepo.getInstance().getLocation(location, currentUser).then((location) {
-      view.navigateToLocation(location, categories);
-    });
-  }
-
   @override
   Stream<MainState> mapEventToState(MainEvent event) async* {
     if (event is ClearLocationsEvent) {

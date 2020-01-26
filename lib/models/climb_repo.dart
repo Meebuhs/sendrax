@@ -24,22 +24,6 @@ class ClimbRepo {
     return _instance;
   }
 
-  Future<SelectedClimb> getClimb(Climb climb, User user) async {
-    DocumentReference climbRef = _firestore
-        .collection(
-            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
-        .document(climb.id);
-    if (climbRef != null) {
-      try {
-        return SelectedClimb(climb.id, climb.displayName);
-      } catch (error) {
-        return null;
-      }
-    } else {
-      return null;
-    }
-  }
-
   Stream<List<Attempt>> getAttemptsForClimb(String climbId, User user) {
     return _firestore
         .collection(

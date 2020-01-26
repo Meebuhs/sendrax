@@ -32,22 +32,6 @@ class LocationRepo {
         .map((data) => Deserializer.deserializeLocations(data.documents));
   }
 
-  Future<SelectedLocation> getLocation(Location location, User user) async {
-    DocumentReference locationRef = _firestore
-        .collection(
-            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
-        .document(location.id);
-    if (locationRef != null) {
-      try {
-        return SelectedLocation(location.id, location.displayName, location.gradesId);
-      } catch (error) {
-        return null;
-      }
-    } else {
-      return null;
-    }
-  }
-
   Stream<List<Climb>> getClimbsForLocation(String locationId, User user) {
     return _firestore
         .collection(

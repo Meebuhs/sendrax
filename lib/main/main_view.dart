@@ -67,11 +67,9 @@ class MainWidget extends StatelessWidget {
                 gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                 itemBuilder: (context, index) {
                   return InkWell(
-                      child: _buildItem(state.locations[index]),
-                      onTap: () {
-                        BlocProvider.of<MainBloc>(context)
-                            .retrieveLocation(state.locations[index], this, state.categories);
-                      });
+                    child: _buildItem(state.locations[index]),
+                    onTap: () => _onLocationTap(state.locations[index], state.categories),
+                  );
                 },
                 itemCount: state.locations.length,
               );
@@ -79,6 +77,16 @@ class MainWidget extends StatelessWidget {
             return _wrapContentWithFab(context, state, content);
           }),
     );
+  }
+
+  LocationItem _buildItem(Location location) {
+    return LocationItem(location: location);
+  }
+
+  void _onLocationTap(Location location, List<String> categories) {
+    SelectedLocation selectedLocation =
+        SelectedLocation(location.id, location.displayName, location.gradesId);
+    navigateToLocation(selectedLocation, categories);
   }
 
   Widget _wrapContentWithFab(BuildContext context, MainState state, Widget content) {
@@ -96,10 +104,6 @@ class MainWidget extends StatelessWidget {
         )
       ],
     );
-  }
-
-  LocationItem _buildItem(Location location) {
-    return LocationItem(location: location);
   }
 
   void _createLocation(MainState state) {
