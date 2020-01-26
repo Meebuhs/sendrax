@@ -15,12 +15,9 @@ import 'create_climb_state.dart';
 import 'create_climb_view.dart';
 
 class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
-  CreateClimbBloc(this.climb, this.availableSections, this.categories, this.isEdit);
+  CreateClimbBloc(this.climb);
 
   final Climb climb;
-  final List<String> availableSections;
-  final List<String> categories;
-  final bool isEdit;
 
   StreamController gradeStream = StreamController<String>();
   StreamController sectionStream = StreamController<String>();
@@ -31,7 +28,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
   @override
   CreateClimbState get initialState {
     _retrieveGrades(climb.gradesId);
-    return CreateClimbState.initial(climb, availableSections, categories, isEdit);
+    return CreateClimbState.initial(climb);
   }
 
   void _retrieveGrades(String gradesId) async {
@@ -53,7 +50,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
     state.loading = true;
 
     if (_validateAndSave(state)) {
-      Climb climb = new Climb(state.id, state.displayName, state.locationId, state.grade,
+      Climb climb = new Climb(this.climb.id, state.displayName, this.climb.locationId, state.grade,
           state.gradesId, state.section, false, state.selectedCategories, <Attempt>[]);
       try {
         ClimbRepo.getInstance().setClimb(climb);
@@ -97,9 +94,9 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
     selectedCategoriesStream.add(state.selectedCategories);
   }
 
-  void deleteClimb(String climbId, BuildContext context, CreateClimbWidget view,
+  void deleteClimb(BuildContext context, CreateClimbWidget view,
       SelectedLocation location, List<String> categories) {
-    ClimbRepo.getInstance().deleteClimb(climbId);
+    ClimbRepo.getInstance().deleteClimb(this.climb.id);
     NavigationHelper.resetToLocation(context, location, categories);
   }
 

@@ -316,14 +316,15 @@ class LocationWidget extends StatelessWidget {
     var uuid = new Uuid();
     // the null values for grade and section here are required as they are used as the initial
     // values for the dropdowns
-    Climb climb = new Climb(
-        "climb-${uuid.v1()}", "", state.locationId, null, state.gradesId, null, false, <String>[]);
+    Climb climb = new Climb("climb-${uuid.v1()}", "", widgetState.location.id, null,
+        widgetState.location.gradesId, null, false, <String>[]);
     NavigationHelper.navigateToCreateClimb(
         widgetState.context,
         climb,
-        SelectedLocation(state.locationId, widget.location.displayName, state.gradesId),
+        SelectedLocation(
+            widgetState.location.id, widget.location.displayName, widgetState.location.gradesId),
         state.sections,
-        state.categories,
+        widgetState.categories,
         false,
         addToBackStack: true);
   }
@@ -338,9 +339,10 @@ class LocationWidget extends StatelessWidget {
     NavigationHelper.navigateToClimb(
         widgetState.context,
         climb,
-        SelectedLocation(state.locationId, widget.location.displayName, state.gradesId),
+        SelectedLocation(
+            widgetState.location.id, widget.location.displayName, widgetState.location.gradesId),
         state.sections,
-        state.categories,
+        widgetState.categories,
         addToBackStack: true);
   }
 }

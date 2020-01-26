@@ -40,7 +40,7 @@ class _CreateClimbState extends State<CreateClimbScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateClimbBloc>(
-      create: (context) => CreateClimbBloc(climb, availableSections, categories, isEdit),
+      create: (context) => CreateClimbBloc(climb),
       child: CreateClimbWidget(
         widget: widget,
         widgetState: this,
@@ -174,12 +174,12 @@ class CreateClimbWidget extends StatelessWidget {
                 Text("No sections"),
               ]),
               iconDisabledColor: Colors.grey,
-              items: _createDropdownItems(state.availableSections),
+              items: _createDropdownItems(widgetState.availableSections),
               value: snapshot.data,
               hint: Text("Section"),
               isExpanded: true,
               validator: (String value) {
-                if (state.availableSections.isNotEmpty) {
+                if (widgetState.availableSections.isNotEmpty) {
                   if (value == null) {
                     return 'A section must be selected';
                   }
@@ -208,7 +208,7 @@ class CreateClimbWidget extends StatelessWidget {
 
   Widget _showCategorySelection(CreateClimbState state, BuildContext context) {
     List<Widget> itemChips = List<Widget>();
-    state.categories.forEach((item) {
+    widgetState.categories.forEach((item) {
       itemChips.add(_buildItemChip(state, context, item));
     });
     return Container(
@@ -280,7 +280,7 @@ class CreateClimbWidget extends StatelessWidget {
                 FlatButton(
                   child: Text("Delete"),
                   onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext).deleteClimb(
-                      climbId, upperContext, view, widget.selectedLocation, categories),
+                      upperContext, view, widget.selectedLocation, categories),
                 )
               ]);
         });

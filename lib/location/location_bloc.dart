@@ -27,7 +27,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   @override
   LocationState get initialState {
     _retrieveLocationData();
-    return LocationState.initial(location, categories);
+    return LocationState.initial();
   }
 
   void _retrieveLocationData() async {

@@ -4,11 +4,8 @@ class MainState {
   final bool loading;
   final List<Location> locations;
   final List<String> categories;
-  final bool loggedIn;
-  final SelectedLocation selected;
 
-  MainState._internal(this.loading, this.locations, this.categories,
-      {this.loggedIn = true, this.selected});
+  MainState._internal(this.loading, this.locations, this.categories);
 
   factory MainState.initial() => MainState._internal(true, <Location>[], <String>[]);
 
