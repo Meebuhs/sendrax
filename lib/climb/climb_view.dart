@@ -27,18 +27,14 @@ class ClimbScreen extends StatefulWidget {
   final List<String> categories;
 
   @override
-  State<StatefulWidget> createState() => _ClimbState(climb.id);
+  State<StatefulWidget> createState() => _ClimbState();
 }
 
 class _ClimbState extends State<ClimbScreen> {
-  final String climbId;
-
-  _ClimbState(this.climbId);
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ClimbBloc>(
-      create: (context) => ClimbBloc(climbId),
+      create: (context) => ClimbBloc(widget.climb.id),
       child: ClimbWidget(widget: widget, widgetState: this),
     );
   }
@@ -106,7 +102,7 @@ class ClimbWidget extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
           );
         } else {
-          return _buildAttempt(state.attempts[index - 2], widgetState.climbId);
+          return _buildAttempt(state.attempts[index - 2], widget.climb.id);
         }
       },
       itemCount: state.attempts.isEmpty ? 3 : state.attempts.length + 2,

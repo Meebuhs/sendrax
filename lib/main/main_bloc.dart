@@ -47,8 +47,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     add(ClearCategoriesEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
-      categoriesSubscription =
-          UserRepo.getInstance().getUserCategories(user).listen((categories) {
+      categoriesSubscription = UserRepo.getInstance().getUserCategories(user).listen((categories) {
         add(CategoriesUpdatedEvent(categories));
       });
     } else {

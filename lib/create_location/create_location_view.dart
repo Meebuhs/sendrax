@@ -18,19 +18,14 @@ class CreateLocationScreen extends StatefulWidget {
   final bool isEdit;
 
   @override
-  State<StatefulWidget> createState() => _CreateLocationState(location, isEdit);
+  State<StatefulWidget> createState() => _CreateLocationState();
 }
 
 class _CreateLocationState extends State<CreateLocationScreen> {
-  final Location location;
-  final bool isEdit;
-
-  _CreateLocationState(this.location, this.isEdit);
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateLocationBloc>(
-      create: (context) => CreateLocationBloc(location, isEdit),
+      create: (context) => CreateLocationBloc(widget.location, widget.isEdit),
       child: CreateLocationWidget(
         widget: widget,
         widgetState: this,
@@ -50,11 +45,9 @@ class CreateLocationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text((widgetState.isEdit)
-            ? "Edit ${widgetState.location.displayName}"
-            : "Create a location"),
+        title: Text((widget.isEdit) ? "Edit ${widget.location.displayName}" : "Create a location"),
         actions: <Widget>[
-          (widgetState.isEdit)
+          (widget.isEdit)
               ? IconButton(
                   icon: Icon(Icons.delete_forever),
                   onPressed: () => _showDeleteLocationDialog(widget.location.id, context, this),

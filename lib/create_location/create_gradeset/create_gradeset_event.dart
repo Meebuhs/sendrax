@@ -17,3 +17,4 @@ class GradeErrorEvent extends CreateGradeSetEvent {
 
   final String errorMessage;
 }
+

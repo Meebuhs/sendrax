@@ -27,8 +27,7 @@ class CreateClimbScreen extends StatefulWidget {
   final bool isEdit;
 
   @override
-  State<StatefulWidget> createState() =>
-      _CreateClimbState();
+  State<StatefulWidget> createState() => _CreateClimbState();
 }
 
 class _CreateClimbState extends State<CreateClimbScreen> {
@@ -53,9 +52,8 @@ class CreateClimbWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String editTitleText = (widget.climb.displayName == "")
-        ? "Edit climb"
-        : "Edit ${widget.climb.displayName}";
+    String editTitleText =
+        (widget.climb.displayName == "") ? "Edit climb" : "Edit ${widget.climb.displayName}";
     return Scaffold(
       appBar: AppBar(
         title: Text((widget.isEdit) ? editTitleText : "Create a climb"),

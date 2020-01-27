@@ -24,4 +24,6 @@ class GradeSelectedEvent extends CreateLocationEvent {
   final String grade;
 }
 
-class CreateLocationErrorEvent extends CreateLocationEvent {}
+class CreateLocationErrorEvent extends CreateLocationEvent {
+
+}

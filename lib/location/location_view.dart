@@ -17,19 +17,14 @@ class LocationScreen extends StatefulWidget {
   final List<String> categories;
 
   @override
-  State<StatefulWidget> createState() => _LocationState(location, categories);
+  State<StatefulWidget> createState() => _LocationState();
 }
 
 class _LocationState extends State<LocationScreen> {
-  final SelectedLocation location;
-  final List<String> categories;
-
-  _LocationState(this.location, this.categories);
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LocationBloc>(
-      create: (context) => LocationBloc(location, categories),
+      create: (context) => LocationBloc(widget.location, widget.categories),
       child: LocationWidget(
         widget: widget,
         widgetState: this,
@@ -293,15 +288,15 @@ class LocationWidget extends StatelessWidget {
     var uuid = new Uuid();
     // the null values for grade and section here are required as they are used as the initial
     // values for the dropdowns
-    Climb climb = new Climb("climb-${uuid.v1()}", "", widgetState.location.id, null,
-        widgetState.location.gradesId, null, false, <String>[]);
+    Climb climb = new Climb("climb-${uuid.v1()}", "", widget.location.id, null,
+        widget.location.gradesId, null, false, <String>[]);
     NavigationHelper.navigateToCreateClimb(
         widgetState.context,
         climb,
-        SelectedLocation(
-            widgetState.location.id, widget.location.displayName, widgetState.location.gradesId),
+        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.gradesId),
         state.sections,
-        widgetState.categories,
+        state.grades,
+        widget.categories,
         false,
         addToBackStack: true);
   }
@@ -316,10 +311,10 @@ class LocationWidget extends StatelessWidget {
     NavigationHelper.navigateToClimb(
         widgetState.context,
         climb,
-        SelectedLocation(
-            widgetState.location.id, widget.location.displayName, widgetState.location.gradesId),
+        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.gradesId),
         state.sections,
-        widgetState.categories,
+        state.grades,
+        widget.categories,
         addToBackStack: true);
   }
 }
