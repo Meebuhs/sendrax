@@ -18,27 +18,25 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   final Location location;
   final bool isEdit;
 
-  StreamController gradesIdStream = StreamController<String>();
-  StreamController errorMessageStream = StreamController<String>();
   StreamController sectionsStream = StreamController<List<String>>.broadcast();
   StreamSubscription<List<String>> gradesSubscription;
   StreamSubscription<Location> locationSubscription;
 
   @override
   CreateLocationState get initialState {
-    _retrieveAvailableGradeSets(isEdit);
     if (isEdit) {
       _retrieveDataForThisLocation();
     }
+    _retrieveAvailableGradeSets();
     return CreateLocationState.initial(location, isEdit);
   }
 
-  void _retrieveAvailableGradeSets(bool isEdit) async {
-    add(ClearGradesEvent());
+  void _retrieveAvailableGradeSets() async {
+    add(GradesClearedEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       gradesSubscription = GradeRepo.getInstance().getGradeIds(user).listen((grades) {
-        add(GradesUpdatedEvent(isEdit, grades));
+        add(GradesUpdatedEvent(grades));
       });
     } else {
       add(CreateLocationErrorEvent());
@@ -46,7 +44,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   }
 
   void _retrieveDataForThisLocation() async {
-    add(ClearLocationEvent());
+    add(LocationClearedEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       locationSubscription =
@@ -61,7 +59,6 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   void validateAndSubmit(
       CreateLocationState state, BuildContext context, CreateLocationWidget view) async {
     FocusScope.of(context).unfocus();
-    state.errorMessage = "";
     state.loading = true;
 
     if (_validateAndSave(state)) {
@@ -73,8 +70,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
       } catch (e) {
         state.formKey.currentState.reset();
         state.loading = false;
-        state.errorMessage = e.message;
-        errorMessageStream.sink.add(state.errorMessage);
+        add(CreateLocationErrorEvent());
       }
       view.navigateBackOne();
     }
@@ -91,8 +87,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   }
 
   void selectGrade(String grade) {
-    state.gradesId = grade;
-    gradesIdStream.add(grade);
+    add(GradeSelectedEvent(grade));
   }
 
   void setSectionsList(List<String> sections) {
@@ -108,24 +103,24 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
 
   @override
   Stream<CreateLocationState> mapEventToState(CreateLocationEvent event) async* {
-    if (event is ClearGradesEvent) {
+    if (event is GradesClearedEvent) {
       yield CreateLocationState.updateGrades(true, <String>[], state);
-    } else if (event is ClearLocationEvent) {
+    } else if (event is LocationClearedEvent) {
       yield CreateLocationState.updateLocation(true,
           new Location(this.location.id, state.displayName, state.gradesId, <String>[]), state);
     } else if (event is GradesUpdatedEvent) {
-      yield CreateLocationState.updateGrades(event.isEdit, event.gradeIds, state);
+      yield CreateLocationState.updateGrades(false, event.availableGrades, state);
     } else if (event is LocationUpdatedEvent) {
       yield CreateLocationState.updateLocation(false, event.location, state);
     } else if (event is CreateLocationErrorEvent) {
       yield CreateLocationState.loading(false, state);
+    } else if (event is GradeSelectedEvent) {
+      yield CreateLocationState.selectGrade(event.grade, state);
     }
   }
 
   @override
   Future<void> close() {
-    gradesIdStream.close();
-    errorMessageStream.close();
     sectionsStream.close();
     if (gradesSubscription != null) {
       gradesSubscription.cancel();

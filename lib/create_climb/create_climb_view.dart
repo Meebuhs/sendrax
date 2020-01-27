@@ -138,24 +138,18 @@ class CreateClimbWidget extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
-        child: new StreamBuilder(
-          stream: BlocProvider.of<CreateClimbBloc>(context).gradeStream.stream,
-          initialData: state.grade,
-          builder: (BuildContext context, snapshot) {
-            return new DropdownButtonFormField<String>(
-              items: _createDropdownItems(state.availableGrades),
-              value: snapshot.data,
-              hint: Text("Grade"),
-              isExpanded: true,
-              validator: (String value) {
-                if (value == null) {
-                  return 'A grade must be selected';
-                }
-                return null;
-              },
-              onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectGrade(value),
-            );
+        child: DropdownButtonFormField<String>(
+          items: _createDropdownItems(state.availableGrades),
+          value: state.grade,
+          hint: Text("Grade"),
+          isExpanded: true,
+          validator: (String value) {
+            if (value == null) {
+              return 'A grade must be selected';
+            }
+            return null;
           },
+          onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectGrade(value),
         ));
   }
 
@@ -163,32 +157,25 @@ class CreateClimbWidget extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
-        child: new StreamBuilder(
-          stream: BlocProvider.of<CreateClimbBloc>(context).sectionStream.stream,
-          initialData: state.section,
-          builder: (BuildContext context, snapshot) {
-            return new DropdownButtonFormField<String>(
-              disabledHint:
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-                Icon(Icons.cancel, color: Colors.grey),
-                Text("No sections"),
-              ]),
-              iconDisabledColor: Colors.grey,
-              items: _createDropdownItems(widgetState.availableSections),
-              value: snapshot.data,
-              hint: Text("Section"),
-              isExpanded: true,
-              validator: (String value) {
-                if (widgetState.availableSections.isNotEmpty) {
-                  if (value == null) {
-                    return 'A section must be selected';
-                  }
-                }
-                return null;
-              },
-              onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectSection(value),
-            );
+        child: DropdownButtonFormField<String>(
+          disabledHint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
+            Icon(Icons.cancel, color: Colors.grey),
+            Text("No sections"),
+          ]),
+          iconDisabledColor: Colors.grey,
+          items: _createDropdownItems(widgetState.availableSections),
+          value: state.section,
+          hint: Text("Section"),
+          isExpanded: true,
+          validator: (String value) {
+            if (widgetState.availableSections.isNotEmpty) {
+              if (value == null) {
+                return 'A section must be selected';
+              }
+            }
+            return null;
           },
+          onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectSection(value),
         ));
   }
 
@@ -232,19 +219,14 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   Widget _buildItemChip(CreateClimbState state, BuildContext context, String item) {
-    return StreamBuilder(
-        stream: BlocProvider.of<CreateClimbBloc>(context).selectedCategoriesStream.stream,
-        initialData: state.selectedCategories,
-        builder: (BuildContext context, snapshot) {
-          return Container(
-            child: InputChip(
-              label: Text(item),
-              selected: snapshot.data.contains(item),
-              onSelected: (selected) =>
-                  BlocProvider.of<CreateClimbBloc>(context).toggleCategory(selected, item),
-            ),
-          );
-        });
+    return Container(
+      child: InputChip(
+        label: Text(item),
+        selected: state.selectedCategories.contains(item),
+        onSelected: (selected) =>
+            BlocProvider.of<CreateClimbBloc>(context).toggleCategory(selected, item),
+      ),
+    );
   }
 
   Widget _showSubmitButton(CreateClimbState state, BuildContext context) {
@@ -279,8 +261,8 @@ class CreateClimbWidget extends StatelessWidget {
                 ),
                 FlatButton(
                   child: Text("Delete"),
-                  onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext).deleteClimb(
-                      upperContext, view, widget.selectedLocation, categories),
+                  onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext)
+                      .deleteClimb(upperContext, view, widget.selectedLocation, categories),
                 )
               ]);
         });

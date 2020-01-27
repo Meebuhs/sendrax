@@ -13,13 +13,10 @@ import 'login_view.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   StreamSubscription<FirebaseUser> _authStateListener;
-  StreamController isLoginFormStream = StreamController<bool>.broadcast();
-  StreamController loadingStream = StreamController<bool>();
-  StreamController errorMessageStream = StreamController<String>();
 
   @override
   LoginState get initialState => LoginState.initial();
-  
+
   void setupAuthStateListener(LoginWidget view) {
     if (_authStateListener == null) {
       _authStateListener = FirebaseAuth.instance.onAuthStateChanged.listen((user) {
@@ -40,7 +37,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     FocusScope.of(context).unfocus();
     state.errorMessage = "";
     state.loading = true;
-    loadingStream.add(state.loading);
+    add(LoginEventInProgress());
 
     if (_validateAndSave(state)) {
       try {
@@ -54,13 +51,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         state.formKey.currentState.reset();
         state.passwordKey.currentState.reset();
         state.loading = false;
-        loadingStream.add(state.loading);
-        state.errorMessage = e.message.replaceAll('email address', 'username');
-        errorMessageStream.sink.add(state.errorMessage);
+        String errorMessage = e.message.replaceAll('email address', 'username');
+        add(LoginErrorEvent(errorMessage));
       }
     } else {
-      state.loading = false;
-      loadingStream.add(state.loading);
+      add(LoginWithEmailEvent());
     }
   }
 
@@ -76,9 +71,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   void toggleFormMode(LoginState state) {
     state.formKey.currentState.reset();
     state.passwordKey.currentState.reset();
-    state.errorMessage = "";
-    state.isLogin = !state.isLogin;
-    isLoginFormStream.add(state.isLogin);
+    add(FormToggledEvent());
   }
 
   void onLogout() async {
@@ -97,15 +90,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield LoginState.loading(false, state);
     } else if (event is LoginEventInProgress) {
       yield LoginState.loading(true, state);
-    } else if (event is LoginErrorEvent) {}
+    } else if (event is FormToggledEvent) {
+      yield LoginState.toggleForm(state);
+    } else if (event is LoginErrorEvent) {
+      yield LoginState.error(event.errorMessage, state);
+    }
   }
 
   @override
   Future<void> close() {
     _authStateListener.cancel();
-    isLoginFormStream.close();
-    loadingStream.close();
-    errorMessageStream.close();
     return super.close();
   }
 }

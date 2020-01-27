@@ -89,28 +89,23 @@ class CreateGradeSetWidget extends StatelessWidget {
   }
 
   Widget _showItemList(CreateGradeSetState state, BuildContext context) {
-    return StreamBuilder(
-        stream: BlocProvider.of<CreateGradeSetBloc>(context).itemStream.stream,
-        initialData: <String>[],
-        builder: (BuildContext context, snapshot) {
-          List<Widget> itemChips = List<Widget>();
-            snapshot.data.forEach((item) {
-              itemChips.add(_buildItemChip(state, context, item));
-            });
-          return Container(
-              constraints: BoxConstraints(
-                minHeight: 85.0,
-                maxHeight: 85.0,
-                maxWidth: 300.0,
-                minWidth: 300.0,
-              ),
-              child: SingleChildScrollView(
-                  child: Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: UIConstants.SMALLER_PADDING,
-                      runSpacing: 0.0,
-                      children: itemChips)));
-        });
+    List<Widget> itemChips = List<Widget>();
+    state.grades.forEach((item) {
+      itemChips.add(_buildItemChip(state, context, item));
+    });
+    return Container(
+        constraints: BoxConstraints(
+          minHeight: 85.0,
+          maxHeight: 85.0,
+          maxWidth: 300.0,
+          minWidth: 300.0,
+        ),
+        child: SingleChildScrollView(
+            child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: UIConstants.SMALLER_PADDING,
+                runSpacing: 0.0,
+                children: itemChips)));
   }
 
   Widget _buildItemChip(CreateGradeSetState state, BuildContext context, String item) {
@@ -121,7 +116,7 @@ class CreateGradeSetWidget extends StatelessWidget {
           Icons.cancel,
           color: Colors.grey,
         ),
-        onDeleted: () => BlocProvider.of<CreateGradeSetBloc>(context).removeItem(item),
+        onDeleted: () => BlocProvider.of<CreateGradeSetBloc>(context).removeGrade(item),
       ),
     );
   }
@@ -157,36 +152,28 @@ class CreateGradeSetWidget extends StatelessWidget {
             color: Colors.pink,
             child: new Text('Add', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             onPressed: () => BlocProvider.of<CreateGradeSetBloc>(context)
-                .addItem(state.itemInputKey.currentState.value.trim()),
+                .addGrade(state.itemInputKey.currentState.value.trim()),
           ),
         ));
   }
 
   Widget _showErrorMessage(CreateGradeSetState state, BuildContext context) {
-    return StreamBuilder(
-        stream: BlocProvider.of<CreateGradeSetBloc>(context).errorMessageStream.stream,
-        initialData: "",
-        builder: (BuildContext context, snapshot) {
-          if (snapshot.data.length > 0) {
-            return Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        UIConstants.STANDARD_PADDING, 2.0, UIConstants.STANDARD_PADDING, 0.0),
-                    child: Text(
-                      snapshot.data,
-                      style: TextStyle(
-                          fontSize: 13.0,
-                          color: Colors.red,
-                          height: 1.0,
-                          fontWeight: FontWeight.w400),
-                    )));
-          } else {
-            return new Container(
-              height: 0.0,
-            );
-          }
-        });
+    if (state.errorMessage.length > 0) {
+      return Align(
+          alignment: Alignment.bottomLeft,
+          child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                  UIConstants.STANDARD_PADDING, 2.0, UIConstants.STANDARD_PADDING, 0.0),
+              child: Text(
+                state.errorMessage,
+                style: TextStyle(
+                    fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w400),
+              )));
+    } else {
+      return new Container(
+        height: 0.0,
+      );
+    }
   }
 
   Widget _showSubmitButton(CreateGradeSetState state, BuildContext context) {

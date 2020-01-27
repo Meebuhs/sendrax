@@ -10,25 +10,35 @@ class CreateClimbState {
   List<String> availableGrades;
   String section;
   List<String> selectedCategories;
-  String errorMessage;
 
   // @formatter:off
   CreateClimbState._internal(
       this.loading, this.formKey, this.displayName, this.grade, this.gradesId, this.availableGrades,
-      this.section, this.selectedCategories, this.errorMessage);
+      this.section, this.selectedCategories);
 
   factory CreateClimbState.initial(Climb climb) =>
       CreateClimbState._internal(true, new GlobalKey<FormState>(), climb.displayName, climb.grade,
-          climb.gradesId, <String>[], climb.section, climb.categories, "");
+          climb.gradesId, <String>[], climb.section, climb.categories);
 
   factory CreateClimbState.loading(bool loading, CreateClimbState state) =>
       CreateClimbState._internal(loading, state.formKey, state.displayName, state.grade,
-          state.gradesId, state.availableGrades, state.section, state.selectedCategories,
-          state.errorMessage);
+          state.gradesId, state.availableGrades, state.section, state.selectedCategories);
+
+  factory CreateClimbState.selectGrade(String grade, CreateClimbState state) =>
+      CreateClimbState._internal(state.loading, state.formKey, state.displayName, grade,
+          state.gradesId, state.availableGrades, state.section, state.selectedCategories);
+
+  factory CreateClimbState.selectSection(String section, CreateClimbState state) =>
+      CreateClimbState._internal(state.loading, state.formKey, state.displayName, state.grade,
+          state.gradesId, state.availableGrades, section, state.selectedCategories);
 
   factory CreateClimbState.updateGrades(
           bool loading, List<String> grades, CreateClimbState state) =>
       CreateClimbState._internal(loading, state.formKey, state.displayName, state.grade,
-          state.gradesId, grades, state.section, state.selectedCategories, state.errorMessage);
+          state.gradesId, grades, state.section, state.selectedCategories);
+
+  factory CreateClimbState.updateCategories(List<String> selectedCategories, CreateClimbState state) =>
+      CreateClimbState._internal(state.loading, state.formKey, state.displayName, state.grade,
+          state.gradesId, state.availableGrades, state.section, selectedCategories);
 }
 // @formatter:on

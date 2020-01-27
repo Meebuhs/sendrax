@@ -170,24 +170,18 @@ class ClimbWidget extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
-        child: new StreamBuilder(
-          stream: BlocProvider.of<ClimbBloc>(context).sendTypeStream.stream,
-          initialData: state.sendType,
-          builder: (BuildContext context, snapshot) {
-            return new DropdownButtonFormField<String>(
-              items: _createDropdownItems(SendTypes.SEND_TYPES),
-              value: snapshot.data,
-              hint: Text("Send"),
-              isExpanded: true,
-              validator: (String value) {
-                if (value == null) {
-                  return 'A send type must be selected';
-                }
-                return null;
-              },
-              onChanged: (value) => BlocProvider.of<ClimbBloc>(context).selectSendType(value),
-            );
+        child: DropdownButtonFormField<String>(
+          items: _createDropdownItems(SendTypes.SEND_TYPES),
+          value: state.sendType,
+          hint: Text("Send"),
+          isExpanded: true,
+          validator: (String value) {
+            if (value == null) {
+              return 'A send type must be selected';
+            }
+            return null;
           },
+          onChanged: (value) => BlocProvider.of<ClimbBloc>(context).selectSendType(value),
         ));
   }
 
@@ -206,39 +200,28 @@ class ClimbWidget extends StatelessWidget {
   }
 
   Widget _showWarmupCheckbox(ClimbState state, BuildContext context) {
-    return new StreamBuilder(
-        stream: BlocProvider.of<ClimbBloc>(context).warmupStream.stream,
-        initialData: state.warmup,
-        builder: (BuildContext context, snapshot) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("Warmup"),
-              Checkbox(
-                  value: snapshot.data,
-                  onChanged: (value) =>
-                      BlocProvider.of<ClimbBloc>(context).toggleWarmupCheckbox(value)),
-            ],
-          );
-        });
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text("Warmup"),
+        Checkbox(
+            value: state.warmup,
+            onChanged: (value) => BlocProvider.of<ClimbBloc>(context).toggleWarmupCheckbox(value)),
+      ],
+    );
   }
 
   Widget _showDownclimbedCheckbox(ClimbState state, BuildContext context) {
-    return new StreamBuilder(
-        stream: BlocProvider.of<ClimbBloc>(context).downclimbedStream.stream,
-        initialData: state.downclimbed,
-        builder: (BuildContext context, snapshot) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("Downclimbed"),
-              Checkbox(
-                  value: snapshot.data,
-                  onChanged: (value) =>
-                      BlocProvider.of<ClimbBloc>(context).toggleDownclimbedCheckbox(value)),
-            ],
-          );
-        });
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text("Downclimbed"),
+        Checkbox(
+            value: state.downclimbed,
+            onChanged: (value) =>
+                BlocProvider.of<ClimbBloc>(context).toggleDownclimbedCheckbox(value)),
+      ],
+    );
   }
 
   Widget _showNotesInput(ClimbState state, BuildContext context) {

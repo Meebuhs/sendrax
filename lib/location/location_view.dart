@@ -84,27 +84,16 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _buildFilteredList(LocationState state, BuildContext context) {
-    return StreamBuilder(
-        stream: BlocProvider.of<LocationBloc>(context).filterGradeStream.stream,
-        initialData: state.filterGrade,
-        builder: (BuildContext context, gradeSnapshot) {
-          return StreamBuilder(
-              stream: BlocProvider.of<LocationBloc>(context).filterSectionStream.stream,
-              initialData: state.filterSection,
-              builder: (BuildContext context, sectionSnapshot) {
-                if (List.from(state.climbs.where((climb) =>
-                    (sectionSnapshot.data == null || climb.section == sectionSnapshot.data) &&
-                    (gradeSnapshot.data == null || climb.grade == gradeSnapshot.data))).isEmpty) {
-                  return _showEmptyFilteredList(state, context);
-                }
-                if (state.sections.isNotEmpty) {
-                  return _buildContentWithSections(
-                      state, context, sectionSnapshot.data, gradeSnapshot.data);
-                } else {
-                  return _buildContentWithoutSections(state, context, gradeSnapshot.data);
-                }
-              });
-        });
+    if (List.from(state.climbs.where((climb) =>
+        (state.filterSection == null || climb.section == state.filterSection) &&
+        (state.filterGrade == null || climb.grade == state.filterGrade))).isEmpty) {
+      return _showEmptyFilteredList(state, context);
+    }
+    if (state.sections.isNotEmpty) {
+      return _buildContentWithSections(state, context, state.filterSection, state.filterGrade);
+    } else {
+      return _buildContentWithoutSections(state, context, state.filterGrade);
+    }
   }
 
   Widget _showEmptyFilteredList(LocationState state, BuildContext context) {
@@ -223,62 +212,50 @@ class LocationWidget extends StatelessWidget {
 
   Widget _showGradeDropdown(LocationState state, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0,
-          UIConstants.SMALLER_PADDING, UIConstants.BIGGER_PADDING),
-      child: new StreamBuilder(
-          stream: BlocProvider.of<LocationBloc>(context).filterGradeStream.stream,
-          initialData: state.filterGrade,
-          builder: (BuildContext context, snapshot) {
-            return new Row(children: <Widget>[
-              Expanded(
-                  child: DropdownButton<String>(
-                items: _createDropdownItems(state.grades),
-                value: snapshot.data,
-                hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-                  Icon(Icons.filter_list, color: Colors.grey),
-                  Text("Grade"),
-                ]),
-                isExpanded: true,
-                onChanged: (value) => BlocProvider.of<LocationBloc>(context).selectGrade(value),
-              )),
-              IconButton(
-                  icon: Icon(Icons.cancel),
-                  onPressed: () => BlocProvider.of<LocationBloc>(context).selectGrade(null))
-            ]);
-          }),
-    );
+        padding: const EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0,
+            UIConstants.SMALLER_PADDING, UIConstants.BIGGER_PADDING),
+        child: Row(children: <Widget>[
+          Expanded(
+              child: DropdownButton<String>(
+            items: _createDropdownItems(state.grades),
+            value: state.filterGrade,
+            hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
+              Icon(Icons.filter_list, color: Colors.grey),
+              Text("Grade"),
+            ]),
+            isExpanded: true,
+            onChanged: (value) => BlocProvider.of<LocationBloc>(context).setGradeFilter(value),
+          )),
+          IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: () => BlocProvider.of<LocationBloc>(context).setGradeFilter(null))
+        ]));
   }
 
   Widget _showSectionDropdown(LocationState state, BuildContext context) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0,
             UIConstants.SMALLER_PADDING, UIConstants.BIGGER_PADDING),
-        child: new StreamBuilder(
-          stream: BlocProvider.of<LocationBloc>(context).filterSectionStream.stream,
-          initialData: state.filterSection,
-          builder: (BuildContext context, snapshot) {
-            return new Row(children: <Widget>[
-              Expanded(
-                child: DropdownButton<String>(
-                  disabledHint: Text("No sections"),
-                  iconDisabledColor: Colors.grey,
-                  items: _createDropdownItems(state.sections),
-                  value: snapshot.data,
-                  hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-                    Icon(Icons.filter_list, color: Colors.grey),
-                    Text("Section"),
-                  ]),
-                  isExpanded: true,
-                  onChanged: (value) => BlocProvider.of<LocationBloc>(context).selectSection(value),
-                ),
-              ),
-              IconButton(
-                  icon: Icon(Icons.cancel,
-                      color: (state.sections.isEmpty) ? Colors.grey : Colors.black),
-                  onPressed: () => BlocProvider.of<LocationBloc>(context).selectSection(null))
-            ]);
-          },
-        ));
+        child: Row(children: <Widget>[
+          Expanded(
+            child: DropdownButton<String>(
+              disabledHint: Text("No sections"),
+              iconDisabledColor: Colors.grey,
+              items: _createDropdownItems(state.sections),
+              value: state.filterSection,
+              hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
+                Icon(Icons.filter_list, color: Colors.grey),
+                Text("Section"),
+              ]),
+              isExpanded: true,
+              onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
+            ),
+          ),
+          IconButton(
+              icon:
+                  Icon(Icons.cancel, color: (state.sections.isEmpty) ? Colors.grey : Colors.black),
+              onPressed: () => BlocProvider.of<LocationBloc>(context).setSectionFilter(null))
+        ]));
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {

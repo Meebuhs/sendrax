@@ -18,18 +18,22 @@ class CreateLocationState {
       CreateLocationState._internal(true, new GlobalKey<FormState>(), location.displayName,
           location.sections, location.gradesId, <String>[], "");
 
-    factory CreateLocationState.loading(bool loading, CreateLocationState state) =>
+  factory CreateLocationState.loading(bool loading, CreateLocationState state) =>
       CreateLocationState._internal(loading, state.formKey, state.displayName, state.sections,
           state.gradesId, state.availableGrades, state.errorMessage);
 
   factory CreateLocationState.updateGrades(
-          bool loading, List<String> gradeIds, CreateLocationState state) =>
+          bool loading, List<String> availableGrades, CreateLocationState state) =>
       CreateLocationState._internal(loading, state.formKey, state.displayName, state.sections,
-          state.gradesId, gradeIds, state.errorMessage);
+          state.gradesId, availableGrades, state.errorMessage);
+
+  factory CreateLocationState.selectGrade(String grade, CreateLocationState state) =>
+      CreateLocationState._internal(state.loading, state.formKey, state.displayName, state.sections,
+          grade, state.availableGrades, state.errorMessage);
 
   factory CreateLocationState.updateLocation(
-      bool loading, Location location, CreateLocationState state) =>
-  CreateLocationState._internal(loading, state.formKey, state.displayName, location.sections,
-      location.gradesId, state.availableGrades, state.errorMessage);
+          bool loading, Location location, CreateLocationState state) =>
+      CreateLocationState._internal(loading, state.formKey, state.displayName, location.sections,
+          location.gradesId, state.availableGrades, state.errorMessage);
 }
 // @formatter:on

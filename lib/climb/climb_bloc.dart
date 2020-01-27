@@ -16,9 +16,6 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
   final String climbId;
   final Uuid uuid = Uuid();
-  StreamController sendTypeStream = StreamController<String>();
-  StreamController warmupStream = StreamController<bool>();
-  StreamController downclimbedStream = StreamController<bool>();
   StreamSubscription<List<Attempt>> climbSubscription;
 
   @override
@@ -28,7 +25,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
   }
 
   void _retrieveAttemptsForThisClimb() async {
-    add(ClearAttemptsEvent());
+    add(AttempsClearedEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       climbSubscription =
@@ -42,18 +39,15 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
   }
 
   void selectSendType(String sendType) {
-    state.sendType = sendType;
-    sendTypeStream.add(sendType);
+    add(SendTypeSelectedEvent(sendType));
   }
 
-  void toggleWarmupCheckbox(bool value) {
-    state.warmup = value;
-    warmupStream.add(value);
+  void toggleWarmupCheckbox(bool warmup) {
+    add(WarmupToggledEvent(warmup));
   }
 
-  void toggleDownclimbedCheckbox(bool value) {
-    state.downclimbed = value;
-    downclimbedStream.add(value);
+  void toggleDownclimbedCheckbox(bool downclimbed) {
+    add(DownclimbedToggledEvent(downclimbed));
   }
 
   void validateAndSubmit(ClimbState state, BuildContext context) async {
@@ -68,6 +62,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
         state.loading = false;
       } catch (e) {
         state.loading = false;
+        add(ClimbErrorEvent());
       }
     }
     state.loading = false;
@@ -89,10 +84,16 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
   @override
   Stream<ClimbState> mapEventToState(ClimbEvent event) async* {
-    if (event is ClearAttemptsEvent) {
+    if (event is AttempsClearedEvent) {
       yield ClimbState.updateAttempts(true, state.attempts, state);
     } else if (event is AttemptsUpdatedEvent) {
       yield ClimbState.updateAttempts(false, event.attempts, state);
+    } else if (event is SendTypeSelectedEvent) {
+      yield ClimbState.selectSendType(event.sendType, state);
+    } else if (event is WarmupToggledEvent) {
+      yield ClimbState.toggleWarmup(event.warmup, state);
+    } else if (event is DownclimbedToggledEvent) {
+      yield ClimbState.toggleDownclimbed(event.downclimbed, state);
     } else if (event is ClimbErrorEvent) {
       yield ClimbState.loading(false, state);
     }
@@ -100,9 +101,6 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
   @override
   Future<void> close() {
-    sendTypeStream.close();
-    warmupStream.close();
-    downclimbedStream.close();
     if (climbSubscription != null) {
       climbSubscription.cancel();
     }

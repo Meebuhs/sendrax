@@ -7,7 +7,9 @@ class LogoutEvent extends LoginEvent {}
 class LoginEventInProgress extends LoginEvent {}
 
 class LoginErrorEvent extends LoginEvent {
-  LoginErrorEvent(this.error);
+  LoginErrorEvent(this.errorMessage);
 
-  final dynamic error;
+  final dynamic errorMessage;
 }
+
+class FormToggledEvent extends LoginEvent {}

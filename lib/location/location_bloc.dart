@@ -18,8 +18,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   final SelectedLocation location;
   final List<String> categories;
-  StreamController filterGradeStream = StreamController<String>.broadcast();
-  StreamController filterSectionStream = StreamController<String>.broadcast();
   StreamSubscription<List<Climb>> climbSubscription;
   StreamSubscription<Location> locationSubscription;
   StreamSubscription<List<String>> gradesSubscription;
@@ -71,14 +69,12 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     }
   }
 
-  void selectGrade(String grade) {
-    state.filterGrade = grade;
-    filterGradeStream.add(grade);
+  void setGradeFilter(String grade) {
+    add(GradeFilteredEvent(grade));
   }
 
-  void selectSection(String section) {
-    state.filterSection = section;
-    filterSectionStream.add(section);
+  void setSectionFilter(String section) {
+    add(SectionFilteredEvent(section));
   }
 
   @override
@@ -91,6 +87,10 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       yield LocationState.updateSections(false, event.sections, state);
     } else if (event is GradesUpdatedEvent) {
       yield LocationState.updateGrades(false, event.grades, state);
+    } else if (event is GradeFilteredEvent) {
+      yield LocationState.setFilterGrade(event.filterGrade, state);
+    } else if (event is SectionFilteredEvent) {
+      yield LocationState.setFilterSection(event.filterSection, state);
     } else if (event is LocationErrorEvent) {
       yield LocationState.loading(false, state);
     }
@@ -98,8 +98,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   @override
   Future<void> close() {
-    filterGradeStream.close();
-    filterSectionStream.close();
     if (locationSubscription != null) {
       locationSubscription.cancel();
     }

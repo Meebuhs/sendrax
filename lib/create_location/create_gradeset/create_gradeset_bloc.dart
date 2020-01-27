@@ -10,34 +10,25 @@ import 'create_gradeset_event.dart';
 import 'create_gradeset_state.dart';
 
 class CreateGradeSetBloc extends Bloc<CreateGradeSetEvent, CreateGradeSetState> {
-  StreamController itemStream = StreamController<List<String>>();
-  StreamController errorMessageStream = StreamController<String>();
-
   @override
   CreateGradeSetState get initialState {
     return CreateGradeSetState.initial();
   }
 
-  void addItem(String item) {
-    if (item.trim().isNotEmpty) {
-      state.itemList.add(item);
+  void addGrade(String grade) {
+    if (grade.trim().isNotEmpty) {
+      add(GradeAddedEvent(grade));
       state.itemInputKey.currentState.reset();
-      itemStream.add(state.itemList);
     }
   }
 
-  void removeItem(String item) {
-    state.itemList.remove(item);
-    itemStream.add(state.itemList);
-  }
-
-  List<String> getItemList() {
-    return state.itemList;
+  void removeGrade(String grade) {
+    add(GradeRemovedEvent(grade));
   }
 
   void createGradeSet(BuildContext context) async {
     if (_validateAndSave(state)) {
-      GradeRepo.getInstance().setGradeSet(new GradeSet(state.name, state.itemList));
+      GradeRepo.getInstance().setGradeSet(new GradeSet(state.name, state.grades));
       NavigationHelper.navigateBackOne(context);
     }
   }
@@ -47,24 +38,28 @@ class CreateGradeSetBloc extends Bloc<CreateGradeSetEvent, CreateGradeSetState> 
     form.save();
 
     if (state.name.trim() == "") {
-      state.errorMessage = "Name can't be empty";
-      errorMessageStream.sink.add(state.errorMessage);
+      add(GradeErrorEvent("Name can't be empty"));
       return false;
-    } else if (state.itemList.isEmpty) {
-      state.errorMessage = "Grades can't be empty";
-      errorMessageStream.sink.add(state.errorMessage);
+    } else if (state.grades.isEmpty) {
+      add(GradeErrorEvent("Grades can't be empty"));
       return false;
     }
     return true;
   }
 
   @override
-  Stream<CreateGradeSetState> mapEventToState(CreateGradeSetEvent event) async* {}
+  Stream<CreateGradeSetState> mapEventToState(CreateGradeSetEvent event) async* {
+    if (event is GradeAddedEvent) {
+      yield CreateGradeSetState.addGrade(event.grade, state);
+    } else if (event is GradeRemovedEvent) {
+      yield CreateGradeSetState.removeGrade(event.grade, state);
+    } else if (event is GradeErrorEvent) {
+      yield CreateGradeSetState.error(event.errorMessage, state);
+    }
+  }
 
   @override
   Future<void> close() {
-    itemStream.close();
-    errorMessageStream.close();
     return super.close();
   }
 }

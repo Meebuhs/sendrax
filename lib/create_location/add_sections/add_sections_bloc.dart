@@ -8,42 +8,43 @@ import 'add_sections_event.dart';
 import 'add_sections_state.dart';
 
 class AddSectionsBloc extends Bloc<AddSectionsEvent, AddSectionsState> {
-  AddSectionsBloc(this.itemList, this.sectionsStream);
+  AddSectionsBloc(this.sections, this.sectionsStream);
 
-  final List<String> itemList;
+  final List<String> sections;
   final StreamController<List<String>> sectionsStream;
-
-  StreamController itemStream = StreamController<List<String>>();
 
   @override
   AddSectionsState get initialState {
-    return AddSectionsState.initial(itemList);
+    return AddSectionsState.initial(sections);
   }
 
-  void addItem(String item) {
-    if (item.trim().isNotEmpty) {
-      state.itemList.add(item);
+  void addSection(String section) {
+    if (section.trim().isNotEmpty) {
+      add(SectionAddedEvent(section));
       state.itemInputKey.currentState.reset();
-      itemStream.add(state.itemList);
     }
   }
 
-  void removeItem(String item) {
-    state.itemList.remove(item);
-    itemStream.add(state.itemList);
+  void removeSection(String section) {
+    add(SectionRemovedEvent(section));
   }
 
   void addSections(BuildContext context) async {
-    sectionsStream.add(state.itemList);
+    sectionsStream.add(state.sections);
     NavigationHelper.navigateBackOne(context);
   }
 
   @override
-  Stream<AddSectionsState> mapEventToState(AddSectionsEvent event) async* {}
+  Stream<AddSectionsState> mapEventToState(AddSectionsEvent event) async* {
+    if (event is SectionAddedEvent) {
+      yield AddSectionsState.addSection(event.section, state);
+    } else if (event is SectionRemovedEvent) {
+      yield AddSectionsState.removeSection(event.section, state);
+    }
+  }
 
   @override
   Future<void> close() {
-    itemStream.close();
     return super.close();
   }
 }

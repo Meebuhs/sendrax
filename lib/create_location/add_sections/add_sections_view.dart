@@ -8,13 +8,13 @@ import 'add_sections_bloc.dart';
 import 'add_sections_state.dart';
 
 class AddSections extends StatefulWidget {
-  AddSections({Key key, @required this.itemList, @required this.sectionsStream}) : super(key: key);
+  AddSections({Key key, @required this.sections, @required this.sectionsStream}) : super(key: key);
 
-  final List<String> itemList;
+  final List<String> sections;
   final StreamController<List<String>> sectionsStream;
 
   @override
-  _AddSectionsState createState() => _AddSectionsState(itemList, sectionsStream);
+  _AddSectionsState createState() => _AddSectionsState(sections, sectionsStream);
 }
 
 class _AddSectionsState extends State<AddSections> {
@@ -70,30 +70,24 @@ class AddSectionsWidget extends StatelessWidget {
   }
 
   Widget _showItemList(AddSectionsState state, BuildContext context) {
-    return StreamBuilder(
-        stream: BlocProvider.of<AddSectionsBloc>(context).itemStream.stream,
-        initialData: state.itemList,
-        builder: (BuildContext context, snapshot) {
-          List<Widget> itemChips = List<Widget>();
-          if (snapshot.data != null) {
-            snapshot.data.forEach((item) {
-              itemChips.add(_buildItemChip(state, context, item));
-            });
-          }
-          return Container(
-              constraints: BoxConstraints(
-                minHeight: 140.0,
-                maxHeight: 140.0,
-                maxWidth: 300.0,
-                minWidth: 300.0,
-              ),
-              child: SingleChildScrollView(
-                  child: Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: UIConstants.SMALLER_PADDING,
-                      runSpacing: 0.0,
-                      children: itemChips)));
-        });
+    List<Widget> itemChips = List<Widget>();
+    state.sections.forEach((item) {
+      itemChips.add(_buildItemChip(state, context, item));
+    });
+
+    return Container(
+        constraints: BoxConstraints(
+          minHeight: 140.0,
+          maxHeight: 140.0,
+          maxWidth: 300.0,
+          minWidth: 300.0,
+        ),
+        child: SingleChildScrollView(
+            child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: UIConstants.SMALLER_PADDING,
+                runSpacing: 0.0,
+                children: itemChips)));
   }
 
   Widget _buildItemChip(AddSectionsState state, BuildContext context, String item) {
@@ -104,7 +98,7 @@ class AddSectionsWidget extends StatelessWidget {
           Icons.cancel,
           color: Colors.grey,
         ),
-        onDeleted: () => BlocProvider.of<AddSectionsBloc>(context).removeItem(item),
+        onDeleted: () => BlocProvider.of<AddSectionsBloc>(context).removeSection(item),
       ),
     );
   }
@@ -140,7 +134,7 @@ class AddSectionsWidget extends StatelessWidget {
             color: Colors.pink,
             child: new Text('Add', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             onPressed: () => BlocProvider.of<AddSectionsBloc>(context)
-                .addItem(state.itemInputKey.currentState.value.trim()),
+                .addSection(state.itemInputKey.currentState.value.trim()),
           ),
         ));
   }

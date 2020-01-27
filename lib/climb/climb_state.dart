@@ -29,12 +29,16 @@ class ClimbState {
       loading, state.formKey, state.notesInputController, attempts, state.sendType, state.warmup,
           state.downclimbed, state.notes);
 
-  factory ClimbState.updateWarmup(bool warmup, ClimbState state) =>
+  factory ClimbState.selectSendType(String sendType, ClimbState state) =>
       ClimbState._internal(
+      state.loading, state.formKey, state.notesInputController, state.attempts, sendType,
+          state.warmup, state.downclimbed, state.notes);
+
+  factory ClimbState.toggleWarmup(bool warmup, ClimbState state) => ClimbState._internal(
       state.loading, state.formKey, state.notesInputController, state.attempts, state.sendType,
           warmup, state.downclimbed, state.notes);
 
-  factory ClimbState.updateDownclimbed(bool downclimbed, ClimbState state) => ClimbState._internal(
+  factory ClimbState.toggleDownclimbed(bool downclimbed, ClimbState state) => ClimbState._internal(
       state.loading, state.formKey, state.notesInputController, state.attempts, state.sendType,
           state.warmup, downclimbed, state.notes);
 }

@@ -36,39 +36,34 @@ class LoginWidget extends StatelessWidget {
       body: BlocBuilder(
           bloc: BlocProvider.of<LoginBloc>(context),
           builder: (context, LoginState state) {
-            return StreamBuilder(
-                stream: BlocProvider.of<LoginBloc>(context).loadingStream.stream,
-                initialData: false,
-                builder: (BuildContext context, snapshot) {
-                  Widget content = ListView(
-                    children: <Widget>[showForm(state, context)],
-                  );
-                  if (snapshot.data) {
-                    return Stack(children: <Widget>[
-                      content,
-                      Center(
-                        child: Stack(children: <Widget>[
-                          Opacity(
-                              opacity: 0.4,
-                              child: Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(5.0),
-                                  ))),
-                          Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: CircularProgressIndicator(
-                                strokeWidth: 4.0,
-                              )),
-                        ]),
-                      )
-                    ]);
-                  } else {
-                    return content;
-                  }
-                });
+            Widget content = ListView(
+              children: <Widget>[showForm(state, context)],
+            );
+            if (state.loading) {
+              return Stack(children: <Widget>[
+                content,
+                Center(
+                  child: Stack(children: <Widget>[
+                    Opacity(
+                        opacity: 0.4,
+                        child: Container(
+                            height: 60,
+                            width: 60,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ))),
+                    Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 4.0,
+                        )),
+                  ]),
+                )
+              ]);
+            } else {
+              return content;
+            }
           }),
       resizeToAvoidBottomPadding: false,
     );
@@ -114,21 +109,16 @@ class LoginWidget extends StatelessWidget {
   }
 
   Widget _showPasswordInputs(LoginState state, BuildContext context) {
-    return StreamBuilder(
-        stream: BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
-        initialData: true,
-        builder: (BuildContext context, snapshot) {
-          Widget content = _showSignInPasswordInput(state, context);
-          if (snapshot.data == false) {
-            content = Column(
-              children: <Widget>[
-                _showSignUpPasswordInput(state, context),
-                _showConfirmPasswordInput(state),
-              ],
-            );
-          }
-          return content;
-        });
+    Widget content = _showSignInPasswordInput(state, context);
+    if (state.isLogin == false) {
+      content = Column(
+        children: <Widget>[
+          _showSignUpPasswordInput(state, context),
+          _showConfirmPasswordInput(state),
+        ],
+      );
+    }
+    return content;
   }
 
   Widget _showSignInPasswordInput(LoginState state, BuildContext context) {
@@ -209,15 +199,8 @@ class LoginWidget extends StatelessWidget {
             elevation: 5.0,
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.pink,
-            child: StreamBuilder(
-              stream: BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
-              initialData: true,
-              builder: (BuildContext context, snapshot) {
-                String buttonText = snapshot.data ? 'Login' : 'Create account';
-                return new Text(buttonText,
-                    style: new TextStyle(fontSize: 20.0, color: Colors.white));
-              },
-            ),
+            child: Text(state.isLogin ? 'Login' : 'Create account',
+                style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: () => BlocProvider.of<LoginBloc>(context).validateAndSubmit(state, context),
           ),
         ));
@@ -225,36 +208,24 @@ class LoginWidget extends StatelessWidget {
 
   Widget _showSecondaryButton(LoginState state, BuildContext context) {
     return new FlatButton(
-        child: StreamBuilder(
-          stream: BlocProvider.of<LoginBloc>(context).isLoginFormStream.stream,
-          initialData: true,
-          builder: (BuildContext context, snapshot) {
-            String buttonText = snapshot.data ? 'Create an account' : 'Have an account? Sign in';
-            return new Text(buttonText,
-                style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300));
-          },
-        ),
+        child: Text(state.isLogin ? 'Create an account' : 'Have an account? Sign in',
+            style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
         onPressed: () => BlocProvider.of<LoginBloc>(context).toggleFormMode(state));
   }
 
   Widget _showErrorMessage(LoginState state, BuildContext context) {
-    return StreamBuilder(
-        stream: BlocProvider.of<LoginBloc>(context).errorMessageStream.stream,
-        initialData: "",
-        builder: (BuildContext context, snapshot) {
-          if (snapshot.data.length > 0) {
-            return new Center(
-                child: Text(
-              snapshot.data,
-              style: TextStyle(
-                  fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w300),
-            ));
-          } else {
-            return new Container(
-              height: 0.0,
-            );
-          }
-        });
+    if (state.errorMessage.length > 0) {
+      return new Center(
+          child: Text(
+        state.errorMessage,
+        style:
+            TextStyle(fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w300),
+      ));
+    } else {
+      return new Container(
+        height: 0.0,
+      );
+    }
   }
 
   void navigateToMain() {

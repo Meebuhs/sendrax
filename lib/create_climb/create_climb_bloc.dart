@@ -19,10 +19,6 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
 
   final Climb climb;
 
-  StreamController gradeStream = StreamController<String>();
-  StreamController sectionStream = StreamController<String>();
-  StreamController selectedCategoriesStream = StreamController<List<String>>.broadcast();
-  StreamController errorMessageStream = StreamController<String>();
   StreamSubscription<List<String>> gradesSubscription;
 
   @override
@@ -32,7 +28,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
   }
 
   void _retrieveGrades(String gradesId) async {
-    add(ClearGradesEvent());
+    add(GradesClearedEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       gradesSubscription = GradeRepo.getInstance().getGradesForId(user, gradesId).listen((grades) {
@@ -46,7 +42,6 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
   void validateAndSubmit(
       CreateClimbState state, BuildContext context, CreateClimbWidget view) async {
     FocusScope.of(context).unfocus();
-    state.errorMessage = "";
     state.loading = true;
 
     if (_validateAndSave(state)) {
@@ -58,8 +53,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
       } catch (e) {
         state.formKey.currentState.reset();
         state.loading = false;
-        state.errorMessage = e.message;
-        errorMessageStream.sink.add(state.errorMessage);
+        add(CreateClimbErrorEvent());
       }
       view.navigateToLocation();
     }
@@ -76,36 +70,41 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
   }
 
   void selectGrade(String grade) {
-    state.grade = grade;
-    gradeStream.add(grade);
+    add(GradeSelectedEvent(grade));
   }
 
   void selectSection(String section) {
-    state.section = section;
-    sectionStream.add(section);
+    add(SectionSelectedEvent(section));
   }
 
   void toggleCategory(bool selected, String category) {
+    List<String> selectedCategories = state.selectedCategories;
     if (selected) {
-      state.selectedCategories.add(category);
+      selectedCategories.add(category);
     } else {
-      state.selectedCategories.remove(category);
+      selectedCategories.remove(category);
     }
-    selectedCategoriesStream.add(state.selectedCategories);
+    add(CategoriesUpdatedEvent(selectedCategories));
   }
 
-  void deleteClimb(BuildContext context, CreateClimbWidget view,
-      SelectedLocation location, List<String> categories) {
+  void deleteClimb(BuildContext context, CreateClimbWidget view, SelectedLocation location,
+      List<String> categories) {
     ClimbRepo.getInstance().deleteClimb(this.climb.id);
     NavigationHelper.resetToLocation(context, location, categories);
   }
 
   @override
   Stream<CreateClimbState> mapEventToState(CreateClimbEvent event) async* {
-    if (event is ClearGradesEvent) {
+    if (event is GradesClearedEvent) {
       yield CreateClimbState.updateGrades(true, <String>[], state);
     } else if (event is GradesUpdatedEvent) {
       yield CreateClimbState.updateGrades(false, event.grades, state);
+    } else if (event is GradeSelectedEvent) {
+      yield CreateClimbState.selectGrade(event.grade, state);
+    } else if (event is SectionSelectedEvent) {
+      yield CreateClimbState.selectSection(event.section, state);
+    } else if (event is CategoriesUpdatedEvent) {
+      yield CreateClimbState.updateCategories(event.selectedCategories, state);
     } else if (event is CreateClimbErrorEvent) {
       yield CreateClimbState.loading(false, state);
     }
@@ -113,10 +112,6 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
 
   @override
   Future<void> close() {
-    gradeStream.close();
-    sectionStream.close();
-    selectedCategoriesStream.close();
-    errorMessageStream.close();
     if (gradesSubscription != null) {
       gradesSubscription.cancel();
     }

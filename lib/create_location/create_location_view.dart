@@ -133,24 +133,18 @@ class CreateLocationWidget extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
-        child: new StreamBuilder(
-          stream: BlocProvider.of<CreateLocationBloc>(context).gradesIdStream.stream,
-          initialData: state.gradesId,
-          builder: (BuildContext context, snapshot) {
-            return new DropdownButtonFormField<String>(
-              items: _createDropdownItems(state),
-              value: snapshot.data,
-              hint: Text("Grades"),
-              isExpanded: true,
-              validator: (String value) {
-                if (value == null) {
-                  return 'A grade set must be selected';
-                }
-                return null;
-              },
-              onChanged: (value) => BlocProvider.of<CreateLocationBloc>(context).selectGrade(value),
-            );
+        child: new DropdownButtonFormField<String>(
+          items: _createDropdownItems(state),
+          value: state.gradesId,
+          hint: Text("Grades"),
+          isExpanded: true,
+          validator: (String value) {
+            if (value == null) {
+              return 'A grade set must be selected';
+            }
+            return null;
           },
+          onChanged: (value) => BlocProvider.of<CreateLocationBloc>(context).selectGrade(value),
         ));
   }
 
@@ -231,7 +225,7 @@ class CreateLocationWidget extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(title: Text("Edit this location's sections"), children: <Widget>[
-            AddSections(itemList: state.sections, sectionsStream: stream),
+            AddSections(sections: state.sections, sectionsStream: stream),
           ]);
         });
   }
