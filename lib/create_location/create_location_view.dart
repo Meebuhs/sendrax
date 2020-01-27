@@ -128,7 +128,7 @@ class CreateLocationWidget extends StatelessWidget {
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: new DropdownButtonFormField<String>(
           items: _createDropdownItems(state),
-          value: state.gradesId,
+          value: state.gradeSet,
           hint: Text("Grades"),
           isExpanded: true,
           validator: (String value) {
@@ -251,7 +251,7 @@ class CreateLocationWidget extends StatelessWidget {
               actions: <Widget>[
                 FlatButton(
                   child: Text("Cancel"),
-                  onPressed: navigateBackOne,
+                  onPressed: () => navigateBackOne,
                 ),
                 FlatButton(
                   child: Text("Delete"),
@@ -264,5 +264,13 @@ class CreateLocationWidget extends StatelessWidget {
 
   void navigateBackOne() {
     NavigationHelper.navigateBackOne(widgetState.context);
+  }
+
+  void navigateToLocationAfterEdit(CreateLocationState state) {
+    // pop back to main screen then reload the location
+    NavigationHelper.navigateBackOne(widgetState.context);
+    NavigationHelper.navigateBackOne(widgetState.context);
+    SelectedLocation selectedLocation = SelectedLocation(widget.location.id, state.displayName, state.gradeSet);
+    NavigationHelper.navigateToLocation(widgetState.context, selectedLocation, widget.location.categories, addToBackStack: true);
   }
 }

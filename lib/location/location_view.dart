@@ -301,8 +301,8 @@ class LocationWidget extends StatelessWidget {
         addToBackStack: true);
   }
 
-  void _editLocation(String locationId, String displayName, String gradesId) {
-    Location location = new Location(locationId, displayName, gradesId, <String>[]);
+  void _editLocation(String locationId, String displayName, String gradeSet) {
+    Location location = new Location(locationId, displayName, gradeSet, <String>[]);
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, true,
         addToBackStack: true);
   }

@@ -22,11 +22,11 @@ class GradeRepo {
     return _instance;
   }
 
-  Stream<List<String>> getGradesForId(User user, String gradesId) {
+  Stream<List<String>> getGradesForId(User user, String gradeSet) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
-        .document(gradesId)
+        .document(gradeSet)
         .snapshots()
         .map((data) => Deserializer.deserializeGradeSet(data).grades);
   }
