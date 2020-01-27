@@ -13,16 +13,16 @@ class CreateClimbScreen extends StatefulWidget {
       {Key key,
       @required this.climb,
       @required this.selectedLocation,
-      @required this.availableSections,
-      @required this.availableGrades,
+      @required this.sections,
+      @required this.grades,
       @required this.categories,
       @required this.isEdit})
       : super(key: key);
 
   final Climb climb;
   final SelectedLocation selectedLocation;
-  final List<String> availableSections;
-  final List<String> availableGrades;
+  final List<String> sections;
+  final List<String> grades;
   final List<String> categories;
   final bool isEdit;
 
@@ -34,7 +34,7 @@ class _CreateClimbState extends State<CreateClimbScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateClimbBloc>(
-      create: (context) => CreateClimbBloc(widget.climb, widget.availableGrades),
+      create: (context) => CreateClimbBloc(widget.climb, widget.grades),
       child: CreateClimbWidget(
         widget: widget,
         widgetState: this,
@@ -132,7 +132,7 @@ class CreateClimbWidget extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
             UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
         child: DropdownButtonFormField<String>(
-          items: _createDropdownItems(state.availableGrades),
+          items: _createDropdownItems(state.grades),
           value: state.grade,
           hint: Text("Grade"),
           isExpanded: true,
@@ -156,12 +156,12 @@ class CreateClimbWidget extends StatelessWidget {
             Text("No sections"),
           ]),
           iconDisabledColor: Colors.grey,
-          items: _createDropdownItems(widget.availableSections),
+          items: _createDropdownItems(widget.sections),
           value: state.section,
           hint: Text("Section"),
           isExpanded: true,
           validator: (String value) {
-            if (widget.availableSections.isNotEmpty) {
+            if (widget.sections.isNotEmpty) {
               if (value == null) {
                 return 'A section must be selected';
               }

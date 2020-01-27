@@ -79,8 +79,8 @@ class NavigationHelper {
               builder: (context) => CreateClimbScreen(
                   climb: climb,
                   selectedLocation: selectedLocation,
-                  availableSections: sections,
-                  availableGrades: grades,
+                  sections: sections,
+                  grades: grades,
                   categories: categories,
                   isEdit: isEdit)));
     } else {
@@ -90,8 +90,8 @@ class NavigationHelper {
               builder: (context) => CreateClimbScreen(
                   climb: climb,
                   selectedLocation: selectedLocation,
-                  availableSections: sections,
-                  availableGrades: grades,
+                  sections: sections,
+                  grades: grades,
                   categories: categories,
                   isEdit: isEdit)));
     }

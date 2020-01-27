@@ -7,9 +7,9 @@ class GradesClearedEvent extends CreateLocationEvent {}
 class LocationClearedEvent extends CreateLocationEvent {}
 
 class GradesUpdatedEvent extends CreateLocationEvent {
-  GradesUpdatedEvent(this.availableGrades);
+  GradesUpdatedEvent(this.grades);
 
-  final List<String> availableGrades;
+  final List<String> grades;
 }
 
 class LocationUpdatedEvent extends CreateLocationEvent {

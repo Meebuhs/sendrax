@@ -7,33 +7,33 @@ class CreateLocationState {
   String displayName;
   List<String> sections;
   String gradesId;
-  List<String> availableGrades;
+  List<String> grades;
   String errorMessage;
 
   // @formatter:off
   CreateLocationState._internal(this.loading, this.formKey, this.displayName, this.sections,
-      this.gradesId, this.availableGrades, this.errorMessage);
+      this.gradesId, this.grades, this.errorMessage);
 
   factory CreateLocationState.initial(Location location, bool isEdit) =>
       CreateLocationState._internal(true, new GlobalKey<FormState>(), location.displayName,
-          location.sections, location.gradesId, <String>[], "");
+          location.sections, location.gradeSet, <String>[], "");
 
     factory CreateLocationState.loading(bool loading, CreateLocationState state) =>
       CreateLocationState._internal(loading, state.formKey, state.displayName, state.sections,
-          state.gradesId, state.availableGrades, state.errorMessage);
+          state.gradesId, state.grades, state.errorMessage);
 
   factory CreateLocationState.updateGrades(
-          bool loading, List<String> availableGrades, CreateLocationState state) =>
+          bool loading, List<String> grades, CreateLocationState state) =>
       CreateLocationState._internal(loading, state.formKey, state.displayName, state.sections,
-          state.gradesId, availableGrades, state.errorMessage);
+          state.gradesId, grades, state.errorMessage);
 
   factory CreateLocationState.selectGrade(String grade, CreateLocationState state) =>
       CreateLocationState._internal(state.loading, state.formKey, state.displayName, state.sections,
-          grade, state.availableGrades, state.errorMessage);
+          grade, state.grades, state.errorMessage);
 
   factory CreateLocationState.updateLocation(
       bool loading, Location location, CreateLocationState state) =>
   CreateLocationState._internal(loading, state.formKey, state.displayName, location.sections,
-      location.gradesId, state.availableGrades, state.errorMessage);
+      location.gradeSet, state.grades, state.errorMessage);
 }
 // @formatter:on

@@ -61,7 +61,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   void _retrieveGradesForThisLocation(User user) async {
     if (user != null) {
       gradesSubscription =
-          GradeRepo.getInstance().getGradesForId(user, location.gradesId).listen((grades) {
+          GradeRepo.getInstance().getGradesForId(user, location.gradeSet).listen((grades) {
         add(GradesUpdatedEvent(grades));
       });
     } else {

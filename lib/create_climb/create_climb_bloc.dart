@@ -13,14 +13,14 @@ import 'create_climb_state.dart';
 import 'create_climb_view.dart';
 
 class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
-  CreateClimbBloc(this.climb, this.availableGrades);
+  CreateClimbBloc(this.climb, this.grades);
 
   final Climb climb;
-  final List<String> availableGrades;
+  final List<String> grades;
 
   @override
   CreateClimbState get initialState {
-    return CreateClimbState.initial(climb, availableGrades);
+    return CreateClimbState.initial(climb, grades);
   }
 
   void validateAndSubmit(

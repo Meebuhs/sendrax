@@ -36,7 +36,7 @@ class GradeRepo {
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
         .snapshots()
-        .map((data) => Deserializer.deserializeGradeIds(data.documents));
+        .map((data) => Deserializer.deserializeGradeSetIds(data.documents));
   }
 
   void setGradeSet(GradeSet gradeSet) async {

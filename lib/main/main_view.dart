@@ -85,7 +85,7 @@ class MainWidget extends StatelessWidget {
 
   void _onLocationTap(Location location, List<String> categories) {
     SelectedLocation selectedLocation =
-        SelectedLocation(location.id, location.displayName, location.gradesId);
+        SelectedLocation(location.id, location.displayName, location.gradeSet);
     navigateToLocation(selectedLocation, categories);
   }
 

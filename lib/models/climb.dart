@@ -8,7 +8,7 @@ class SelectedClimb {
 }
 
 class Climb {
-  Climb(this.id, this.displayName, this.locationId, this.grade, this.gradesId, this.section,
+  Climb(this.id, this.displayName, this.locationId, this.grade, this.gradeSet, this.section,
       this.archived, this.categories,
       [this.attempts]);
 
@@ -16,7 +16,7 @@ class Climb {
   final String displayName;
   final String locationId;
   final String grade;
-  final String gradesId;
+  final String gradeSet;
   final String section;
   final bool archived;
   final List<String> categories;
@@ -28,7 +28,7 @@ class Climb {
       "displayName": displayName,
       "locationId": locationId,
       "grade": grade,
-      "gradesId": gradesId,
+      "gradeSet": gradeSet,
       "section": section,
       "archived": archived,
       "categories": categories,

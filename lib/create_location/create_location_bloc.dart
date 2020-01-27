@@ -27,11 +27,11 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     if (isEdit) {
       _retrieveDataForThisLocation();
     }
-    _retrieveAvailableGradeSets();
+    _retrieveGradeSets();
     return CreateLocationState.initial(location, isEdit);
   }
 
-  void _retrieveAvailableGradeSets() async {
+  void _retrieveGradeSets() async {
     add(GradesClearedEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
@@ -109,7 +109,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
       yield CreateLocationState.updateLocation(true,
           new Location(this.location.id, state.displayName, state.gradesId, <String>[]), state);
     } else if (event is GradesUpdatedEvent) {
-      yield CreateLocationState.updateGrades(false, event.availableGrades, state);
+      yield CreateLocationState.updateGrades(false, event.grades, state);
     } else if (event is LocationUpdatedEvent) {
       yield CreateLocationState.updateLocation(false, event.location, state);
     } else if (event is CreateLocationErrorEvent) {

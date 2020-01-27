@@ -142,7 +142,7 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   List<DropdownMenuItem> _createDropdownItems(CreateLocationState state) {
-    return state.availableGrades.map((String value) {
+    return state.grades.map((String value) {
       return new DropdownMenuItem<String>(
         value: value,
         child: new Text(value),

@@ -49,7 +49,7 @@ class LocationWidget extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () => _editLocation(
-                widget.location.id, widget.location.displayName, widget.location.gradesId),
+                widget.location.id, widget.location.displayName, widget.location.gradeSet),
           )
         ],
       ),
@@ -289,11 +289,11 @@ class LocationWidget extends StatelessWidget {
     // the null values for grade and section here are required as they are used as the initial
     // values for the dropdowns
     Climb climb = new Climb("climb-${uuid.v1()}", "", widget.location.id, null,
-        widget.location.gradesId, null, false, <String>[]);
+        widget.location.gradeSet, null, false, <String>[]);
     NavigationHelper.navigateToCreateClimb(
         widgetState.context,
         climb,
-        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.gradesId),
+        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.gradeSet),
         state.sections,
         state.grades,
         widget.categories,
@@ -311,7 +311,7 @@ class LocationWidget extends StatelessWidget {
     NavigationHelper.navigateToClimb(
         widgetState.context,
         climb,
-        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.gradesId),
+        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.gradeSet),
         state.sections,
         state.grades,
         widget.categories,
