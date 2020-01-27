@@ -5,9 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
-import 'package:sendrax/models/grade_repo.dart';
 import 'package:sendrax/models/location.dart';
-import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
 
 import 'create_climb_event.dart';
@@ -15,28 +13,14 @@ import 'create_climb_state.dart';
 import 'create_climb_view.dart';
 
 class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
-  CreateClimbBloc(this.climb);
+  CreateClimbBloc(this.climb, this.availableGrades);
 
   final Climb climb;
-
-  StreamSubscription<List<String>> gradesSubscription;
+  final List<String> availableGrades;
 
   @override
   CreateClimbState get initialState {
-    _retrieveGrades(climb.gradesId);
-    return CreateClimbState.initial(climb);
-  }
-
-  void _retrieveGrades(String gradesId) async {
-    add(GradesClearedEvent());
-    final user = await UserRepo.getInstance().getCurrentUser();
-    if (user != null) {
-      gradesSubscription = GradeRepo.getInstance().getGradesForId(user, gradesId).listen((grades) {
-        add(GradesUpdatedEvent(grades));
-      });
-    } else {
-      add(CreateClimbErrorEvent());
-    }
+    return CreateClimbState.initial(climb, availableGrades);
   }
 
   void validateAndSubmit(
@@ -95,11 +79,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
 
   @override
   Stream<CreateClimbState> mapEventToState(CreateClimbEvent event) async* {
-    if (event is GradesClearedEvent) {
-      yield CreateClimbState.updateGrades(true, <String>[], state);
-    } else if (event is GradesUpdatedEvent) {
-      yield CreateClimbState.updateGrades(false, event.grades, state);
-    } else if (event is GradeSelectedEvent) {
+    if (event is GradeSelectedEvent) {
       yield CreateClimbState.selectGrade(event.grade, state);
     } else if (event is SectionSelectedEvent) {
       yield CreateClimbState.selectSection(event.section, state);
@@ -112,9 +92,6 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
 
   @override
   Future<void> close() {
-    if (gradesSubscription != null) {
-      gradesSubscription.cancel();
-    }
     return super.close();
   }
 }

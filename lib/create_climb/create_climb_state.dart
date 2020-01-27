@@ -16,9 +16,9 @@ class CreateClimbState {
       this.loading, this.formKey, this.displayName, this.grade, this.gradesId, this.availableGrades,
       this.section, this.selectedCategories);
 
-  factory CreateClimbState.initial(Climb climb) =>
-      CreateClimbState._internal(true, new GlobalKey<FormState>(), climb.displayName, climb.grade,
-          climb.gradesId, <String>[], climb.section, climb.categories);
+  factory CreateClimbState.initial(Climb climb, List<String> availableGrades) =>
+      CreateClimbState._internal(false, new GlobalKey<FormState>(), climb.displayName, climb.grade,
+          climb.gradesId, availableGrades, climb.section, climb.categories);
 
   factory CreateClimbState.loading(bool loading, CreateClimbState state) =>
       CreateClimbState._internal(loading, state.formKey, state.displayName, state.grade,
@@ -31,11 +31,6 @@ class CreateClimbState {
   factory CreateClimbState.selectSection(String section, CreateClimbState state) =>
       CreateClimbState._internal(state.loading, state.formKey, state.displayName, state.grade,
           state.gradesId, state.availableGrades, section, state.selectedCategories);
-
-  factory CreateClimbState.updateGrades(
-          bool loading, List<String> grades, CreateClimbState state) =>
-      CreateClimbState._internal(loading, state.formKey, state.displayName, state.grade,
-          state.gradesId, grades, state.section, state.selectedCategories);
 
   factory CreateClimbState.updateCategories(List<String> selectedCategories, CreateClimbState state) =>
       CreateClimbState._internal(state.loading, state.formKey, state.displayName, state.grade,

@@ -1,13 +1,5 @@
 abstract class CreateClimbEvent {}
 
-class GradesClearedEvent extends CreateClimbEvent {}
-
-class GradesUpdatedEvent extends CreateClimbEvent {
-  GradesUpdatedEvent(this.grades);
-
-  final List<String> grades;
-}
-
 class GradeSelectedEvent extends CreateClimbEvent {
   GradeSelectedEvent(this.grade);
 

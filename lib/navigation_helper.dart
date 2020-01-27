@@ -68,6 +68,7 @@ class NavigationHelper {
       Climb climb,
       SelectedLocation selectedLocation,
       List<String> sections,
+      List<String> grades,
       List<String> categories,
       bool isEdit,
       {bool addToBackStack: false}) {
@@ -79,6 +80,7 @@ class NavigationHelper {
                   climb: climb,
                   selectedLocation: selectedLocation,
                   availableSections: sections,
+                  availableGrades: grades,
                   categories: categories,
                   isEdit: isEdit)));
     } else {
@@ -89,13 +91,14 @@ class NavigationHelper {
                   climb: climb,
                   selectedLocation: selectedLocation,
                   availableSections: sections,
+                  availableGrades: grades,
                   categories: categories,
                   isEdit: isEdit)));
     }
   }
 
   static void navigateToClimb(BuildContext context, Climb climb, SelectedLocation selectedLocation,
-      List<String> sections, List<String> categories,
+      List<String> sections, List<String> grades, List<String> categories,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
@@ -105,6 +108,7 @@ class NavigationHelper {
                   climb: climb,
                   selectedLocation: selectedLocation,
                   sections: sections,
+                  grades: grades,
                   categories: categories)));
     } else {
       Navigator.pushReplacement(
@@ -114,6 +118,7 @@ class NavigationHelper {
                   climb: climb,
                   selectedLocation: selectedLocation,
                   sections: sections,
+                  grades: grades,
                   categories: categories)));
     }
   }

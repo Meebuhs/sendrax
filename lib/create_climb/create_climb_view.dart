@@ -14,6 +14,7 @@ class CreateClimbScreen extends StatefulWidget {
       @required this.climb,
       @required this.selectedLocation,
       @required this.availableSections,
+      @required this.availableGrades,
       @required this.categories,
       @required this.isEdit})
       : super(key: key);
@@ -21,26 +22,20 @@ class CreateClimbScreen extends StatefulWidget {
   final Climb climb;
   final SelectedLocation selectedLocation;
   final List<String> availableSections;
+  final List<String> availableGrades;
   final List<String> categories;
   final bool isEdit;
 
   @override
   State<StatefulWidget> createState() =>
-      _CreateClimbState(climb, availableSections, categories, isEdit);
+      _CreateClimbState();
 }
 
 class _CreateClimbState extends State<CreateClimbScreen> {
-  final Climb climb;
-  final List<String> availableSections;
-  final List<String> categories;
-  final bool isEdit;
-
-  _CreateClimbState(this.climb, this.availableSections, this.categories, this.isEdit);
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateClimbBloc>(
-      create: (context) => CreateClimbBloc(climb),
+      create: (context) => CreateClimbBloc(widget.climb, widget.availableGrades),
       child: CreateClimbWidget(
         widget: widget,
         widgetState: this,
@@ -58,14 +53,14 @@ class CreateClimbWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String editTitleText = (widgetState.climb.displayName == "")
+    String editTitleText = (widget.climb.displayName == "")
         ? "Edit climb"
-        : "Edit ${widgetState.climb.displayName}";
+        : "Edit ${widget.climb.displayName}";
     return Scaffold(
       appBar: AppBar(
-        title: Text((widgetState.isEdit) ? editTitleText : "Create a climb"),
+        title: Text((widget.isEdit) ? editTitleText : "Create a climb"),
         actions: <Widget>[
-          (widgetState.isEdit)
+          (widget.isEdit)
               ? IconButton(
                   icon: Icon(Icons.delete_forever),
                   onPressed: () =>
@@ -163,12 +158,12 @@ class CreateClimbWidget extends StatelessWidget {
             Text("No sections"),
           ]),
           iconDisabledColor: Colors.grey,
-          items: _createDropdownItems(widgetState.availableSections),
+          items: _createDropdownItems(widget.availableSections),
           value: state.section,
           hint: Text("Section"),
           isExpanded: true,
           validator: (String value) {
-            if (widgetState.availableSections.isNotEmpty) {
+            if (widget.availableSections.isNotEmpty) {
               if (value == null) {
                 return 'A section must be selected';
               }
@@ -195,7 +190,7 @@ class CreateClimbWidget extends StatelessWidget {
 
   Widget _showCategorySelection(CreateClimbState state, BuildContext context) {
     List<Widget> itemChips = List<Widget>();
-    widgetState.categories.forEach((item) {
+    widget.categories.forEach((item) {
       itemChips.add(_buildItemChip(state, context, item));
     });
     return Container(
