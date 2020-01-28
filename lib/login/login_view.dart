@@ -93,9 +93,9 @@ class LoginWidget extends StatelessWidget {
       keyboardType: TextInputType.text,
       autofocus: false,
       decoration: new InputDecoration(
-          hintText: 'Username',
+          labelText: 'Username',
           icon: new Icon(
-            Icons.mail,
+            Icons.perm_identity,
             color: Colors.grey,
           )),
       validator: (String value) {
@@ -109,19 +109,17 @@ class LoginWidget extends StatelessWidget {
   }
 
   Widget _showPasswordInputs(LoginState state, BuildContext context) {
-    Widget content = _showSignInPasswordInput(state, context);
-    if (state.isLogin == false) {
-      content = Column(
-        children: <Widget>[
-          _showSignUpPasswordInput(state, context),
-          _showConfirmPasswordInput(state),
-        ],
-      );
-    }
-    return content;
+    return state.isLogin
+        ? _showPasswordInput(state, context)
+        : Column(
+            children: <Widget>[
+              _showPasswordInput(state, context),
+              _showConfirmPasswordInput(state),
+            ],
+          );
   }
 
-  Widget _showSignInPasswordInput(LoginState state, BuildContext context) {
+  Widget _showPasswordInput(LoginState state, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
@@ -130,33 +128,14 @@ class LoginWidget extends StatelessWidget {
         obscureText: true,
         autofocus: false,
         decoration: new InputDecoration(
-            hintText: 'Password',
+            labelText: 'Password',
+            helperText: state.isLogin ? null : 'Must be at least 6 characters',
             icon: new Icon(
-              Icons.lock,
-              color: Colors.grey,
-            )),
-        onSaved: (value) => state.password = value.trim(),
-      ),
-    );
-  }
-
-  Widget _showSignUpPasswordInput(LoginState state, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
-        key: state.passwordKey,
-        maxLines: 1,
-        obscureText: true,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Password',
-            helperText: 'Must be at least 6 characters',
-            icon: new Icon(
-              Icons.lock,
+              Icons.lock_outline,
               color: Colors.grey,
             )),
         validator: (String value) {
-          if (value.trim().length < 6) {
+          if (!state.isLogin && value.trim().length < 6) {
             return 'Password must be at least 6 characters';
           }
           return null;
@@ -176,7 +155,7 @@ class LoginWidget extends StatelessWidget {
         decoration: new InputDecoration(
             hintText: 'Confirm Password',
             icon: new Icon(
-              Icons.lock,
+              Icons.lock_outline,
               color: Colors.grey,
             )),
         validator: (String value) {

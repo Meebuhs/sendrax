@@ -266,17 +266,11 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   void navigateToClimbAfterEdit(CreateClimbState state) {
+    // pop back to location then reload climb
     NavigationHelper.navigateBackOne(widgetState.context);
     NavigationHelper.navigateBackOne(widgetState.context);
-    Climb climb = Climb(
-        widget.climb.id,
-        state.displayName,
-        widget.climb.locationId,
-        state.grade,
-        widget.climb.gradeSet,
-        state.section,
-        widget.climb.archived,
-        state.selectedCategories,
+    Climb climb = Climb(widget.climb.id, state.displayName, widget.climb.locationId, state.grade,
+        widget.climb.gradeSet, state.section, widget.climb.archived, state.selectedCategories,
         widget.climb.attempts);
     NavigationHelper.navigateToClimb(widgetState.context, climb, widget.selectedLocation,
         widget.sections, widget.grades, widget.categories, addToBackStack: true);
