@@ -16,7 +16,17 @@ class MainScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _MainState();
 }
 
-class _MainState extends State<MainScreen> {
+class _MainState extends State<MainScreen> with TickerProviderStateMixin {
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = new AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<MainBloc>(
@@ -96,14 +106,104 @@ class MainWidget extends StatelessWidget {
         Container(
           alignment: Alignment.bottomRight,
           padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
-          child: FloatingActionButton(
-              onPressed: () => _createLocation(state),
-              child: Icon(Icons.add, color: Colors.white),
-              backgroundColor: Colors.pinkAccent,
-              elevation: UIConstants.STANDARD_ELEVATION),
+          child: new Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                _showEditCategories(state),
+                _showAddLocation(state),
+                _showMainFab(),
+              ]),
         )
       ],
     );
+  }
+
+  Widget _showEditCategories(MainState state) {
+    double totalWidth = 149;
+    double fabContainerSize = 56;
+    double xProportionToFabCenter = 1 - (fabContainerSize / 2 / totalWidth);
+    return Container(
+        height: 60.0,
+        width: totalWidth,
+        alignment: FractionalOffset.center,
+        child: ScaleTransition(
+          alignment: FractionalOffset(xProportionToFabCenter, 0.5),
+          scale: CurvedAnimation(
+            parent: widgetState._animationController,
+            curve: Interval(0.0, 1.0, curve: Curves.easeOutQuad),
+          ),
+          child: Row(
+            children: <Widget>[
+              Text("Edit categories"),
+              Container(
+                  height: fabContainerSize,
+                  width: fabContainerSize,
+                  alignment: FractionalOffset.center,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    backgroundColor: Colors.white,
+                    mini: true,
+                    child: new Icon(Icons.mode_edit, color: Colors.pink),
+                    onPressed: () => _editCategories(),
+                  ))
+            ],
+          ),
+        ));
+  }
+
+  Widget _showAddLocation(MainState state) {
+    double totalWidth = 135;
+    double fabContainerSize = 56;
+    double xProportionToFabCenter = 1 - (fabContainerSize / 2 / totalWidth);
+    return Container(
+        height: 60.0,
+        width: totalWidth,
+        alignment: FractionalOffset.center,
+        child: ScaleTransition(
+          alignment: FractionalOffset(xProportionToFabCenter, 0.5),
+          scale: CurvedAnimation(
+            parent: widgetState._animationController,
+            curve: Interval(0.0, 1.0, curve: Curves.easeOutQuad),
+          ),
+          child: Row(
+            children: <Widget>[
+              Text("Add location"),
+              Container(
+                  height: fabContainerSize,
+                  width: fabContainerSize,
+                  alignment: FractionalOffset.center,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    backgroundColor: Colors.white,
+                    mini: true,
+                    child: new Icon(Icons.add, color: Colors.pink),
+                    onPressed: () => _createLocation(state),
+                  ))
+            ],
+          ),
+        ));
+  }
+
+  Widget _showMainFab() {
+    return Container(
+        alignment: FractionalOffset.bottomRight,
+        child: Padding(
+            padding: EdgeInsets.fromLTRB(0.0, UIConstants.SMALLER_PADDING, 0.0, 0.0),
+            child: FloatingActionButton(
+              heroTag: null,
+              child: AnimatedIcon(
+                icon: AnimatedIcons.menu_close,
+                progress: widgetState._animationController,
+              ),
+              onPressed: () {
+                if (widgetState._animationController.isDismissed) {
+                  widgetState._animationController.forward();
+                } else {
+                  widgetState._animationController.reverse();
+                }
+              },
+            )));
   }
 
   void _createLocation(MainState state) {
@@ -113,6 +213,8 @@ class MainWidget extends StatelessWidget {
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
         addToBackStack: true);
   }
+
+  void _editCategories() {}
 
   void navigateToLogin() {
     NavigationHelper.navigateToLogin(widgetState.context);
