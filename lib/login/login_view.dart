@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/navigation_helper.dart';
+import 'package:sendrax/util/constants.dart';
 
 import 'login_bloc.dart';
 import 'login_state.dart';
@@ -12,11 +13,33 @@ class LoginScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _LoginState();
 }
 
-class _LoginState extends State<LoginScreen> {
+class _LoginState extends State<LoginScreen> with TickerProviderStateMixin {
+  AnimationController _animationController;
+  Animation _heightAnimation;
+  Animation _slideAnimation;
+
+  @override
+  initState() {
+    super.initState();
+    _animationController =
+        AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
+    _heightAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+        curve: Interval(0.0, 0.5, curve: Curves.easeOutQuad), parent: _animationController));
+    _slideAnimation = Tween(begin: const Offset(-1.5, 0.0), end: Offset.zero).animate(
+        CurvedAnimation(
+            curve: Interval(0.4, 1.0, curve: Curves.easeOutQuad), parent: _animationController));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(), child: LoginWidget(widget: widget, widgetState: this));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 }
 
@@ -51,13 +74,16 @@ class LoginWidget extends StatelessWidget {
                             width: 60,
                             decoration: BoxDecoration(
                               color: Colors.black,
-                              borderRadius: BorderRadius.circular(5.0),
+                              borderRadius:
+                                  BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS),
                             ))),
-                    Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: CircularProgressIndicator(
+                    SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: Center(
+                            child: CircularProgressIndicator(
                           strokeWidth: 4.0,
-                        )),
+                        ))),
                   ]),
                 )
               ]);
@@ -71,7 +97,7 @@ class LoginWidget extends StatelessWidget {
 
   Widget showForm(LoginState state, BuildContext context) {
     return new Container(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
         child: new Form(
           key: state.formKey,
           child: new ListView(
@@ -94,7 +120,16 @@ class LoginWidget extends StatelessWidget {
       autofocus: false,
       decoration: new InputDecoration(
           labelText: 'Username',
-          icon: new Icon(
+          focusedBorder: _createInputBorder(Colors.pink),
+          enabledBorder: _createInputBorder(Colors.grey),
+          errorBorder: _createInputBorder(Colors.red),
+          focusedErrorBorder: _createInputBorder(Colors.red),
+          errorStyle: TextStyle(
+              fontSize: UIConstants.STANDARD_FONT_SIZE,
+              height: 0.75,
+              color: Colors.red,
+              fontWeight: FontWeight.w300),
+          prefixIcon: new Icon(
             Icons.perm_identity,
             color: Colors.grey,
           )),
@@ -109,19 +144,17 @@ class LoginWidget extends StatelessWidget {
   }
 
   Widget _showPasswordInputs(LoginState state, BuildContext context) {
-    return state.isLogin
-        ? _showPasswordInput(state, context)
-        : Column(
-            children: <Widget>[
-              _showPasswordInput(state, context),
-              _showConfirmPasswordInput(state),
-            ],
-          );
+    return Column(
+      children: <Widget>[
+        _showPasswordInput(state, context),
+        _showConfirmPasswordInput(state),
+      ],
+    );
   }
 
   Widget _showPasswordInput(LoginState state, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
       child: new TextFormField(
         key: state.passwordKey,
         maxLines: 1,
@@ -129,14 +162,24 @@ class LoginWidget extends StatelessWidget {
         autofocus: false,
         decoration: new InputDecoration(
             labelText: 'Password',
-            helperText: state.isLogin ? null : 'Must be at least 6 characters',
-            icon: new Icon(
+            focusedBorder: _createInputBorder(Colors.pink),
+            enabledBorder: _createInputBorder(Colors.grey),
+            errorBorder: _createInputBorder(Colors.red),
+            focusedErrorBorder: _createInputBorder(Colors.red),
+            errorStyle: TextStyle(
+                fontSize: UIConstants.STANDARD_FONT_SIZE,
+                height: 0.75,
+                color: Colors.red,
+                fontWeight: FontWeight.w300),
+            prefixIcon: new Icon(
               Icons.lock_outline,
               color: Colors.grey,
             )),
         validator: (String value) {
           if (!state.isLogin && value.trim().length < 6) {
             return 'Password must be at least 6 characters';
+          } else if (value.trim().isEmpty) {
+            return 'Password cannot be empty';
           }
           return null;
         },
@@ -146,15 +189,24 @@ class LoginWidget extends StatelessWidget {
   }
 
   Widget _showConfirmPasswordInput(LoginState state) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+    Widget passwordContent = Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
       child: new TextFormField(
         maxLines: 1,
         obscureText: true,
         autofocus: false,
         decoration: new InputDecoration(
-            hintText: 'Confirm Password',
-            icon: new Icon(
+            labelText: 'Confirm Password',
+            focusedBorder: _createInputBorder(Colors.pink),
+            enabledBorder: _createInputBorder(Colors.grey),
+            errorBorder: _createInputBorder(Colors.red),
+            focusedErrorBorder: _createInputBorder(Colors.red),
+            errorStyle: TextStyle(
+                fontSize: UIConstants.STANDARD_FONT_SIZE,
+                height: 0.75,
+                color: Colors.red,
+                fontWeight: FontWeight.w300),
+            prefixIcon: new Icon(
               Icons.lock_outline,
               color: Colors.grey,
             )),
@@ -167,19 +219,43 @@ class LoginWidget extends StatelessWidget {
         onSaved: (value) => state.confirmPassword = value.trim(),
       ),
     );
+
+    return AnimatedBuilder(
+        animation: widgetState._animationController,
+        builder: (context, child) {
+          return Stack(children: <Widget>[
+            Opacity(
+                opacity: 0,
+                child: Container(
+                  height: widgetState._heightAnimation.value * 75,
+                )),
+            SlideTransition(
+              position: widgetState._slideAnimation,
+              child: widgetState._heightAnimation.value == 1 ? passwordContent : null,
+            )
+          ]);
+        });
+  }
+
+  OutlineInputBorder _createInputBorder(Color color) {
+    return OutlineInputBorder(
+      borderSide: BorderSide(color: color, width: UIConstants.STANDARD_BORDER_WIDTH),
+      borderRadius: const BorderRadius.all(Radius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
+    );
   }
 
   Widget _showPrimaryButton(LoginState state, BuildContext context) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+            elevation: UIConstants.STANDARD_ELEVATION,
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
             color: Colors.pink,
             child: Text(state.isLogin ? 'Login' : 'Create account',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                style: new TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.white)),
             onPressed: () => BlocProvider.of<LoginBloc>(context).validateAndSubmit(state, context),
           ),
         ));
@@ -188,8 +264,13 @@ class LoginWidget extends StatelessWidget {
   Widget _showSecondaryButton(LoginState state, BuildContext context) {
     return new FlatButton(
         child: Text(state.isLogin ? 'Create an account' : 'Have an account? Sign in',
-            style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
-        onPressed: () => BlocProvider.of<LoginBloc>(context).toggleFormMode(state));
+            style: new TextStyle(fontSize: UIConstants.BIG_FONT_SIZE, fontWeight: FontWeight.w300)),
+        onPressed: () {
+          BlocProvider.of<LoginBloc>(context).toggleFormMode(state);
+          state.isLogin
+              ? widgetState._animationController.forward()
+              : widgetState._animationController.reverse();
+        });
   }
 
   Widget _showErrorMessage(LoginState state, BuildContext context) {
@@ -197,8 +278,12 @@ class LoginWidget extends StatelessWidget {
       return new Center(
           child: Text(
         state.errorMessage,
-        style:
-            TextStyle(fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w300),
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontSize: UIConstants.STANDARD_FONT_SIZE,
+            height: 0.75,
+            color: Colors.red,
+            fontWeight: FontWeight.w300),
       ));
     } else {
       return new Container(

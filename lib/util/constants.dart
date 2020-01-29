@@ -12,6 +12,7 @@ class UIConstants {
   // FONT SIZE
   static const double SMALLER_FONT_SIZE = 10.0;
   static const double STANDARD_FONT_SIZE = 14.0;
+  static const double BIG_FONT_SIZE = 16.0;
   static const double BIGGER_FONT_SIZE = 18.0;
 
   // PADDING
@@ -21,6 +22,12 @@ class UIConstants {
 
   // ELEVATION
   static const double STANDARD_ELEVATION = 3.0;
+
+  // BORDER RADIUS
+  static const double STANDARD_BORDER_RADIUS = 40;
+
+  // BORDER WIDTH
+  static const double STANDARD_BORDER_WIDTH = 1.5;
 }
 
 class FirestorePaths {
