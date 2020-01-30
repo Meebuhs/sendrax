@@ -36,6 +36,7 @@ class LocationRepo {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
+        .where("archived", isEqualTo: false)
         .where("locationId", isEqualTo: locationId)
         .snapshots()
         .map((data) => Deserializer.deserializeClimbs(data.documents));
@@ -80,7 +81,8 @@ class LocationRepo {
     climbs.documents.forEach((climb) async {
       docCounter++;
       batch.delete(climb.reference);
-      if (docCounter > 498) { // batches can delete 500 refs at a time
+      if (docCounter > 498) {
+        // batches can delete 500 refs at a time
         await batch.commit();
       }
     });

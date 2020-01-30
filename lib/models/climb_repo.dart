@@ -52,6 +52,15 @@ class ClimbRepo {
         .delete();
   }
 
+  void archiveClimb(String climbId) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    await _firestore
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
+        .document(climbId)
+        .updateData({"archived": true});
+  }
+
   void setAttempt(Attempt attempt, String climbId) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore

@@ -59,9 +59,16 @@ class CreateClimbWidget extends StatelessWidget {
         actions: <Widget>[
           (widget.isEdit)
               ? IconButton(
+            icon: Icon(Icons.archive),
+            onPressed: () =>
+                _showArchiveClimbDialog(context, this),
+          )
+              : Container(),
+          (widget.isEdit)
+              ? IconButton(
             icon: Icon(Icons.delete_forever),
             onPressed: () =>
-                _showDeleteClimbDialog(widget.climb.id, context, this, widget.categories),
+                _showDeleteClimbDialog(context, this),
           )
               : Container()
         ],
@@ -238,8 +245,7 @@ class CreateClimbWidget extends StatelessWidget {
         ));
   }
 
-  void _showDeleteClimbDialog(String climbId, BuildContext upperContext, CreateClimbWidget view,
-      List<String> categories) {
+  void _showDeleteClimbDialog(BuildContext upperContext, CreateClimbWidget view,) {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {
@@ -255,7 +261,32 @@ class CreateClimbWidget extends StatelessWidget {
                   child: Text("Delete"),
                   onPressed: () =>
                       BlocProvider.of<CreateClimbBloc>(upperContext)
-                          .deleteClimb(upperContext, view, widget.selectedLocation, categories),
+                          .deleteClimb(
+                          upperContext, view, widget.selectedLocation, widget.categories),
+                )
+              ]);
+        });
+  }
+
+  void _showArchiveClimbDialog(BuildContext upperContext, CreateClimbWidget view) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Are you sure you want to archive this climb?"),
+              content: Text(
+                  "It will still appear in your log but will no longer appear for this location"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: navigateToLocation,
+                ),
+                FlatButton(
+                  child: Text("Archive"),
+                  onPressed: () =>
+                      BlocProvider.of<CreateClimbBloc>(upperContext)
+                          .archiveClimb(
+                          upperContext, view, widget.selectedLocation, widget.categories),
                 )
               ]);
         });

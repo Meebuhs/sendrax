@@ -15,5 +15,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Location, climb, attempt, categories and grade set creation
 - Location and climb editing
 - Location, climb, attempt and category deletion
-- Climb filtering
+- Climb filtering and archiving
 - App icon
