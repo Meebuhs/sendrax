@@ -9,14 +9,13 @@ import 'create_climb_bloc.dart';
 import 'create_climb_state.dart';
 
 class CreateClimbScreen extends StatefulWidget {
-  CreateClimbScreen(
-      {Key key,
-      @required this.climb,
-      @required this.selectedLocation,
-      @required this.sections,
-      @required this.grades,
-      @required this.categories,
-      @required this.isEdit})
+  CreateClimbScreen({Key key,
+    @required this.climb,
+    @required this.selectedLocation,
+    @required this.sections,
+    @required this.grades,
+    @required this.categories,
+    @required this.isEdit})
       : super(key: key);
 
   final Climb climb;
@@ -53,17 +52,17 @@ class CreateClimbWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String editTitleText =
-        (widget.climb.displayName == "") ? "Edit climb" : "Edit ${widget.climb.displayName}";
+    (widget.climb.displayName == "") ? "Edit climb" : "Edit ${widget.climb.displayName}";
     return Scaffold(
       appBar: AppBar(
         title: Text((widget.isEdit) ? editTitleText : "Create a climb"),
         actions: <Widget>[
           (widget.isEdit)
               ? IconButton(
-                  icon: Icon(Icons.delete_forever),
-                  onPressed: () =>
-                      _showDeleteClimbDialog(widget.climb.id, context, this, widget.categories),
-                )
+            icon: Icon(Icons.delete_forever),
+            onPressed: () =>
+                _showDeleteClimbDialog(widget.climb.id, context, this, widget.categories),
+          )
               : Container()
         ],
       ),
@@ -200,15 +199,15 @@ class CreateClimbWidget extends StatelessWidget {
         ),
         child: (itemChips.isNotEmpty)
             ? SingleChildScrollView(
-                child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: UIConstants.SMALLER_PADDING,
-                    runSpacing: 0.0,
-                    children: itemChips))
+            child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: UIConstants.SMALLER_PADDING,
+                runSpacing: 0.0,
+                children: itemChips))
             : Center(
-                child: Container(
-                    child: Text("You don't currently have any climb categories",
-                        textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)))));
+            child: Container(
+                child: Text("You don't currently have any climb categories",
+                    textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)))));
   }
 
   Widget _buildItemChip(CreateClimbState state, BuildContext context, String item) {
@@ -239,8 +238,8 @@ class CreateClimbWidget extends StatelessWidget {
         ));
   }
 
-  void _showDeleteClimbDialog(
-      String climbId, BuildContext upperContext, CreateClimbWidget view, List<String> categories) {
+  void _showDeleteClimbDialog(String climbId, BuildContext upperContext, CreateClimbWidget view,
+      List<String> categories) {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {
@@ -254,8 +253,9 @@ class CreateClimbWidget extends StatelessWidget {
                 ),
                 FlatButton(
                   child: Text("Delete"),
-                  onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext)
-                      .deleteClimb(upperContext, view, widget.selectedLocation, categories),
+                  onPressed: () =>
+                      BlocProvider.of<CreateClimbBloc>(upperContext)
+                          .deleteClimb(upperContext, view, widget.selectedLocation, categories),
                 )
               ]);
         });
@@ -266,13 +266,17 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   void navigateToClimbAfterEdit(CreateClimbState state) {
-    // pop back to location then reload climb
     NavigationHelper.navigateBackOne(widgetState.context);
-    NavigationHelper.navigateBackOne(widgetState.context);
-    Climb climb = Climb(widget.climb.id, state.displayName, widget.climb.locationId, state.grade,
-        widget.climb.gradeSet, state.section, widget.climb.archived, state.selectedCategories,
-        widget.climb.attempts);
-    NavigationHelper.navigateToClimb(widgetState.context, climb, widget.selectedLocation,
-        widget.sections, widget.grades, widget.categories, addToBackStack: true);
+    // when editing, pop back to location then reload climb
+    if (widget.isEdit) {
+      NavigationHelper.navigateBackOne(widgetState.context);
+      // @formatter:off
+      Climb climb = Climb(widget.climb.id, state.displayName, widget.climb.locationId, state.grade,
+          widget.climb.gradeSet, state.section, widget.climb.archived, state.selectedCategories,
+          widget.climb.attempts);
+      NavigationHelper.navigateToClimb(widgetState.context, climb, widget.selectedLocation,
+          widget.sections, widget.grades, widget.categories, addToBackStack: true);
+    // @formatter:on
+    }
   }
 }
