@@ -37,8 +37,10 @@ class FirestorePaths {
   static const String LOCATIONS_SUBPATH = "locations";
   static const String ATTEMPTS_SUBPATH = "attempts";
   static const String GRADES_SUBPATH = "grades";
+  static const String CATEGORIES_SUBPATH = "categories";
 }
 
+// @formatter:off
 class SendTypes {
   static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt",
     "Red Point", "Hang Dog", "Second", "Top Rope Onsight", "Top Rope Flash", "Top Rope",
@@ -50,3 +52,4 @@ class ClimbCategories {
     "Slopey Crimps", "Jugs", "Volumes", "Bad Feet", "Roof", "Overhung", "Slab", "Mantle", "Powerful",
     "Technical", "Sustained", "Compression", "Dyno", "Run and Jump", "Arete", "Dihedral"];
 }
+// @formatter:on

@@ -55,6 +55,11 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     }
   }
 
+  void editCategories(List<String> categories) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    UserRepo.getInstance().setUserCategories(user, categories);
+  }
+
   @override
   Stream<MainState> mapEventToState(MainEvent event) async* {
     if (event is ClearLocationsEvent) {

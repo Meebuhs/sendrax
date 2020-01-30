@@ -1,33 +1,41 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/util/constants.dart';
 
-import 'add_sections_bloc.dart';
-import 'add_sections_state.dart';
+import 'string_collection_input_bloc.dart';
+import 'string_collection_input_state.dart';
 
-class AddSections extends StatefulWidget {
-  AddSections({Key key, @required this.sections, @required this.sectionsStream}) : super(key: key);
+class StringCollectionInputScreen extends StatefulWidget {
+  StringCollectionInputScreen(
+      {Key key,
+      @required this.items,
+      @required this.itemName,
+      @required this.upperContext,
+      @required this.submitInput})
+      : super(key: key);
 
-  final List<String> sections;
-  final StreamController<List<String>> sectionsStream;
+  final List<String> items;
+  final String itemName;
+  final BuildContext upperContext;
+  final Function(List<String>, BuildContext context) submitInput;
 
   @override
-  _AddSectionsState createState() => _AddSectionsState(sections, sectionsStream);
+  _StringCollectionInputScreenState createState() =>
+      _StringCollectionInputScreenState(items, upperContext, submitInput);
 }
 
-class _AddSectionsState extends State<AddSections> {
+class _StringCollectionInputScreenState extends State<StringCollectionInputScreen> {
   final List<String> itemList;
-  final StreamController<List<String>> sectionsStream;
+  final BuildContext upperContext;
+  final Function(List<String>, BuildContext context) submitInput;
 
-  _AddSectionsState(this.itemList, this.sectionsStream);
+  _StringCollectionInputScreenState(this.itemList, this.upperContext, this.submitInput);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AddSectionsBloc>(
-      create: (context) => AddSectionsBloc(itemList, sectionsStream),
-      child: AddSectionsWidget(
+    return BlocProvider<StringCollectionInputBloc>(
+      create: (context) => StringCollectionInputBloc(itemList, upperContext, submitInput),
+      child: StringCollectionInputWidget(
         widget: widget,
         widgetState: this,
       ),
@@ -35,18 +43,18 @@ class _AddSectionsState extends State<AddSections> {
   }
 }
 
-class AddSectionsWidget extends StatelessWidget {
-  const AddSectionsWidget({Key key, @required this.widget, @required this.widgetState})
+class StringCollectionInputWidget extends StatelessWidget {
+  const StringCollectionInputWidget({Key key, @required this.widget, @required this.widgetState})
       : super(key: key);
 
-  final AddSections widget;
-  final _AddSectionsState widgetState;
+  final StringCollectionInputScreen widget;
+  final _StringCollectionInputScreenState widgetState;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
-        bloc: BlocProvider.of<AddSectionsBloc>(context),
-        builder: (context, AddSectionsState state) {
+        bloc: BlocProvider.of<StringCollectionInputBloc>(context),
+        builder: (context, StringCollectionInputState state) {
           return Container(
               constraints: BoxConstraints(
                 minHeight: 250.0,
@@ -69,9 +77,9 @@ class AddSectionsWidget extends StatelessWidget {
         });
   }
 
-  Widget _showItemList(AddSectionsState state, BuildContext context) {
+  Widget _showItemList(StringCollectionInputState state, BuildContext context) {
     List<Widget> itemChips = List<Widget>();
-    state.sections.forEach((item) {
+    state.items.forEach((item) {
       itemChips.add(_buildItemChip(state, context, item));
     });
 
@@ -90,7 +98,7 @@ class AddSectionsWidget extends StatelessWidget {
                 children: itemChips)));
   }
 
-  Widget _buildItemChip(AddSectionsState state, BuildContext context, String item) {
+  Widget _buildItemChip(StringCollectionInputState state, BuildContext context, String item) {
     return Container(
       child: InputChip(
         label: Text(item),
@@ -98,12 +106,12 @@ class AddSectionsWidget extends StatelessWidget {
           Icons.cancel,
           color: Colors.grey,
         ),
-        onDeleted: () => BlocProvider.of<AddSectionsBloc>(context).removeSection(item),
+        onDeleted: () => BlocProvider.of<StringCollectionInputBloc>(context).removeItem(item),
       ),
     );
   }
 
-  Widget _showAddItemInput(AddSectionsState state) {
+  Widget _showAddItemInput(StringCollectionInputState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 10.0),
@@ -113,7 +121,7 @@ class AddSectionsWidget extends StatelessWidget {
         keyboardType: TextInputType.text,
         autofocus: true,
         decoration: new InputDecoration(
-            hintText: "Section",
+            hintText: widget.itemName,
             icon: new Icon(
               Icons.add,
               color: Colors.grey,
@@ -122,7 +130,7 @@ class AddSectionsWidget extends StatelessWidget {
     );
   }
 
-  Widget _showAddItemButton(AddSectionsState state, BuildContext context) {
+  Widget _showAddItemButton(StringCollectionInputState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(
             UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 10.0),
@@ -133,17 +141,17 @@ class AddSectionsWidget extends StatelessWidget {
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.pink,
             child: new Text('Add', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
-            onPressed: () => BlocProvider.of<AddSectionsBloc>(context)
-                .addSection(state.itemInputKey.currentState.value.trim()),
+            onPressed: () => BlocProvider.of<StringCollectionInputBloc>(context)
+                .addItem(state.itemInputKey.currentState.value.trim()),
           ),
         ));
   }
 
-  Widget _showSubmitButton(AddSectionsState state, BuildContext context) {
+  Widget _showSubmitButton(StringCollectionInputState state, BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
       child: FlatButton(
-        onPressed: () => BlocProvider.of<AddSectionsBloc>(context).addSections(context),
+        onPressed: () => BlocProvider.of<StringCollectionInputBloc>(context).submitItems(context),
         child: Text('Finished'),
       ),
     );

@@ -50,4 +50,10 @@ class UserRepo {
         .snapshots()
         .map((data) => Deserializer.deserializeCategories(data));
   }
+
+  void setUserCategories(User user, List<String> categories) async {
+    await _firestore
+        .document("${FirestorePaths.USERS_COLLECTION}/${user.uid}/")
+        .updateData({"${FirestorePaths.CATEGORIES_SUBPATH}": categories});
+  }
 }

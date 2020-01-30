@@ -1,11 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sendrax/create_location/add_sections/add_sections_view.dart';
 import 'package:sendrax/create_location/create_gradeset/create_gradeset_view.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
+import 'package:sendrax/string_collection_input/string_collection_input_view.dart';
 import 'package:sendrax/util/constants.dart';
 
 import 'create_location_bloc.dart';
@@ -211,16 +209,22 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  void _showAddSectionsDialog(CreateLocationState state, BuildContext context) {
-    StreamController<List<String>> stream =
-        BlocProvider.of<CreateLocationBloc>(context).sectionsStream;
+  void _showAddSectionsDialog(CreateLocationState state, BuildContext upperContext) {
     showDialog(
-        context: context,
+        context: upperContext,
         builder: (BuildContext context) {
           return SimpleDialog(title: Text("Edit this location's sections"), children: <Widget>[
-            AddSections(sections: state.sections, sectionsStream: stream),
+            StringCollectionInputScreen(
+                items: state.sections,
+                itemName: "Section",
+                upperContext: upperContext,
+                submitInput: _submitInput),
           ]);
         });
+  }
+
+  void _submitInput(List<String> itemList, BuildContext context) {
+    BlocProvider.of<CreateLocationBloc>(context).sectionsStream.add(itemList);
   }
 
   Widget _showSubmitButton(CreateLocationState state, BuildContext context) {
@@ -270,7 +274,10 @@ class CreateLocationWidget extends StatelessWidget {
     // pop back to main screen then reload the location
     NavigationHelper.navigateBackOne(widgetState.context);
     NavigationHelper.navigateBackOne(widgetState.context);
-    SelectedLocation selectedLocation = SelectedLocation(widget.location.id, state.displayName, state.gradeSet);
-    NavigationHelper.navigateToLocation(widgetState.context, selectedLocation, widget.location.categories, addToBackStack: true);
+    SelectedLocation selectedLocation =
+        SelectedLocation(widget.location.id, state.displayName, state.gradeSet);
+    NavigationHelper.navigateToLocation(
+        widgetState.context, selectedLocation, widget.location.categories,
+        addToBackStack: true);
   }
 }

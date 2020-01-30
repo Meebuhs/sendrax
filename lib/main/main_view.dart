@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/main/main_location_item.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
+import 'package:sendrax/string_collection_input/string_collection_input_view.dart';
 import 'package:sendrax/util/constants.dart';
 import 'package:uuid/uuid.dart';
 
@@ -110,7 +111,7 @@ class MainWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                _showEditCategories(state),
+                _showEditCategories(state, context),
                 _showAddLocation(state),
                 _showMainFab(),
               ]),
@@ -119,7 +120,7 @@ class MainWidget extends StatelessWidget {
     );
   }
 
-  Widget _showEditCategories(MainState state) {
+  Widget _showEditCategories(MainState state, BuildContext context) {
     double totalWidth = 149;
     double fabContainerSize = 56;
     double xProportionToFabCenter = 1 - (fabContainerSize / 2 / totalWidth);
@@ -145,7 +146,7 @@ class MainWidget extends StatelessWidget {
                     backgroundColor: Colors.white,
                     mini: true,
                     child: new Icon(Icons.mode_edit, color: Colors.pink),
-                    onPressed: () => _editCategories(),
+                    onPressed: () => _showEditCategoriesDialog(state, context),
                   ))
             ],
           ),
@@ -214,7 +215,23 @@ class MainWidget extends StatelessWidget {
         addToBackStack: true);
   }
 
-  void _editCategories() {}
+  void _showEditCategoriesDialog(MainState state, BuildContext upperContext) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return SimpleDialog(title: Text("Edit your climb categories"), children: <Widget>[
+            StringCollectionInputScreen(
+                items: state.categories,
+                itemName: "Category",
+                upperContext: upperContext,
+                submitInput: _submitInput),
+          ]);
+        });
+  }
+
+  void _submitInput(List<String> itemList, BuildContext context) {
+    BlocProvider.of<MainBloc>(context).editCategories(itemList);
+  }
 
   void navigateToLogin() {
     NavigationHelper.navigateToLogin(widgetState.context);
