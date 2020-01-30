@@ -121,7 +121,7 @@ class MainWidget extends StatelessWidget {
   }
 
   Widget _showEditCategories(MainState state, BuildContext context) {
-    double totalWidth = 149;
+    double totalWidth = 160;
     double fabContainerSize = 56;
     double xProportionToFabCenter = 1 - (fabContainerSize / 2 / totalWidth);
     return Container(
@@ -135,6 +135,7 @@ class MainWidget extends StatelessWidget {
             curve: Interval(0.0, 1.0, curve: Curves.easeOutQuad),
           ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Text("Edit categories"),
               Container(
@@ -154,7 +155,7 @@ class MainWidget extends StatelessWidget {
   }
 
   Widget _showAddLocation(MainState state) {
-    double totalWidth = 135;
+    double totalWidth = 160;
     double fabContainerSize = 56;
     double xProportionToFabCenter = 1 - (fabContainerSize / 2 / totalWidth);
     return Container(
@@ -168,6 +169,7 @@ class MainWidget extends StatelessWidget {
             curve: Interval(0.0, 1.0, curve: Curves.easeOutQuad),
           ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Text("Add location"),
               Container(
