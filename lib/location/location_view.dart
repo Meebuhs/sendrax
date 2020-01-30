@@ -208,7 +208,7 @@ class LocationWidget extends StatelessWidget {
   Widget _showGradeDropdown(LocationState state, BuildContext context) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0,
-            UIConstants.SMALLER_PADDING, UIConstants.BIGGER_PADDING),
+            UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING),
         child: Row(children: <Widget>[
           Expanded(
               child: DropdownButton<String>(
@@ -230,7 +230,7 @@ class LocationWidget extends StatelessWidget {
   Widget _showSectionDropdown(LocationState state, BuildContext context) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0,
-            UIConstants.SMALLER_PADDING, UIConstants.BIGGER_PADDING),
+            UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING),
         child: Row(children: <Widget>[
           Expanded(
             child: DropdownButton<String>(

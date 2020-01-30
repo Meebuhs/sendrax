@@ -78,6 +78,7 @@ class CreateLocationWidget extends StatelessWidget {
             shrinkWrap: true,
             children: <Widget>[
               _showDisplayNameInput(state),
+              _showImageInput(state, context),
               Row(children: <Widget>[
                 Expanded(
                   child: _showGradesDropdown(state, context),
@@ -94,10 +95,81 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
+  Widget _showImageInput(CreateLocationState state, BuildContext context) {
+    return Column(
+      children: <Widget>[
+        _showImage(state, context),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            _showCameraButton(state, context),
+            _showGalleryButton(state, context),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _showImage(CreateLocationState state, BuildContext context) {
+    return SizedBox(
+      height: 200.0,
+      child: Center(
+        child: Text(
+          "Add an image to this location",
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  Widget _showCameraButton(CreateLocationState state, BuildContext context) {
+    return new Padding(
+        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
+            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
+        child: SizedBox(
+          height: 40.0,
+          child: new RaisedButton(
+            elevation: UIConstants.STANDARD_ELEVATION,
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
+            color: Colors.pink,
+            child: Row(children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  child: Icon(Icons.camera_alt, color: Colors.white)),
+              Text('Camera', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
+            ]),
+            onPressed: () => null,
+          ),
+        ));
+  }
+
+  Widget _showGalleryButton(CreateLocationState state, BuildContext context) {
+    return new Padding(
+        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
+            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
+        child: SizedBox(
+          height: 40.0,
+          child: new RaisedButton(
+            elevation: UIConstants.STANDARD_ELEVATION,
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
+            color: Colors.pink,
+            child: Row(children: <Widget>[
+              Padding(
+                padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                child: Icon(Icons.image, color: Colors.white)),
+              Text('Gallery', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
+            ]),
+            onPressed: () => null,
+          ),
+        ));
+  }
+
   Widget _showDisplayNameInput(CreateLocationState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-          UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
+          UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
       child: new TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.text,
@@ -123,7 +195,7 @@ class CreateLocationWidget extends StatelessWidget {
   Widget _showGradesDropdown(CreateLocationState state, BuildContext context) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-            UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
+            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
         child: new DropdownButtonFormField<String>(
           items: _createDropdownItems(state),
           value: state.gradeSet,
@@ -151,12 +223,13 @@ class CreateLocationWidget extends StatelessWidget {
   Widget _showGradeCreationButton(CreateLocationState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-            UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
+            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+            elevation: UIConstants.STANDARD_ELEVATION,
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
             color: Colors.pink,
             child: new Text('Create a grade set',
                 style: new TextStyle(fontSize: 14.0, color: Colors.white)),
@@ -195,15 +268,16 @@ class CreateLocationWidget extends StatelessWidget {
   Widget _showSectionCreator(CreateLocationState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, UIConstants.SMALLER_PADDING,
-            UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
+            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+            elevation: UIConstants.STANDARD_ELEVATION,
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
             color: Colors.pink,
             child: new Text('Create sections (optional)',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                style: new TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.white)),
             onPressed: () => _showAddSectionsDialog(state, context),
           ),
         ));
@@ -234,10 +308,12 @@ class CreateLocationWidget extends StatelessWidget {
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+            elevation: UIConstants.STANDARD_ELEVATION,
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
             color: Colors.pink,
-            child: new Text('Submit', style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+            child: new Text('Submit',
+                style: new TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.white)),
             onPressed: () => BlocProvider.of<CreateLocationBloc>(context)
                 .validateAndSubmit(state, context, this),
           ),
