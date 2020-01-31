@@ -110,17 +110,17 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _buildContentWithSections(
-      LocationState state, BuildContext context, String sectionSnapshot, String gradeSnapshot) {
+      LocationState state, BuildContext context, String filterSection, String filterGrade) {
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
         if (index == 0) {
           return _showFilterDropdownRow(state, context);
         } else {
-          if (sectionSnapshot != null) {
-            return _buildSection(context, state, gradeSnapshot, sectionSnapshot);
+          if (filterSection != null) {
+            return _buildSection(context, state, filterGrade, filterSection);
           } else {
-            return _buildSection(context, state, gradeSnapshot, state.sections[index - 1]);
+            return _buildSection(context, state, filterGrade, state.sections[index - 1]);
           }
         }
       },
@@ -160,9 +160,9 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _buildContentWithoutSections(
-      LocationState state, BuildContext context, String gradeSnapshot) {
-    List<Climb> climbsToInclude =
-        List.from(state.climbs.where((climb) => climb.grade == gradeSnapshot));
+      LocationState state, BuildContext context, String filterGrade) {
+    List<Climb> climbsToInclude = List.from(
+        state.climbs.where((climb) => (filterGrade == null || climb.grade == filterGrade)));
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
