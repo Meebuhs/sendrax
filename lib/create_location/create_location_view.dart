@@ -157,8 +157,8 @@ class CreateLocationWidget extends StatelessWidget {
             color: Colors.pink,
             child: Row(children: <Widget>[
               Padding(
-                padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
-                child: Icon(Icons.image, color: Colors.white)),
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  child: Icon(Icons.image, color: Colors.white)),
               Text('Gallery', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             ]),
             onPressed: () => null,
@@ -351,11 +351,11 @@ class CreateLocationWidget extends StatelessWidget {
     // when editing, pop back to main then reload location
     if (widget.isEdit) {
       NavigationHelper.navigateBackOne(widgetState.context);
-      SelectedLocation selectedLocation =
-          SelectedLocation(widget.location.id, state.displayName, state.gradeSet);
-      NavigationHelper.navigateToLocation(
-          widgetState.context, selectedLocation, widget.location.categories,
-          addToBackStack: true);
     }
+    SelectedLocation selectedLocation =
+        SelectedLocation(widget.location.id, state.displayName, state.gradeSet);
+    NavigationHelper.navigateToLocation(
+        widgetState.context, selectedLocation, widget.location.categories,
+        addToBackStack: true);
   }
 }

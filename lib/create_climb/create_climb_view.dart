@@ -302,12 +302,12 @@ class CreateClimbWidget extends StatelessWidget {
     if (widget.isEdit) {
       NavigationHelper.navigateBackOne(widgetState.context);
       // @formatter:off
-      Climb climb = Climb(widget.climb.id, state.displayName, widget.climb.locationId, state.grade,
-          widget.climb.gradeSet, state.section, widget.climb.archived, state.selectedCategories,
-          widget.climb.attempts);
-      NavigationHelper.navigateToClimb(widgetState.context, climb, widget.selectedLocation,
-          widget.sections, widget.grades, widget.categories, addToBackStack: true);
-    // @formatter:on
     }
+    Climb climb = Climb(widget.climb.id, state.displayName, widget.climb.locationId, state.grade,
+        widget.climb.gradeSet, state.section, widget.climb.archived, state.selectedCategories,
+        widget.climb.attempts);
+    NavigationHelper.navigateToClimb(widgetState.context, climb, widget.selectedLocation,
+        widget.sections, widget.grades, widget.categories, addToBackStack: true);
+    // @formatter:on
   }
 }
