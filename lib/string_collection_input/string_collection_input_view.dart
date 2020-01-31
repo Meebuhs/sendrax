@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
 import 'string_collection_input_bloc.dart';
@@ -72,7 +73,13 @@ class StringCollectionInputWidget extends StatelessWidget {
                     child: _showAddItemButton(state, context),
                   ),
                 ]),
-                _showSubmitButton(state, context),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    _showCancelButton(state, context),
+                    _showSubmitButton(state, context),
+                  ],
+                )
               ]));
         });
   }
@@ -145,6 +152,16 @@ class StringCollectionInputWidget extends StatelessWidget {
                 .addItem(state.itemInputKey.currentState.value.trim()),
           ),
         ));
+  }
+
+  Widget _showCancelButton(StringCollectionInputState state, BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: FlatButton(
+        onPressed: () => NavigationHelper.navigateBackOne(context),
+        child: Text('Cancel'),
+      ),
+    );
   }
 
   Widget _showSubmitButton(StringCollectionInputState state, BuildContext context) {

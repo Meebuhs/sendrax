@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
 import 'create_gradeset_bloc.dart';
@@ -59,9 +60,8 @@ class CreateGradeSetWidget extends StatelessWidget {
                   Expanded(
                     child: _showErrorMessage(state, context),
                   ),
-                  Expanded(
-                    child: _showSubmitButton(state, context),
-                  ),
+                  _showCancelButton(state, context),
+                  _showSubmitButton(state, context),
                 ]),
               ]));
         });
@@ -174,6 +174,16 @@ class CreateGradeSetWidget extends StatelessWidget {
         height: 0.0,
       );
     }
+  }
+
+  Widget _showCancelButton(CreateGradeSetState state, BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: FlatButton(
+        onPressed: () => NavigationHelper.navigateBackOne(context),
+        child: Text('Cancel'),
+      ),
+    );
   }
 
   Widget _showSubmitButton(CreateGradeSetState state, BuildContext context) {
