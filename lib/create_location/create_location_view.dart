@@ -51,7 +51,7 @@ class CreateLocationWidget extends StatelessWidget {
           (widget.isEdit)
               ? IconButton(
                   icon: Icon(Icons.delete_forever),
-                  onPressed: () => _showDeleteLocationDialog(widget.location.id, context, this),
+                  onPressed: () => _showDeleteLocationDialog(context, this),
                 )
               : Container()
         ],
@@ -338,8 +338,7 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  void _showDeleteLocationDialog(
-      String locationId, BuildContext upperContext, CreateLocationWidget view) {
+  void _showDeleteLocationDialog(BuildContext upperContext, CreateLocationWidget view) {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {
@@ -354,7 +353,7 @@ class CreateLocationWidget extends StatelessWidget {
                 FlatButton(
                   child: Text("Delete"),
                   onPressed: () => BlocProvider.of<CreateLocationBloc>(upperContext)
-                      .deleteLocation(locationId, upperContext, view),
+                      .deleteLocation(upperContext, view),
                 )
               ]);
         });

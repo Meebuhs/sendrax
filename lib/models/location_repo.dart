@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/util/constants.dart';
 import 'package:sendrax/util/serialization_util.dart';
@@ -62,7 +63,7 @@ class LocationRepo {
         .setData(location.map, merge: true);
   }
 
-  void deleteLocation(String locationId) async {
+  void deleteLocation(String locationId, String imageUri) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
@@ -87,5 +88,10 @@ class LocationRepo {
       }
     });
     await batch.commit();
+
+    // Delete the stored image for this location, if it exists
+    if (imageUri != "") {
+      StorageRepo.getInstance().deleteFileByUri(imageUri);
+    }
   }
 }

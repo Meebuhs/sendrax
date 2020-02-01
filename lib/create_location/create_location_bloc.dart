@@ -118,8 +118,8 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     add(ImageFileUpdatedEvent(true, null));
   }
 
-  void deleteLocation(String locationId, BuildContext context, CreateLocationWidget view) {
-    LocationRepo.getInstance().deleteLocation(locationId);
+  void deleteLocation(BuildContext context, CreateLocationWidget view) {
+    LocationRepo.getInstance().deleteLocation(location.id, location.imageUri);
     NavigationHelper.resetToMain(context);
   }
 
