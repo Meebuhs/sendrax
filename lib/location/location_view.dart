@@ -63,14 +63,23 @@ class LocationWidget extends StatelessWidget {
                 ),
               );
             } else if (state.climbs.isEmpty) {
-              content = Center(
-                child: Text(
-                  "This location doesn't have any climbs.\nLet's create one right now!",
-                  textAlign: TextAlign.center,
-                ),
-              );
+              content = Column(children: <Widget>[
+                _showImage(),
+                Expanded(
+                    child: Center(
+                  child: Text(
+                    "This location doesn't have any climbs.\nLet's create one right now!",
+                    textAlign: TextAlign.center,
+                  ),
+                ))
+              ]);
             } else {
-              content = _buildFilteredList(state, context);
+              content = Column(children: <Widget>[
+                _showFilterDropdownRow(state, context),
+                Expanded(
+                  child: _buildFilteredList(state, context),
+                )
+              ]);
             }
             return _wrapContentWithFab(state, context, content);
           }),
@@ -90,40 +99,131 @@ class LocationWidget extends StatelessWidget {
     }
   }
 
+  Widget _showFilterDropdownRow(LocationState state, BuildContext context) {
+    return Row(children: <Widget>[
+      Expanded(
+        child: _showGradeDropdown(state, context),
+      ),
+      Expanded(
+        child: _showSectionDropdown(state, context),
+      )
+    ]);
+  }
+
+  Widget _showGradeDropdown(LocationState state, BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: Row(children: <Widget>[
+          Expanded(
+              child: DropdownButton<String>(
+            items: _createDropdownItems(state.grades),
+            value: state.filterGrade,
+            hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
+              Icon(Icons.filter_list, color: Colors.grey),
+              Text("Grade"),
+            ]),
+            isExpanded: true,
+            onChanged: (value) => BlocProvider.of<LocationBloc>(context).setGradeFilter(value),
+          )),
+          IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: () => BlocProvider.of<LocationBloc>(context).setGradeFilter(null))
+        ]));
+  }
+
+  Widget _showSectionDropdown(LocationState state, BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: Row(children: <Widget>[
+          Expanded(
+            child: DropdownButton<String>(
+              disabledHint: Text("No sections"),
+              iconDisabledColor: Colors.grey,
+              items: _createDropdownItems(state.sections),
+              value: state.filterSection,
+              hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
+                Icon(Icons.filter_list, color: Colors.grey),
+                Text("Section"),
+              ]),
+              isExpanded: true,
+              onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
+            ),
+          ),
+          IconButton(
+              icon:
+                  Icon(Icons.cancel, color: (state.sections.isEmpty) ? Colors.grey : Colors.black),
+              onPressed: () => BlocProvider.of<LocationBloc>(context).setSectionFilter(null))
+        ]));
+  }
+
+  List<DropdownMenuItem> _createDropdownItems(List<String> items) {
+    if (items.isNotEmpty) {
+      return items.map((String value) {
+        return new DropdownMenuItem<String>(
+          value: value,
+          child: new Text(value),
+        );
+      }).toList();
+    } else {
+      // null disables the dropdown
+      return null;
+    }
+  }
+
   Widget _showEmptyFilteredList(LocationState state, BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return _showFilterDropdownRow(state, context);
-        } else {
-          return Center(
-              child: Text(
+    Widget content;
+    if (widget.location.imagePath != "") {
+      content = Column(children: <Widget>[
+        _showImage(),
+        Expanded(
+            child: Center(
+          child: Text(
             "There are no climbs matching these filter parameters.",
             textAlign: TextAlign.center,
-          ));
-        }
-      },
-      itemCount: 2,
+          ),
+        ))
+      ]);
+    } else {
+      content = Center(
+        child: Text(
+          "There are no climbs matching these filter parameters.",
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+    return Padding(
+      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+      child: content,
     );
   }
 
   Widget _buildContentWithSections(
       LocationState state, BuildContext context, String filterSection, String filterGrade) {
+    int itemCount = 0;
+    int indexOffset = 0;
+    if (widget.location.imagePath != "") {
+      itemCount++;
+      indexOffset = 1;
+    }
+    if (state.filterSection != null) {
+      itemCount++;
+    } else {
+      itemCount += state.sections.length;
+    }
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
-        if (index == 0) {
-          return _showFilterDropdownRow(state, context);
+        if (index == 0 && widget.location.imagePath != "") {
+          return _showImage();
         } else {
           if (filterSection != null) {
             return _buildSection(context, state, filterGrade, filterSection);
           } else {
-            return _buildSection(context, state, filterGrade, state.sections[index - 1]);
+            return _buildSection(context, state, filterGrade, state.sections[index - indexOffset]);
           }
         }
       },
-      itemCount: (state.filterSection != null) ? 2 : state.sections.length + 1,
+      itemCount: itemCount,
     );
   }
 
@@ -160,18 +260,19 @@ class LocationWidget extends StatelessWidget {
 
   Widget _buildContentWithoutSections(
       LocationState state, BuildContext context, String filterGrade) {
+    int indexOffset = widget.location.imagePath != "" ? 1 : 0;
     List<Climb> climbsToInclude = List.from(
         state.climbs.where((climb) => (filterGrade == null || climb.grade == filterGrade)));
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
-        if (index == 0) {
-          return _showFilterDropdownRow(state, context);
+        if (index == 0 && widget.location.imagePath != "") {
+          return _showImage();
         } else {
-          return _buildClimb(context, state, climbsToInclude, index - 1);
+          return _buildClimb(context, state, climbsToInclude, index - indexOffset);
         }
       },
-      itemCount: climbsToInclude.length + 1,
+      itemCount: climbsToInclude.length + indexOffset,
     );
   }
 
@@ -193,76 +294,18 @@ class LocationWidget extends StatelessWidget {
     return ClimbItem(climb: climb);
   }
 
-  Widget _showFilterDropdownRow(LocationState state, BuildContext context) {
-    return Row(children: <Widget>[
-      Expanded(
-        child: _showGradeDropdown(state, context),
-      ),
-      Expanded(
-        child: _showSectionDropdown(state, context),
-      )
-    ]);
-  }
-
-  Widget _showGradeDropdown(LocationState state, BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0,
-            UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING),
-        child: Row(children: <Widget>[
-          Expanded(
-              child: DropdownButton<String>(
-            items: _createDropdownItems(state.grades),
-            value: state.filterGrade,
-            hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-              Icon(Icons.filter_list, color: Colors.grey),
-              Text("Grade"),
-            ]),
-            isExpanded: true,
-            onChanged: (value) => BlocProvider.of<LocationBloc>(context).setGradeFilter(value),
-          )),
-          IconButton(
-              icon: Icon(Icons.cancel),
-              onPressed: () => BlocProvider.of<LocationBloc>(context).setGradeFilter(null))
-        ]));
-  }
-
-  Widget _showSectionDropdown(LocationState state, BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0,
-            UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING),
-        child: Row(children: <Widget>[
-          Expanded(
-            child: DropdownButton<String>(
-              disabledHint: Text("No sections"),
-              iconDisabledColor: Colors.grey,
-              items: _createDropdownItems(state.sections),
-              value: state.filterSection,
-              hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-                Icon(Icons.filter_list, color: Colors.grey),
-                Text("Section"),
-              ]),
-              isExpanded: true,
-              onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
-            ),
-          ),
-          IconButton(
-              icon:
-                  Icon(Icons.cancel, color: (state.sections.isEmpty) ? Colors.grey : Colors.black),
-              onPressed: () => BlocProvider.of<LocationBloc>(context).setSectionFilter(null))
-        ]));
-  }
-
-  List<DropdownMenuItem> _createDropdownItems(List<String> items) {
-    if (items.isNotEmpty) {
-      return items.map((String value) {
-        return new DropdownMenuItem<String>(
-          value: value,
-          child: new Text(value),
-        );
-      }).toList();
+  Widget _showImage() {
+    if (widget.location.imagePath != "") {
+      return Container(
+        height: 200,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: NetworkImage(widget.location.imagePath),
+          fit: BoxFit.cover,
+        )),
+      );
     } else {
-      // null disables the dropdown
-      return null;
+      return Container();
     }
   }
 
