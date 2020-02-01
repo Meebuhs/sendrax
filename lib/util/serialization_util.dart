@@ -9,10 +9,12 @@ class Deserializer {
     return locations.map((location) => _deserializeLocation(location)).toList();
   }
 
+  // @formatter:off
   static Location _deserializeLocation(DocumentSnapshot location) {
-    return Location(location['id'], location['displayName'], location['gradeSet'], <String>[],
-        <String>[], <Climb>[]);
+    return Location(location['id'], location['displayName'], "", location['imageUri'],
+        location['gradeSet'], <String>[], <String>[], <Climb>[]);
   }
+  // @formatter:on
 
   static List<String> deserializeCategories(DocumentSnapshot user) {
     if (user['categories'] != null) {
@@ -26,28 +28,26 @@ class Deserializer {
     return climbs.map((climb) => _deserializeClimb(climb)).toList();
   }
 
+  // @formatter:off
   static Climb _deserializeClimb(DocumentSnapshot climb) {
     return Climb(climb['id'], climb['displayName'], climb['locationId'], climb['grade'],
         climb['gradeSet'], climb['section'], climb['archived'],
         _deserializeClimbCategories(climb['categories']), <Attempt>[]);
   }
+  // @formatter:on
 
   static List<String> _deserializeClimbCategories(List<dynamic> categories) {
     return List.from(categories);
   }
 
-  static Location deserializeLocationSections(DocumentSnapshot locationDocument) {
+  static Location deserializeLocationSections(DocumentSnapshot locationDocument,
+      Location location) {
     if (locationDocument.data != null) {
-      Location location = _deserializeLocation(locationDocument);
       if (locationDocument['sections'] != null) {
         location.sections.addAll(List.from(locationDocument['sections']));
       }
-      return location;
-    } else {
-      // This occurs when a location is deleted and the pages in the stack try to load it
-      // It is discarded immediately without user interaction so an empty placeholder is safe here
-      return Location("", "", "", <String>[]);
     }
+    return location;
   }
 
   static List<Attempt> deserializeAttempts(List<DocumentSnapshot> attempts) {

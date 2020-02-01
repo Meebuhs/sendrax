@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:sendrax/models/location.dart';
 
 abstract class CreateLocationEvent {}
@@ -24,6 +26,11 @@ class GradeSelectedEvent extends CreateLocationEvent {
   final String grade;
 }
 
-class CreateLocationErrorEvent extends CreateLocationEvent {
+class ImageFileUpdatedEvent extends CreateLocationEvent {
+  ImageFileUpdatedEvent(this.deleteImage, this.imageFile);
 
+  final bool deleteImage;
+  final File imageFile;
 }
+
+class CreateLocationErrorEvent extends CreateLocationEvent {}

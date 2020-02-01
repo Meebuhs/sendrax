@@ -42,14 +42,14 @@ class LocationRepo {
         .map((data) => Deserializer.deserializeClimbs(data.documents));
   }
 
-  Stream<Location> getSectionsForLocation(String locationId, User user) {
+  Stream<Location> getSectionsForLocation(Location location, User user) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
-        .document(locationId)
+        .document(location.id)
         .snapshots()
         .map((data) {
-      return Deserializer.deserializeLocationSections(data);
+      return Deserializer.deserializeLocationSections(data, location);
     });
   }
 

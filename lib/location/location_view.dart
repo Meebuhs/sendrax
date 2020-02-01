@@ -48,8 +48,7 @@ class LocationWidget extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () => _editLocation(
-                widget.location.id, widget.location.displayName, widget.location.gradeSet),
+            onPressed: () => _editLocation(widget.location),
           )
         ],
       ),
@@ -293,7 +292,8 @@ class LocationWidget extends StatelessWidget {
     NavigationHelper.navigateToCreateClimb(
         widgetState.context,
         climb,
-        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.gradeSet),
+        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.imagePath,
+            widget.location.imageUri, widget.location.gradeSet),
         state.sections,
         state.grades,
         widget.categories,
@@ -301,8 +301,13 @@ class LocationWidget extends StatelessWidget {
         addToBackStack: true);
   }
 
-  void _editLocation(String locationId, String displayName, String gradeSet) {
-    Location location = new Location(locationId, displayName, gradeSet, <String>[]);
+  void _editLocation(SelectedLocation selectedLocation) {
+    Location location = new Location(
+        selectedLocation.id,
+        selectedLocation.displayName,
+        selectedLocation.imagePath,
+        selectedLocation.imageUri,
+        selectedLocation.gradeSet, <String>[], <String>[]);
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, true,
         addToBackStack: true);
   }
@@ -311,7 +316,8 @@ class LocationWidget extends StatelessWidget {
     NavigationHelper.navigateToClimb(
         widgetState.context,
         climb,
-        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.gradeSet),
+        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.imagePath,
+            widget.location.imageUri, widget.location.gradeSet),
         state.sections,
         state.grades,
         widget.categories,

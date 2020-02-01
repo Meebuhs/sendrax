@@ -12,8 +12,10 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_bloc:
   firebase_auth:
+  firebase_storage:
   cloud_firestore:
   shared_preferences:
+  image_picker:
   uuid:
 
 dev_dependencies:

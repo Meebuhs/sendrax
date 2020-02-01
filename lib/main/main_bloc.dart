@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
 import 'package:sendrax/models/login_repo.dart';
+import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 
 import 'main_event.dart';
@@ -24,26 +25,37 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   @override
   MainState get initialState {
-    retrieveUserLocations();
-    retrieveUserCategories();
+    _retrieveUserLocations();
+    _retrieveUserCategories();
     return MainState.initial();
   }
 
-  void retrieveUserLocations() async {
+  void _retrieveUserLocations() async {
     add(ClearLocationsEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       locationsSubscription =
-          LocationRepo.getInstance().getLocationsForUser(user).listen((locations) {
+          LocationRepo.getInstance().getLocationsForUser(user).listen((locations) async {
+        Stream<Location> processedLocationsStream =
+            Stream.fromIterable(locations).asyncMap((location) async {
+          if (location.imageUri != "") {
+            final String url = await StorageRepo.getInstance().decodeUri(location.imageUri);
+            return Location(location.id, location.displayName, url, location.imageUri,
+                location.gradeSet, location.categories, location.sections, location.climbs);
+          } else {
+            return location;
+          }
+        });
+        final List<Location> processedLocations = await processedLocationsStream.toList();
         add(LocationsUpdatedEvent(
-            locations..sort((a, b) => a.displayName.compareTo(b.displayName))));
+            processedLocations..sort((a, b) => a.displayName.compareTo(b.displayName))));
       });
     } else {
       add(MainErrorEvent());
     }
   }
 
-  void retrieveUserCategories() async {
+  void _retrieveUserCategories() async {
     add(ClearCategoriesEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {

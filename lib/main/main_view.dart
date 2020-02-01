@@ -95,8 +95,8 @@ class MainWidget extends StatelessWidget {
   }
 
   void _onLocationTap(Location location, List<String> categories) {
-    SelectedLocation selectedLocation =
-        SelectedLocation(location.id, location.displayName, location.gradeSet);
+    SelectedLocation selectedLocation = SelectedLocation(location.id, location.displayName,
+        location.imagePath, location.imageUri, location.gradeSet);
     navigateToLocation(selectedLocation, categories);
   }
 
@@ -212,7 +212,7 @@ class MainWidget extends StatelessWidget {
   void _createLocation(MainState state) {
     var uuid = new Uuid();
     Location location =
-        new Location("location-${uuid.v1()}", "", null, state.categories, <String>[], null);
+        new Location("location-${uuid.v1()}", "", "", "", null, state.categories, <String>[], null);
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
         addToBackStack: true);
   }

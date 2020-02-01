@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +10,7 @@ import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/grade_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
+import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
 
@@ -48,7 +50,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       locationSubscription =
-          LocationRepo.getInstance().getSectionsForLocation(location.id, user).listen((location) {
+          LocationRepo.getInstance().getSectionsForLocation(location, user).listen((location) {
         add(LocationUpdatedEvent(location));
       });
     } else {
@@ -61,9 +63,21 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     FocusScope.of(context).unfocus();
     state.loading = true;
 
-    if (_validateAndSave(state)) {
-      Location location = new Location(this.location.id, state.displayName, state.gradeSet,
-          <String>[], state.sections, <Climb>[]);
+    if (_validateAndSave()) {
+      if (state.deleteImage) {
+        StorageRepo.getInstance().deleteFileByUri(state.existingImageUri);
+        state.existingImageUri = "";
+        state.existingImagePath = "";
+      } else if (state.newImageFile != null) {
+        if (state.existingImageUri != "") {
+          StorageRepo.getInstance().deleteFileByUri(state.existingImageUri);
+        }
+        state.existingImageUri = await StorageRepo.getInstance().uploadFile(state.newImageFile);
+        state.existingImagePath = await StorageRepo.getInstance().decodeUri(state.existingImageUri);
+      }
+
+      Location location = new Location(this.location.id, state.displayName, state.existingImagePath,
+          state.existingImageUri, state.gradeSet, <String>[], state.sections, <Climb>[]);
       try {
         LocationRepo.getInstance().setLocation(location);
         state.loading = false;
@@ -77,7 +91,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     state.loading = false;
   }
 
-  bool _validateAndSave(CreateLocationState state) {
+  bool _validateAndSave() {
     final form = state.formKey.currentState;
     if (form.validate()) {
       form.save();
@@ -96,6 +110,14 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     });
   }
 
+  void setImageFile(File image) {
+    add(ImageFileUpdatedEvent(false, image));
+  }
+
+  void deleteImage() {
+    add(ImageFileUpdatedEvent(true, null));
+  }
+
   void deleteLocation(String locationId, BuildContext context, CreateLocationWidget view) {
     LocationRepo.getInstance().deleteLocation(locationId);
     NavigationHelper.resetToMain(context);
@@ -106,8 +128,11 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     if (event is GradesClearedEvent) {
       yield CreateLocationState.updateGrades(true, <String>[], state);
     } else if (event is LocationClearedEvent) {
-      yield CreateLocationState.updateLocation(true,
-          new Location(this.location.id, state.displayName, state.gradeSet, <String>[]), state);
+      yield CreateLocationState.updateLocation(
+          true,
+          new Location(this.location.id, state.displayName, state.existingImagePath,
+              state.existingImageUri, state.gradeSet, <String>[]),
+          state);
     } else if (event is GradesUpdatedEvent) {
       yield CreateLocationState.updateGrades(false, event.grades, state);
     } else if (event is LocationUpdatedEvent) {
@@ -116,6 +141,8 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
       yield CreateLocationState.loading(false, state);
     } else if (event is GradeSelectedEvent) {
       yield CreateLocationState.selectGrade(event.grade, state);
+    } else if (event is ImageFileUpdatedEvent) {
+      yield CreateLocationState.updateImageFile(event.deleteImage, event.imageFile, state);
     }
   }
 

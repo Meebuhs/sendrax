@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sendrax/create_location/create_gradeset/create_gradeset_view.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
@@ -102,8 +105,11 @@ class CreateLocationWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _showCameraButton(state, context),
-            _showGalleryButton(state, context),
+            _showImagePickerButton(state, context, "Camera",
+                Icon(Icons.camera_alt, color: Colors.white), ImageSource.camera),
+            _showImagePickerButton(state, context, "Gallery",
+                Icon(Icons.image, color: Colors.white), ImageSource.gallery),
+            _showImageRemoveButton(state, context),
           ],
         )
       ],
@@ -111,21 +117,29 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   Widget _showImage(CreateLocationState state, BuildContext context) {
-    return SizedBox(
-      height: 200.0,
-      child: Center(
+    Widget content;
+    if (state.deleteImage || (state.newImageFile == null && state.existingImagePath == "")) {
+      content = Center(
         child: Text(
           "Add an image to this location",
           textAlign: TextAlign.center,
         ),
-      ),
+      );
+    } else if (state.newImageFile != null) {
+      content = Image.file(state.newImageFile);
+    } else {
+      content = Image.network(state.existingImagePath);
+    }
+    return SizedBox(
+      height: 200.0,
+      child: content,
     );
   }
 
-  Widget _showCameraButton(CreateLocationState state, BuildContext context) {
+  Widget _showImagePickerButton(CreateLocationState state, BuildContext context, String buttonText,
+      Icon icon, ImageSource imageSource) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
@@ -136,18 +150,22 @@ class CreateLocationWidget extends StatelessWidget {
             child: Row(children: <Widget>[
               Padding(
                   padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
-                  child: Icon(Icons.camera_alt, color: Colors.white)),
-              Text('Camera', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
+                  child: icon),
+              Text(buttonText, style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             ]),
-            onPressed: () => null,
+            onPressed: () => _openPictureDialog(context, imageSource),
           ),
         ));
   }
 
-  Widget _showGalleryButton(CreateLocationState state, BuildContext context) {
+  void _openPictureDialog(BuildContext context, ImageSource imageSource) async {
+    File image = await ImagePicker.pickImage(source: imageSource);
+    BlocProvider.of<CreateLocationBloc>(context).setImageFile(image);
+  }
+
+  Widget _showImageRemoveButton(CreateLocationState state, BuildContext context) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(
@@ -158,10 +176,10 @@ class CreateLocationWidget extends StatelessWidget {
             child: Row(children: <Widget>[
               Padding(
                   padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
-                  child: Icon(Icons.image, color: Colors.white)),
-              Text('Gallery', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
+                  child: Icon(Icons.delete_forever, color: Colors.white)),
+              Text("Delete", style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             ]),
-            onPressed: () => null,
+            onPressed: () => BlocProvider.of<CreateLocationBloc>(context).deleteImage(),
           ),
         ));
   }
@@ -352,8 +370,8 @@ class CreateLocationWidget extends StatelessWidget {
     if (widget.isEdit) {
       NavigationHelper.navigateBackOne(widgetState.context);
     }
-    SelectedLocation selectedLocation =
-        SelectedLocation(widget.location.id, state.displayName, state.gradeSet);
+    SelectedLocation selectedLocation = SelectedLocation(widget.location.id, state.displayName,
+        state.existingImagePath, state.existingImageUri, state.gradeSet);
     NavigationHelper.navigateToLocation(
         widgetState.context, selectedLocation, widget.location.categories,
         addToBackStack: true);

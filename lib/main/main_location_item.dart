@@ -9,15 +9,37 @@ class LocationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-        child: Text(
-          location.displayName,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
+    Widget content;
+    if (location.imagePath != "") {
+      content = Column(children: <Widget>[
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
+                image: DecorationImage(
+                  image: NetworkImage(location.imagePath),
+                  fit: BoxFit.cover,
+                )),
+          ),
         ),
-      ),
+        Padding(
+            padding: EdgeInsets.fromLTRB(0.0, UIConstants.SMALLER_PADDING, 0.0, 0.0),
+            child: Text(
+              location.displayName,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
+            )),
+      ]);
+    } else {
+      content = Text(
+        location.displayName,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
+      );
+    }
+
+    return Center(
+      child: Container(padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: content),
     );
   }
 }

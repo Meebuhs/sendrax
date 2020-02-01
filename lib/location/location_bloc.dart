@@ -49,8 +49,10 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   void _retrieveSectionsForThisLocation(User user) async {
     if (user != null) {
+      Location newLocation = Location(location.id, location.displayName, location.imagePath,
+          location.imageUri, location.gradeSet, categories, <String>[]);
       locationSubscription =
-          LocationRepo.getInstance().getSectionsForLocation(location.id, user).listen((location) {
+          LocationRepo.getInstance().getSectionsForLocation(newLocation, user).listen((location) {
         add(SectionsUpdatedEvent(location.sections));
       });
     } else {
