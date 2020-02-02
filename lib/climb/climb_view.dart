@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/models/attempt.dart';
@@ -83,40 +84,75 @@ class ClimbWidget extends StatelessWidget {
   }
 
   Widget _showListView(ClimbState state) {
+    int itemCount = 1;
+    if (widget.climb.imagePath != "") {
+      itemCount++;
+    }
+    if (state.attempts.isEmpty) {
+      itemCount++;
+    } else {
+      itemCount += state.attempts.length;
+    }
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        if (index == 0) {
-          return _showImage();
-        } else if (index == 1) {
-          return _showClimbInformation();
-        } else if (state.attempts.isEmpty) {
-          return Container(
-            child: Center(
-              child: Text(
-                "This climb doesn't have any attempts.\nLet's create one right now!",
-                textAlign: TextAlign.center,
-              ),
-            ),
-            padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
-          );
+        if (widget.climb.imagePath != "") {
+          if (index == 0) {
+            return _showImage();
+          } else if (index == 1) {
+            return _showClimbInformation();
+          } else if (state.attempts.isEmpty) {
+            return _showEmptyAttemptList();
+          } else {
+            return _buildAttempt(state.attempts[index - 2], widget.climb.id);
+          }
         } else {
-          return _buildAttempt(state.attempts[index - 2], widget.climb.id);
+          if (index == 0) {
+            return _showClimbInformation();
+          } else if (state.attempts.isEmpty) {
+            return _showEmptyAttemptList();
+          } else {
+            return _buildAttempt(state.attempts[index - 1], widget.climb.id);
+          }
         }
       },
-      itemCount: state.attempts.isEmpty ? 3 : state.attempts.length + 2,
+      itemCount: itemCount,
+    );
+  }
+
+  Widget _showEmptyAttemptList() {
+    return Container(
+      child: Center(
+        child: Text(
+          "This climb doesn't have any attempts.\nLet's create one right now!",
+          textAlign: TextAlign.center,
+        ),
+      ),
+      padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
     );
   }
 
   Widget _showImage() {
-    return SizedBox(
-      height: 200.0,
-      child: Center(
-        child: Text(
-          "Image placeholder",
-          textAlign: TextAlign.center,
+    return Container(
+      height: 200,
+      child: CachedNetworkImage(
+        imageUrl: widget.climb.imagePath,
+        imageBuilder: (context, imageProvider) => Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
+          )),
         ),
+        placeholder: (context, url) => SizedBox(
+            width: 60,
+            height: 60,
+            child: Center(
+                child: CircularProgressIndicator(
+              strokeWidth: 4.0,
+            ))),
+        errorWidget: (context, url, error) => Icon(Icons.error),
       ),
     );
   }
@@ -129,7 +165,13 @@ class ClimbWidget extends StatelessWidget {
     rowComponents.add(Expanded(child: Center(child: Text(firstComponentText))));
     rowComponents.add(Expanded(child: Text("${widget.climb.categories.join(', ')}"), flex: 2));
 
-    return Column(children: <Widget>[Container(child: Row(children: rowComponents)), Divider()]);
+    return Column(children: <Widget>[
+      Container(
+          child: Padding(
+              padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+              child: Row(children: rowComponents))),
+      Divider()
+    ]);
   }
 
   AttemptItem _buildAttempt(Attempt attempt, String climbId) {

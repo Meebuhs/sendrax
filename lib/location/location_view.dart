@@ -172,9 +172,9 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _showEmptyFilteredList(LocationState state, BuildContext context) {
-    Widget content;
-    if (widget.location.imagePath != "") {
-      content = Column(children: <Widget>[
+    return Padding(
+      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+      child: Column(children: <Widget>[
         _showImage(),
         Expanded(
             child: Center(
@@ -183,18 +183,7 @@ class LocationWidget extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ))
-      ]);
-    } else {
-      content = Center(
-        child: Text(
-          "There are no climbs matching these filter parameters.",
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-    return Padding(
-      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-      child: content,
+      ]),
     );
   }
 

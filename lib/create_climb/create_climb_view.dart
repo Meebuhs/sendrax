@@ -393,8 +393,8 @@ class CreateClimbWidget extends StatelessWidget {
       NavigationHelper.navigateBackOne(widgetState.context);
     }
     // @formatter:off
-    Climb climb = Climb(widget.climb.id, state.displayName, state.imageUri,
-        state.imagePath, widget.climb.locationId, state.grade, widget.climb.gradeSet,
+    Climb climb = Climb(widget.climb.id, state.displayName, state.imagePath,
+        state.imageUri, widget.climb.locationId, state.grade, widget.climb.gradeSet,
         state.section, widget.climb.archived, state.selectedCategories, widget.climb.attempts);
     NavigationHelper.navigateToClimb(widgetState.context, climb, widget.selectedLocation,
         widget.sections, widget.grades, widget.categories, addToBackStack: true);
