@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
@@ -6,6 +7,7 @@ import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/location.dart';
+import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
 
 import 'create_climb_event.dart';
@@ -29,8 +31,29 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
     state.loading = true;
 
     if (_validateAndSave(state)) {
-      Climb climb = new Climb(this.climb.id, state.displayName, this.climb.locationId, state.grade,
-          state.gradeSet, state.section, false, state.selectedCategories, <Attempt>[]);
+      if (state.deleteImage) {
+        StorageRepo.getInstance().deleteFileByUri(state.imageUri);
+        state.imageUri = "";
+        state.imagePath = "";
+      } else if (state.imageFile != null) {
+        if (state.imageUri != "") {
+          StorageRepo.getInstance().deleteFileByUri(state.imageUri);
+        }
+        state.imageUri = await StorageRepo.getInstance().uploadFile(state.imageFile);
+        state.imagePath = await StorageRepo.getInstance().decodeUri(state.imageUri);
+      }
+
+      Climb climb = new Climb(
+          this.climb.id,
+          state.displayName,
+          state.imagePath,
+          state.imageUri,
+          this.climb.locationId,
+          state.grade,
+          state.gradeSet,
+          state.section,
+          false,
+          state.selectedCategories, <Attempt>[]);
       try {
         ClimbRepo.getInstance().setClimb(climb);
         state.loading = false;
@@ -71,6 +94,14 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
     add(CategoriesUpdatedEvent(selectedCategories));
   }
 
+  void setImageFile(File image) {
+    add(ImageFileUpdatedEvent(false, image));
+  }
+
+  void deleteImage() {
+    add(ImageFileUpdatedEvent(true, null));
+  }
+
   void archiveClimb(BuildContext context, CreateClimbWidget view, SelectedLocation location,
       List<String> categories) {
     ClimbRepo.getInstance().archiveClimb(this.climb.id);
@@ -79,7 +110,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
 
   void deleteClimb(BuildContext context, CreateClimbWidget view, SelectedLocation location,
       List<String> categories) {
-    ClimbRepo.getInstance().deleteClimb(this.climb.id);
+    ClimbRepo.getInstance().deleteClimb(this.climb.id, this.climb.imageUri);
     NavigationHelper.resetToLocation(context, location, categories);
   }
 
@@ -91,6 +122,8 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
       yield CreateClimbState.selectSection(event.section, state);
     } else if (event is CategoriesUpdatedEvent) {
       yield CreateClimbState.updateCategories(event.selectedCategories, state);
+    } else if (event is ImageFileUpdatedEvent) {
+      yield CreateClimbState.updateImageFile(event.deleteImage, event.imageFile, state);
     } else if (event is CreateClimbErrorEvent) {
       yield CreateClimbState.loading(false, state);
     }

@@ -7,6 +7,7 @@ import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/grade_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
+import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user.dart';
 import 'package:sendrax/models/user_repo.dart';
 
@@ -39,8 +40,28 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   void _retrieveClimbsForThisLocation(User user) async {
     if (user != null) {
       climbSubscription =
-          LocationRepo.getInstance().getClimbsForLocation(location.id, user).listen((climbs) {
-        add(ClimbsUpdatedEvent(climbs));
+          LocationRepo.getInstance().getClimbsForLocation(location.id, user).listen((climbs) async {
+        Stream<Climb> processedClimbsStream = Stream.fromIterable(climbs).asyncMap((climb) async {
+          if (climb.imageUri != "") {
+            final String url = await StorageRepo.getInstance().decodeUri(climb.imageUri);
+            return Climb(
+                climb.id,
+                climb.displayName,
+                url,
+                climb.imageUri,
+                climb.locationId,
+                climb.grade,
+                climb.gradeSet,
+                climb.section,
+                climb.archived,
+                climb.categories,
+                climb.attempts);
+          } else {
+            return climb;
+          }
+        });
+        final List<Climb> processedClimbs = await processedClimbsStream.toList();
+        add(ClimbsUpdatedEvent(processedClimbs));
       });
     } else {
       add(LocationErrorEvent());

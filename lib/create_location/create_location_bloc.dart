@@ -65,19 +65,19 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
 
     if (_validateAndSave()) {
       if (state.deleteImage) {
-        StorageRepo.getInstance().deleteFileByUri(state.existingImageUri);
-        state.existingImageUri = "";
-        state.existingImagePath = "";
-      } else if (state.newImageFile != null) {
-        if (state.existingImageUri != "") {
-          StorageRepo.getInstance().deleteFileByUri(state.existingImageUri);
+        StorageRepo.getInstance().deleteFileByUri(state.imageUri);
+        state.imageUri = "";
+        state.imagePath = "";
+      } else if (state.imageFile != null) {
+        if (state.imageUri != "") {
+          StorageRepo.getInstance().deleteFileByUri(state.imageUri);
         }
-        state.existingImageUri = await StorageRepo.getInstance().uploadFile(state.newImageFile);
-        state.existingImagePath = await StorageRepo.getInstance().decodeUri(state.existingImageUri);
+        state.imageUri = await StorageRepo.getInstance().uploadFile(state.imageFile);
+        state.imagePath = await StorageRepo.getInstance().decodeUri(state.imageUri);
       }
 
-      Location location = new Location(this.location.id, state.displayName, state.existingImagePath,
-          state.existingImageUri, state.gradeSet, <String>[], state.sections, <Climb>[]);
+      Location location = new Location(this.location.id, state.displayName, state.imagePath,
+          state.imageUri, state.gradeSet, <String>[], state.sections, <Climb>[]);
       try {
         LocationRepo.getInstance().setLocation(location);
         state.loading = false;
@@ -130,8 +130,8 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     } else if (event is LocationClearedEvent) {
       yield CreateLocationState.updateLocation(
           true,
-          new Location(this.location.id, state.displayName, state.existingImagePath,
-              state.existingImageUri, state.gradeSet, <String>[]),
+          new Location(this.location.id, state.displayName, state.imagePath, state.imageUri,
+              state.gradeSet, <String>[]),
           state);
     } else if (event is GradesUpdatedEvent) {
       yield CreateLocationState.updateGrades(false, event.grades, state);

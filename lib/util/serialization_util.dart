@@ -30,8 +30,8 @@ class Deserializer {
 
   // @formatter:off
   static Climb _deserializeClimb(DocumentSnapshot climb) {
-    return Climb(climb['id'], climb['displayName'], climb['locationId'], climb['grade'],
-        climb['gradeSet'], climb['section'], climb['archived'],
+    return Climb(climb['id'], climb['displayName'], "", climb['imageUri'], climb['locationId'],
+        climb['grade'], climb['gradeSet'], climb['section'], climb['archived'],
         _deserializeClimbCategories(climb['categories']), <Attempt>[]);
   }
   // @formatter:on

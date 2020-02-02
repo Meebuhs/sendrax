@@ -118,17 +118,17 @@ class CreateLocationWidget extends StatelessWidget {
 
   Widget _showImage(CreateLocationState state, BuildContext context) {
     Widget content;
-    if (state.deleteImage || (state.newImageFile == null && state.existingImagePath == "")) {
+    if (state.deleteImage || (state.imageFile == null && state.imagePath == "")) {
       content = Center(
         child: Text(
           "Add an image to this location",
           textAlign: TextAlign.center,
         ),
       );
-    } else if (state.newImageFile != null) {
-      content = Image.file(state.newImageFile);
+    } else if (state.imageFile != null) {
+      content = Image.file(state.imageFile);
     } else {
-      content = Image.network(state.existingImagePath);
+      content = Image.network(state.imagePath);
     }
     return SizedBox(
       height: 200.0,
@@ -369,8 +369,8 @@ class CreateLocationWidget extends StatelessWidget {
     if (widget.isEdit) {
       NavigationHelper.navigateBackOne(widgetState.context);
     }
-    SelectedLocation selectedLocation = SelectedLocation(widget.location.id, state.displayName,
-        state.existingImagePath, state.existingImageUri, state.gradeSet);
+    SelectedLocation selectedLocation = SelectedLocation(
+        widget.location.id, state.displayName, state.imagePath, state.imageUri, state.gradeSet);
     NavigationHelper.navigateToLocation(
         widgetState.context, selectedLocation, widget.location.categories,
         addToBackStack: true);

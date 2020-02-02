@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/util/constants.dart';
 import 'package:sendrax/util/serialization_util.dart';
@@ -43,20 +44,24 @@ class ClimbRepo {
         .setData(climb.map, merge: true);
   }
 
-  void deleteClimb(String climbId) async {
+  void deleteClimb(String climbId, String imageUri) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
         .document(climbId)
         .delete();
+
+    if (imageUri != "") {
+      StorageRepo.getInstance().deleteFileByUri(imageUri);
+    }
   }
 
   void archiveClimb(String climbId) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
         .document(climbId)
         .updateData({"archived": true});
   }

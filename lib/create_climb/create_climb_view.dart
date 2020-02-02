@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
@@ -98,6 +101,7 @@ class CreateClimbWidget extends StatelessWidget {
             shrinkWrap: true,
             children: <Widget>[
               _showDisplayNameInput(state),
+              _showImageInput(state, context),
               Row(children: <Widget>[
                 Expanded(
                   child: _showGradeDropdown(state, context),
@@ -131,6 +135,92 @@ class CreateClimbWidget extends StatelessWidget {
         onSaved: (value) => state.displayName = value.trim(),
       ),
     );
+  }
+
+  Widget _showImageInput(CreateClimbState state, BuildContext context) {
+    return Column(
+      children: <Widget>[
+        _showImage(state, context),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            _showImagePickerButton(state, context, "Camera",
+                Icon(Icons.camera_alt, color: Colors.white), ImageSource.camera),
+            _showImagePickerButton(state, context, "Gallery",
+                Icon(Icons.image, color: Colors.white), ImageSource.gallery),
+            _showImageRemoveButton(state, context),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _showImage(CreateClimbState state, BuildContext context) {
+    Widget content;
+    if (state.deleteImage || (state.imageFile == null && state.imagePath == "")) {
+      content = Center(
+        child: Text(
+          "Add an image to this location",
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else if (state.imageFile != null) {
+      content = Image.file(state.imageFile);
+    } else {
+      content = Image.network(state.imagePath);
+    }
+    return SizedBox(
+      height: 200.0,
+      child: content,
+    );
+  }
+
+  Widget _showImagePickerButton(CreateClimbState state, BuildContext context, String buttonText,
+      Icon icon, ImageSource imageSource) {
+    return new Padding(
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: SizedBox(
+          height: 40.0,
+          child: new RaisedButton(
+            elevation: UIConstants.STANDARD_ELEVATION,
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
+            color: Colors.pink,
+            child: Row(children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  child: icon),
+              Text(buttonText, style: new TextStyle(fontSize: 14.0, color: Colors.white)),
+            ]),
+            onPressed: () => _openPictureDialog(context, imageSource),
+          ),
+        ));
+  }
+
+  void _openPictureDialog(BuildContext context, ImageSource imageSource) async {
+    File image = await ImagePicker.pickImage(source: imageSource);
+    BlocProvider.of<CreateClimbBloc>(context).setImageFile(image);
+  }
+
+  Widget _showImageRemoveButton(CreateClimbState state, BuildContext context) {
+    return new Padding(
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: SizedBox(
+          height: 40.0,
+          child: new RaisedButton(
+            elevation: UIConstants.STANDARD_ELEVATION,
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
+            color: Colors.pink,
+            child: Row(children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  child: Icon(Icons.delete_forever, color: Colors.white)),
+              Text("Delete", style: new TextStyle(fontSize: 14.0, color: Colors.white)),
+            ]),
+            onPressed: () => BlocProvider.of<CreateClimbBloc>(context).deleteImage(),
+          ),
+        ));
   }
 
   Widget _showGradeDropdown(CreateClimbState state, BuildContext context) {
@@ -301,11 +391,11 @@ class CreateClimbWidget extends StatelessWidget {
     // when editing, pop back to location then reload climb
     if (widget.isEdit) {
       NavigationHelper.navigateBackOne(widgetState.context);
-      // @formatter:off
     }
-    Climb climb = Climb(widget.climb.id, state.displayName, widget.climb.locationId, state.grade,
-        widget.climb.gradeSet, state.section, widget.climb.archived, state.selectedCategories,
-        widget.climb.attempts);
+    // @formatter:off
+    Climb climb = Climb(widget.climb.id, state.displayName, state.imageUri,
+        state.imagePath, widget.climb.locationId, state.grade, widget.climb.gradeSet,
+        state.section, widget.climb.archived, state.selectedCategories, widget.climb.attempts);
     NavigationHelper.navigateToClimb(widgetState.context, climb, widget.selectedLocation,
         widget.sections, widget.grades, widget.categories, addToBackStack: true);
     // @formatter:on

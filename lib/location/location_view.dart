@@ -344,7 +344,7 @@ class LocationWidget extends StatelessWidget {
     var uuid = new Uuid();
     // the null values for grade and section here are required as they are used as the initial
     // values for the dropdowns
-    Climb climb = new Climb("climb-${uuid.v1()}", "", widget.location.id, null,
+    Climb climb = new Climb("climb-${uuid.v1()}", "", "", "", widget.location.id, null,
         widget.location.gradeSet, null, false, <String>[]);
     NavigationHelper.navigateToCreateClimb(
         widgetState.context,

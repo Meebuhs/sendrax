@@ -1,19 +1,14 @@
 import 'attempt.dart';
 
-class SelectedClimb {
-  SelectedClimb(this.id, this.displayName);
-
-  final String id;
-  final String displayName;
-}
-
 class Climb {
-  Climb(this.id, this.displayName, this.locationId, this.grade, this.gradeSet, this.section,
-      this.archived, this.categories,
+  Climb(this.id, this.displayName, this.imagePath, this.imageUri, this.locationId, this.grade,
+      this.gradeSet, this.section, this.archived, this.categories,
       [this.attempts]);
 
   final String id;
   final String displayName;
+  final String imagePath;
+  final String imageUri;
   final String locationId;
   final String grade;
   final String gradeSet;
@@ -26,6 +21,7 @@ class Climb {
     return {
       "id": id,
       "displayName": displayName,
+      "imageUri": imageUri,
       "locationId": locationId,
       "grade": grade,
       "gradeSet": gradeSet,
