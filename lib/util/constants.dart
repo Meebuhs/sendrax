@@ -24,6 +24,7 @@ class UIConstants {
   static const double STANDARD_ELEVATION = 3.0;
 
   // BORDER RADIUS
+  static const double SMALLER_BORDER_RADIUS = 20;
   static const double STANDARD_BORDER_RADIUS = 40;
 
   // BORDER WIDTH

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/location/location_climb_item.dart';
@@ -298,11 +299,24 @@ class LocationWidget extends StatelessWidget {
     if (widget.location.imagePath != "") {
       return Container(
         height: 200,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: NetworkImage(widget.location.imagePath),
-          fit: BoxFit.cover,
-        )),
+        child: CachedNetworkImage(
+          imageUrl: widget.location.imagePath,
+          imageBuilder: (context, imageProvider) => Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
+            )),
+          ),
+          placeholder: (context, url) => SizedBox(
+              width: 60,
+              height: 60,
+              child: Center(
+                  child: CircularProgressIndicator(
+                strokeWidth: 4.0,
+              ))),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        ),
       );
     } else {
       return Container();
