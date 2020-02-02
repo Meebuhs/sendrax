@@ -111,8 +111,10 @@ class MainWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                _showEditCategories(state, context),
-                _showAddLocation(state),
+                _buildMiniFab("Edit categories", Icon(Icons.mode_edit, color: Colors.pink),
+                    _showEditCategoriesDialog, state, context),
+                _buildMiniFab("Add location", Icon(Icons.add, color: Colors.pink), _createLocation,
+                    state, context),
                 _showMainFab(),
               ]),
         )
@@ -120,7 +122,8 @@ class MainWidget extends StatelessWidget {
     );
   }
 
-  Widget _showEditCategories(MainState state, BuildContext context) {
+  Widget _buildMiniFab(String labelText, Icon icon, Function(MainState, BuildContext) onPressed,
+      MainState state, BuildContext context) {
     double totalWidth = 160;
     double fabContainerSize = 56;
     double xProportionToFabCenter = 1 - (fabContainerSize / 2 / totalWidth);
@@ -137,7 +140,7 @@ class MainWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Text("Edit categories"),
+              Text(labelText),
               Container(
                   height: fabContainerSize,
                   width: fabContainerSize,
@@ -146,42 +149,8 @@ class MainWidget extends StatelessWidget {
                     heroTag: null,
                     backgroundColor: Colors.white,
                     mini: true,
-                    child: new Icon(Icons.mode_edit, color: Colors.pink),
-                    onPressed: () => _showEditCategoriesDialog(state, context),
-                  ))
-            ],
-          ),
-        ));
-  }
-
-  Widget _showAddLocation(MainState state) {
-    double totalWidth = 160;
-    double fabContainerSize = 56;
-    double xProportionToFabCenter = 1 - (fabContainerSize / 2 / totalWidth);
-    return Container(
-        height: 60.0,
-        width: totalWidth,
-        alignment: FractionalOffset.center,
-        child: ScaleTransition(
-          alignment: FractionalOffset(xProportionToFabCenter, 0.5),
-          scale: CurvedAnimation(
-            parent: widgetState._animationController,
-            curve: Interval(0.0, 1.0, curve: Curves.easeOutQuad),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Text("Add location"),
-              Container(
-                  height: fabContainerSize,
-                  width: fabContainerSize,
-                  alignment: FractionalOffset.center,
-                  child: FloatingActionButton(
-                    heroTag: null,
-                    backgroundColor: Colors.white,
-                    mini: true,
-                    child: new Icon(Icons.add, color: Colors.pink),
-                    onPressed: () => _createLocation(state),
+                    child: icon,
+                    onPressed: () => onPressed(state, context),
                   ))
             ],
           ),
@@ -209,14 +178,6 @@ class MainWidget extends StatelessWidget {
             )));
   }
 
-  void _createLocation(MainState state) {
-    var uuid = new Uuid();
-    Location location =
-        new Location("location-${uuid.v1()}", "", "", "", null, state.categories, <String>[], null);
-    NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
-        addToBackStack: true);
-  }
-
   void _showEditCategoriesDialog(MainState state, BuildContext upperContext) {
     showDialog(
         context: upperContext,
@@ -229,6 +190,14 @@ class MainWidget extends StatelessWidget {
                 submitInput: _submitInput),
           ]);
         });
+  }
+
+  void _createLocation(MainState state, BuildContext context) {
+    var uuid = new Uuid();
+    Location location =
+        new Location("location-${uuid.v1()}", "", "", "", null, state.categories, <String>[], null);
+    NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
+        addToBackStack: true);
   }
 
   void _submitInput(List<String> itemList, BuildContext context) {

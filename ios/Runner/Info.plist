@@ -27,9 +27,9 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-    <string>Sendrax requires library access to load a photo for locations or climbs.</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Sendrax requires camera access to take a photo for locations or climbs.</string>
+	<string>Sendrax requires library access to load a photo for locations or climbs.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Sendrax requires camera access to take a photo for locations or climbs.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
