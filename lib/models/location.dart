@@ -30,7 +30,6 @@ class Location {
       "imageUri": imageUri,
       "gradeSet": gradeSet,
       "sections": sections,
-      "climbs": climbs
     };
   }
 }

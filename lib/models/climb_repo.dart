@@ -46,6 +46,23 @@ class ClimbRepo {
 
   void deleteClimb(String climbId, String imageUri) async {
     final user = await UserRepo.getInstance().getCurrentUser();
+    // Delete all attempts contained in this climb
+    final WriteBatch batch = _firestore.batch();
+    int docCounter = 0;
+    QuerySnapshot attempts = await _firestore
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .getDocuments();
+    attempts.documents.forEach((attempt) async {
+      docCounter++;
+      batch.delete(attempt.reference);
+      if (docCounter > 498) {
+        // batches can delete 500 refs at a time
+        await batch.commit();
+      }
+    });
+    await batch.commit();
+
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
