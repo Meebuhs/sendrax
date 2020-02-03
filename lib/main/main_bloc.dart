@@ -81,7 +81,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     } else if (event is LocationsUpdatedEvent) {
       yield MainState.updateLocations(false, event.locations, state);
     } else if (event is CategoriesUpdatedEvent) {
-      yield MainState.updateCategories(false, event.categories, state);
+      yield MainState.updateCategories(state.loading, event.categories, state);
     } else if (event is MainErrorEvent) {
       yield MainState.loading(false, state);
     }

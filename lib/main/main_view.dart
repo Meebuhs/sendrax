@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/main/main_location_item.dart';
+import 'package:sendrax/main/mini_fab_label_clipper.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/string_collection_input/string_collection_input_view.dart';
@@ -24,8 +25,9 @@ class _MainState extends State<MainScreen> with TickerProviderStateMixin {
   void initState() {
     _animationController = new AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 400),
     );
+    super.initState();
   }
 
   @override
@@ -44,54 +46,61 @@ class MainWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('sendrax'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.lock_open),
-            onPressed: () {
-              BlocProvider.of<MainBloc>(context).logout(this);
-            },
-          )
-        ],
-      ),
-      body: BlocBuilder(
-          bloc: BlocProvider.of<MainBloc>(context),
-          builder: (context, MainState state) {
-            Widget content;
-            if (state.loading) {
-              content = Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 4.0,
-                ),
-              );
-            } else if (state.locations.isEmpty) {
-              content = Center(
-                child: Text(
-                  "Looks like you don't have any locations\nLet's create one right now!",
-                  textAlign: TextAlign.center,
-                ),
-              );
-            } else {
-              content = GridView.builder(
-                padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    child: _buildItem(state.locations[index]),
-                    onTap: () => _onLocationTap(state.locations[index], state.categories),
-                  );
-                },
-                itemCount: state.locations.length,
-              );
-            }
-            return _wrapContentWithFab(context, state, content);
-          }),
+      appBar: _buildAppBar(context),
+      body: _buildBody(context),
+      backgroundColor: Theme.of(context).backgroundColor,
     );
   }
 
-  LocationItem _buildItem(Location location) {
-    return LocationItem(location: location);
+  Widget _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text('sendrax'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.lock_open),
+          onPressed: () {
+            BlocProvider.of<MainBloc>(context).logout(this);
+          },
+        )
+      ],
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return BlocBuilder(
+        bloc: BlocProvider.of<MainBloc>(context),
+        builder: (context, MainState state) {
+          Widget content;
+          if (state.loading) {
+            content = Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 4.0,
+              ),
+            );
+          } else if (state.locations.isEmpty) {
+            content = Center(
+              child: Text(
+                "Looks like you don't have any locations\nLet's create one right now!",
+                textAlign: TextAlign.center,
+              ),
+            );
+          } else {
+            content = GridView.builder(
+              padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+              gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              itemBuilder: (context, index) {
+                return _buildItem(state.locations[index], state.categories, _onLocationTap);
+              },
+              itemCount: state.locations.length,
+            );
+          }
+          return _wrapContentWithFab(context, state, content);
+        });
+  }
+
+  LocationItem _buildItem(
+      Location location, List<String> categories, Function(Location, List<String>) onTapped) {
+    return LocationItem(location: location, categories: categories, onTapped: _onLocationTap);
   }
 
   void _onLocationTap(Location location, List<String> categories) {
@@ -111,9 +120,9 @@ class MainWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                _buildMiniFab("Edit categories", Icon(Icons.mode_edit, color: Colors.pink),
+                _buildMiniFab("Edit categories", Icon(Icons.mode_edit, color: Colors.black),
                     _showEditCategoriesDialog, state, context),
-                _buildMiniFab("Add location", Icon(Icons.add, color: Colors.pink), _createLocation,
+                _buildMiniFab("Add location", Icon(Icons.add, color: Colors.black), _createLocation,
                     state, context),
                 _showMainFab(),
               ]),
@@ -128,7 +137,7 @@ class MainWidget extends StatelessWidget {
     double fabContainerSize = 56;
     double xProportionToFabCenter = 1 - (fabContainerSize / 2 / totalWidth);
     return Container(
-        height: 60.0,
+        height: 56.0,
         width: totalWidth,
         alignment: FractionalOffset.center,
         child: ScaleTransition(
@@ -137,24 +146,53 @@ class MainWidget extends StatelessWidget {
             parent: widgetState._animationController,
             curve: Interval(0.0, 1.0, curve: Curves.easeOutQuad),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          child: Stack(
+            alignment: Alignment.center,
             children: <Widget>[
-              Text(labelText),
-              Container(
-                  height: fabContainerSize,
-                  width: fabContainerSize,
-                  alignment: FractionalOffset.center,
-                  child: FloatingActionButton(
-                    heroTag: null,
-                    backgroundColor: Colors.white,
-                    mini: true,
-                    child: icon,
-                    onPressed: () => onPressed(state, context),
-                  ))
+              _showMiniFabButton(fabContainerSize, icon, onPressed, context, state),
+              _showMiniFabLabel(fabContainerSize, labelText, context)
             ],
           ),
         ));
+  }
+
+  Widget _showMiniFabButton(double fabContainerSize, Icon icon,
+      Function(MainState, BuildContext) onPressed, BuildContext context, MainState state) {
+    return Positioned(
+        right: 0.0,
+        child: Container(
+            height: fabContainerSize,
+            width: fabContainerSize,
+            alignment: FractionalOffset.center,
+            child: FloatingActionButton(
+              heroTag: null,
+              backgroundColor: Theme.of(context).accentColor,
+              mini: true,
+              child: icon,
+              onPressed: () => onPressed(state, context),
+            )));
+  }
+
+  Widget _showMiniFabLabel(double fabContainerSize, String labelText, BuildContext context) {
+    return Positioned(
+      right: fabContainerSize - 8,
+      child: ClipPath(
+          clipper: MiniFabLabelClipper(),
+          child: Container(
+              padding: EdgeInsets.fromLTRB(
+                  UIConstants.SMALLER_PADDING / 2,
+                  UIConstants.SMALLER_PADDING / 2,
+                  UIConstants.SMALLER_PADDING,
+                  UIConstants.SMALLER_PADDING / 2),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).accentColor,
+                  borderRadius: BorderRadius.horizontal(
+                      left: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+              child: Text(
+                labelText,
+                style: Theme.of(context).primaryTextTheme.bodyText1,
+              ))),
+    );
   }
 
   Widget _showMainFab() {

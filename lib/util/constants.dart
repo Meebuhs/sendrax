@@ -24,8 +24,8 @@ class UIConstants {
   static const double STANDARD_ELEVATION = 3.0;
 
   // BORDER RADIUS
-  static const double SMALLER_BORDER_RADIUS = 20;
-  static const double STANDARD_BORDER_RADIUS = 40;
+  static const double CARD_BORDER_RADIUS = 4.0;
+  static const double STANDARD_BORDER_RADIUS = 40.0;
 
   // BORDER WIDTH
   static const double STANDARD_BORDER_WIDTH = 1.5;

@@ -4,23 +4,49 @@ import 'package:sendrax/models/location.dart';
 import 'package:sendrax/util/constants.dart';
 
 class LocationItem extends StatelessWidget {
-  LocationItem({Key key, @required this.location}) : super(key: key);
+  LocationItem(
+      {Key key, @required this.location, @required this.categories, @required this.onTapped})
+      : super(key: key);
 
   final Location location;
+  final List<String> categories;
+  final Function(Location, List<String>) onTapped;
 
   @override
   Widget build(BuildContext context) {
-    Widget content;
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: Card(
+            color: Theme.of(context).cardColor,
+            child: InkWell(
+              child: _buildContent(location, context),
+              onTap: () => onTapped(location, categories),
+            )),
+      ),
+    );
+  }
+
+  Widget _buildContent(Location location, BuildContext context) {
     if (location.imagePath != "") {
-      content = Column(children: <Widget>[
-        Expanded(
-          child: Container(
+      return _buildImageContent(location, context);
+    } else {
+      return _buildTextContent(location, context);
+    }
+  }
+
+  Widget _buildImageContent(Location location, BuildContext context) {
+    return Column(children: <Widget>[
+      Expanded(
+        child: Container(
+          child: Padding(
+            padding: EdgeInsets.all(1.0),
             child: CachedNetworkImage(
               imageUrl: location.imagePath,
               imageBuilder: (context, imageProvider) => Container(
                 decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.SMALLER_BORDER_RADIUS)),
+                    borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
                     image: DecorationImage(
                       image: imageProvider,
                       fit: BoxFit.cover,
@@ -37,24 +63,25 @@ class LocationItem extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-            padding: EdgeInsets.fromLTRB(0.0, UIConstants.SMALLER_PADDING, 0.0, 0.0),
-            child: Text(
-              location.displayName,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
-            )),
-      ]);
-    } else {
-      content = Text(
-        location.displayName,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
-      );
-    }
+      ),
+      Padding(
+          padding: EdgeInsets.fromLTRB(
+              0.0, UIConstants.SMALLER_PADDING, 0.0, UIConstants.SMALLER_PADDING),
+          child: Text(
+            location.displayName,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).accentTextTheme.headline6,
+          )),
+    ]);
+  }
 
-    return Center(
-      child: Container(padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: content),
-    );
+  Widget _buildTextContent(Location location, BuildContext context) {
+    return Container(
+        child: Center(
+            child: Text(
+      location.displayName,
+      overflow: TextOverflow.ellipsis,
+      style: Theme.of(context).accentTextTheme.headline6,
+    )));
   }
 }
