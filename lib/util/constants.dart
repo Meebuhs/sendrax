@@ -25,6 +25,8 @@ class UIConstants {
 
   // BORDER RADIUS
   static const double CARD_BORDER_RADIUS = 4.0;
+  static const double FIELD_BORDER_RADIUS = 8.0;
+  static const double BUTTON_BORDER_RADIUS = 8.0;
   static const double STANDARD_BORDER_RADIUS = 40.0;
 
   // BORDER WIDTH

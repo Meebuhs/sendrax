@@ -54,48 +54,52 @@ class LoginWidget extends StatelessWidget {
     BlocProvider.of<LoginBloc>(context).setupAuthStateListener(this);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Login"),
+        title: Text("sendrax"),
       ),
-      body: BlocBuilder(
-          bloc: BlocProvider.of<LoginBloc>(context),
-          builder: (context, LoginState state) {
-            Widget content = ListView(
-              children: <Widget>[showForm(state, context)],
-            );
-            if (state.loading) {
-              return Stack(children: <Widget>[
-                content,
-                Center(
-                  child: Stack(children: <Widget>[
-                    Opacity(
-                        opacity: 0.4,
-                        child: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius:
-                                  BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS),
-                            ))),
-                    SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: Center(
-                            child: CircularProgressIndicator(
-                          strokeWidth: 4.0,
-                        ))),
-                  ]),
-                )
-              ]);
-            } else {
-              return content;
-            }
-          }),
+      body: _buildBody(context),
+      backgroundColor: Theme.of(context).backgroundColor,
       resizeToAvoidBottomPadding: false,
     );
   }
 
-  Widget showForm(LoginState state, BuildContext context) {
+  Widget _buildBody(BuildContext context) {
+    return BlocBuilder(
+        bloc: BlocProvider.of<LoginBloc>(context),
+        builder: (context, LoginState state) {
+          Widget content = ListView(
+            children: <Widget>[_showForm(state, context)],
+          );
+          if (state.loading) {
+            return Stack(children: <Widget>[
+              content,
+              Center(
+                child: Stack(children: <Widget>[
+                  Opacity(
+                      opacity: 0.4,
+                      child: Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(UIConstants.FIELD_BORDER_RADIUS),
+                          ))),
+                  SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        strokeWidth: 4.0,
+                      ))),
+                ]),
+              )
+            ]);
+          } else {
+            return content;
+          }
+        });
+  }
+
+  Widget _showForm(LoginState state, BuildContext context) {
     return new Container(
         padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
         child: new Form(
@@ -103,7 +107,7 @@ class LoginWidget extends StatelessWidget {
           child: new ListView(
             shrinkWrap: true,
             children: <Widget>[
-              _showUsernameInput(state),
+              _showUsernameInput(state, context),
               _showPasswordInputs(state, context),
               _showPrimaryButton(state, context),
               _showSecondaryButton(state, context),
@@ -113,26 +117,19 @@ class LoginWidget extends StatelessWidget {
         ));
   }
 
-  Widget _showUsernameInput(LoginState state) {
+  Widget _showUsernameInput(LoginState state, BuildContext context) {
     return new TextFormField(
       maxLines: 1,
       keyboardType: TextInputType.text,
       autofocus: false,
       decoration: new InputDecoration(
           labelText: 'Username',
-          focusedBorder: _createInputBorder(Colors.pink),
-          enabledBorder: _createInputBorder(Colors.grey),
-          errorBorder: _createInputBorder(Colors.red),
-          focusedErrorBorder: _createInputBorder(Colors.red),
-          errorStyle: TextStyle(
-              fontSize: UIConstants.STANDARD_FONT_SIZE,
-              height: 0.75,
-              color: Colors.red,
-              fontWeight: FontWeight.w300),
-          prefixIcon: new Icon(
-            Icons.perm_identity,
-            color: Colors.grey,
-          )),
+          focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
+          enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
+          errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
+          focusedErrorBorder: Theme.of(context).inputDecorationTheme.focusedErrorBorder,
+          errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
+          prefixIcon: new Icon(Icons.perm_identity)),
       validator: (String value) {
         if (value.trim().isEmpty) {
           return 'Username cannot be empty';
@@ -147,7 +144,7 @@ class LoginWidget extends StatelessWidget {
     return Column(
       children: <Widget>[
         _showPasswordInput(state, context),
-        _showConfirmPasswordInput(state),
+        _showConfirmPasswordInput(state, context),
       ],
     );
   }
@@ -162,19 +159,12 @@ class LoginWidget extends StatelessWidget {
         autofocus: false,
         decoration: new InputDecoration(
             labelText: 'Password',
-            focusedBorder: _createInputBorder(Colors.pink),
-            enabledBorder: _createInputBorder(Colors.grey),
-            errorBorder: _createInputBorder(Colors.red),
-            focusedErrorBorder: _createInputBorder(Colors.red),
-            errorStyle: TextStyle(
-                fontSize: UIConstants.STANDARD_FONT_SIZE,
-                height: 0.75,
-                color: Colors.red,
-                fontWeight: FontWeight.w300),
-            prefixIcon: new Icon(
-              Icons.lock_outline,
-              color: Colors.grey,
-            )),
+            focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
+            enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
+            errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
+            focusedErrorBorder: Theme.of(context).inputDecorationTheme.focusedErrorBorder,
+            errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
+            prefixIcon: new Icon(Icons.lock_outline)),
         validator: (String value) {
           if (!state.isLogin && value.trim().length < 6) {
             return 'Password must be at least 6 characters';
@@ -188,7 +178,7 @@ class LoginWidget extends StatelessWidget {
     );
   }
 
-  Widget _showConfirmPasswordInput(LoginState state) {
+  Widget _showConfirmPasswordInput(LoginState state, BuildContext context) {
     Widget passwordContent = Padding(
       padding: const EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
       child: new TextFormField(
@@ -197,19 +187,12 @@ class LoginWidget extends StatelessWidget {
         autofocus: false,
         decoration: new InputDecoration(
             labelText: 'Confirm Password',
-            focusedBorder: _createInputBorder(Colors.pink),
-            enabledBorder: _createInputBorder(Colors.grey),
-            errorBorder: _createInputBorder(Colors.red),
-            focusedErrorBorder: _createInputBorder(Colors.red),
-            errorStyle: TextStyle(
-                fontSize: UIConstants.STANDARD_FONT_SIZE,
-                height: 0.75,
-                color: Colors.red,
-                fontWeight: FontWeight.w300),
-            prefixIcon: new Icon(
-              Icons.lock_outline,
-              color: Colors.grey,
-            )),
+            focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
+            enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
+            errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
+            focusedErrorBorder: Theme.of(context).inputDecorationTheme.focusedErrorBorder,
+            errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
+            prefixIcon: new Icon(Icons.lock_outline)),
         validator: (String value) {
           if (value.trim() != state.passwordKey.currentState.value) {
             return 'Passwords do not match';
@@ -237,13 +220,6 @@ class LoginWidget extends StatelessWidget {
         });
   }
 
-  OutlineInputBorder _createInputBorder(Color color) {
-    return OutlineInputBorder(
-      borderSide: BorderSide(color: color, width: UIConstants.STANDARD_BORDER_WIDTH),
-      borderRadius: const BorderRadius.all(Radius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
-    );
-  }
-
   Widget _showPrimaryButton(LoginState state, BuildContext context) {
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
@@ -252,10 +228,10 @@ class LoginWidget extends StatelessWidget {
           child: new RaisedButton(
             elevation: UIConstants.STANDARD_ELEVATION,
             shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
-            color: Colors.pink,
-            child: Text(state.isLogin ? 'Login' : 'Create account',
-                style: new TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.white)),
+                borderRadius: new BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+            color: Theme.of(context).accentColor,
+            child: Text(state.isLogin ? 'LOGIN' : 'CREATE ACCOUNT',
+                style: Theme.of(context).primaryTextTheme.button),
             onPressed: () => BlocProvider.of<LoginBloc>(context).validateAndSubmit(state, context),
           ),
         ));
@@ -264,7 +240,7 @@ class LoginWidget extends StatelessWidget {
   Widget _showSecondaryButton(LoginState state, BuildContext context) {
     return new FlatButton(
         child: Text(state.isLogin ? 'Create an account' : 'Have an account? Sign in',
-            style: new TextStyle(fontSize: UIConstants.BIG_FONT_SIZE, fontWeight: FontWeight.w300)),
+            style: Theme.of(context).accentTextTheme.subtitle2),
         onPressed: () {
           BlocProvider.of<LoginBloc>(context).toggleFormMode(state);
           state.isLogin
@@ -276,15 +252,9 @@ class LoginWidget extends StatelessWidget {
   Widget _showErrorMessage(LoginState state, BuildContext context) {
     if (state.errorMessage.length > 0) {
       return new Center(
-          child: Text(
-        state.errorMessage,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: UIConstants.STANDARD_FONT_SIZE,
-            height: 0.75,
-            color: Colors.red,
-            fontWeight: FontWeight.w300),
-      ));
+          child: Text(state.errorMessage,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).inputDecorationTheme.errorStyle));
     } else {
       return new Container(
         height: 0.0,
