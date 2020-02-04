@@ -200,7 +200,7 @@ class MainWidget extends StatelessWidget {
     return Container(
         alignment: FractionalOffset.bottomRight,
         child: Padding(
-            padding: EdgeInsets.fromLTRB(0.0, UIConstants.SMALLER_PADDING, 0.0, 0.0),
+            padding: EdgeInsets.only(top: UIConstants.STANDARD_PADDING),
             child: FloatingActionButton(
               heroTag: null,
               child: AnimatedIcon(

@@ -107,9 +107,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     } else if (event is ClimbsUpdatedEvent) {
       yield LocationState.updateClimbs(false, event.climbs, state);
     } else if (event is SectionsUpdatedEvent) {
-      yield LocationState.updateSections(false, event.sections, state);
+      yield LocationState.updateSections(state.loading, event.sections, state);
     } else if (event is GradesUpdatedEvent) {
-      yield LocationState.updateGrades(false, event.grades, state);
+      yield LocationState.updateGrades(state.loading, event.grades, state);
     } else if (event is GradeFilteredEvent) {
       yield LocationState.setFilterGrade(event.filterGrade, state);
     } else if (event is SectionFilteredEvent) {

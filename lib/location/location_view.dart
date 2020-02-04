@@ -113,8 +113,7 @@ class LocationWidget extends StatelessWidget {
   Widget _showGradeDropdown(LocationState state, BuildContext context) {
     return Container(
         color: Theme.of(context).cardColor,
-        padding:
-            EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
         child: Row(children: <Widget>[
           Expanded(
               child: DropdownButtonHideUnderline(
@@ -124,7 +123,7 @@ class LocationWidget extends StatelessWidget {
             value: state.filterGrade,
             hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
               Padding(
-                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  padding: EdgeInsets.only(right: UIConstants.STANDARD_PADDING),
                   child: Icon(Icons.filter_list, color: Colors.grey)),
               Text("Grade"),
             ]),
@@ -141,8 +140,7 @@ class LocationWidget extends StatelessWidget {
   Widget _showSectionDropdown(LocationState state, BuildContext context) {
     return Container(
         color: Theme.of(context).cardColor,
-        padding:
-            EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
         child: Row(children: <Widget>[
           Expanded(
               child: DropdownButtonHideUnderline(
@@ -154,7 +152,7 @@ class LocationWidget extends StatelessWidget {
             value: state.filterSection,
             hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
               Padding(
-                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  padding: EdgeInsets.only(right: UIConstants.STANDARD_PADDING),
                   child: Icon(Icons.filter_list, color: Colors.grey)),
               Text("Section"),
             ]),
@@ -322,7 +320,7 @@ class LocationWidget extends StatelessWidget {
     if (widget.location.imagePath != "") {
       return Container(
         height: 200,
-        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, UIConstants.SMALLER_PADDING),
+        padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
         child: CachedNetworkImage(
           imageUrl: widget.location.imagePath,
           imageBuilder: (context, imageProvider) => Container(

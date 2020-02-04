@@ -65,8 +65,7 @@ class LocationItem extends StatelessWidget {
         ),
       ),
       Padding(
-        padding:
-            EdgeInsets.fromLTRB(0.0, UIConstants.SMALLER_PADDING, 0.0, UIConstants.SMALLER_PADDING),
+        padding: EdgeInsets.symmetric(vertical: UIConstants.SMALLER_PADDING),
         child: _showText(location, context),
       )
     ]);

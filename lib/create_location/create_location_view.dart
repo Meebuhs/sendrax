@@ -148,9 +148,7 @@ class CreateLocationWidget extends StatelessWidget {
                 borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
             color: Colors.pink,
             child: Row(children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
-                  child: icon),
+              Padding(padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING), child: icon),
               Text(buttonText, style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             ]),
             onPressed: () => _openPictureDialog(context, imageSource),
@@ -175,7 +173,7 @@ class CreateLocationWidget extends StatelessWidget {
             color: Colors.pink,
             child: Row(children: <Widget>[
               Padding(
-                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
                   child: Icon(Icons.delete_forever, color: Colors.white)),
               Text("Delete", style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             ]),
@@ -272,8 +270,7 @@ class CreateLocationWidget extends StatelessWidget {
         initialData: (state.sections == null) ? <String>[] : state.sections,
         builder: (BuildContext context, snapshot) {
           return Padding(
-              padding: EdgeInsets.fromLTRB(
-                  UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
+              padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
               child: Text(
                 (snapshot.data.isEmpty) ? "No sections added" : snapshot.data.join(', '),
                 style: TextStyle(
@@ -321,8 +318,7 @@ class CreateLocationWidget extends StatelessWidget {
 
   Widget _showSubmitButton(CreateLocationState state, BuildContext context) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(
-            UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(

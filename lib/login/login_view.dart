@@ -154,7 +154,7 @@ class LoginWidget extends StatelessWidget {
 
   Widget _showPasswordInput(LoginState state, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
+      padding: const EdgeInsets.only(top: UIConstants.STANDARD_PADDING),
       child: new TextFormField(
         key: state.passwordKey,
         maxLines: 1,
@@ -186,7 +186,7 @@ class LoginWidget extends StatelessWidget {
 
   Widget _showConfirmPasswordInput(LoginState state, BuildContext context) {
     Widget passwordContent = Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
+      padding: const EdgeInsets.only(top: UIConstants.STANDARD_PADDING),
       child: new TextFormField(
         maxLines: 1,
         obscureText: true,
@@ -231,7 +231,7 @@ class LoginWidget extends StatelessWidget {
 
   Widget _showPrimaryButton(LoginState state, BuildContext context) {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
+        padding: EdgeInsets.only(top: UIConstants.STANDARD_PADDING),
         child: SizedBox(
           height: 40.0,
           child: new RaisedButton(

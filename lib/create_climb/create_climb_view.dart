@@ -188,7 +188,7 @@ class CreateClimbWidget extends StatelessWidget {
             color: Colors.pink,
             child: Row(children: <Widget>[
               Padding(
-                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
                   child: icon),
               Text(buttonText, style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             ]),
@@ -214,7 +214,7 @@ class CreateClimbWidget extends StatelessWidget {
             color: Colors.pink,
             child: Row(children: <Widget>[
               Padding(
-                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
                   child: Icon(Icons.delete_forever, color: Colors.white)),
               Text("Delete", style: new TextStyle(fontSize: 14.0, color: Colors.white)),
             ]),
