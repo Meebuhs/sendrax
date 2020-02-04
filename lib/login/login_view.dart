@@ -122,6 +122,7 @@ class LoginWidget extends StatelessWidget {
       maxLines: 1,
       keyboardType: TextInputType.text,
       autofocus: false,
+      style: Theme.of(context).accentTextTheme.subtitle2,
       decoration: new InputDecoration(
           labelText: 'Username',
           filled: true,
@@ -159,6 +160,7 @@ class LoginWidget extends StatelessWidget {
         maxLines: 1,
         obscureText: true,
         autofocus: false,
+        style: Theme.of(context).accentTextTheme.subtitle2,
         decoration: new InputDecoration(
             labelText: 'Password',
             filled: true,
@@ -189,6 +191,7 @@ class LoginWidget extends StatelessWidget {
         maxLines: 1,
         obscureText: true,
         autofocus: false,
+        style: Theme.of(context).accentTextTheme.subtitle2,
         decoration: new InputDecoration(
             labelText: 'Confirm Password',
             filled: true,

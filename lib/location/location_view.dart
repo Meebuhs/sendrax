@@ -119,6 +119,7 @@ class LocationWidget extends StatelessWidget {
           Expanded(
               child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
+            style: Theme.of(context).accentTextTheme.subtitle2,
             items: _createDropdownItems(state.grades),
             value: state.filterGrade,
             hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
@@ -146,6 +147,7 @@ class LocationWidget extends StatelessWidget {
           Expanded(
               child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
+            style: Theme.of(context).accentTextTheme.subtitle2,
             disabledHint: Text("No sections"),
             iconDisabledColor: Theme.of(context).cardColor,
             items: _createDropdownItems(state.sections),

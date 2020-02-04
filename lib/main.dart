@@ -25,8 +25,8 @@ class _sendraxState extends State<sendrax> {
             accentColor: accentColour,
             errorColor: errorColour,
             backgroundColor: Color(0x00000000),
-            cardColor: Color(0xff111111),
-            canvasColor: Color(0xff111111),
+            cardColor: Color(0xff1f1f1f),
+            canvasColor: Color(0xff1f1f1f),
             primaryTextTheme: TextTheme(
               headline5: TextStyle(
                   fontSize: 20.0,
