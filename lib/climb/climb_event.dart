@@ -16,12 +16,6 @@ class SendTypeSelectedEvent extends ClimbEvent {
   final String sendType;
 }
 
-class WarmupToggledEvent extends ClimbEvent {
-  WarmupToggledEvent(this.warmup);
-
-  final bool warmup;
-}
-
 class DownclimbedToggledEvent extends ClimbEvent {
   DownclimbedToggledEvent(this.downclimbed);
 

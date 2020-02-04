@@ -42,10 +42,6 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     add(SendTypeSelectedEvent(sendType));
   }
 
-  void toggleWarmupCheckbox(bool warmup) {
-    add(WarmupToggledEvent(warmup));
-  }
-
   void toggleDownclimbedCheckbox(bool downclimbed) {
     add(DownclimbedToggledEvent(downclimbed));
   }
@@ -56,7 +52,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
     if (_validateAndSave(state)) {
       Attempt attempt = new Attempt("attempt-${uuid.v1()}", new Timestamp.now(), state.sendType,
-          state.warmup, state.downclimbed, state.notes);
+          state.downclimbed, state.notes);
       try {
         ClimbRepo.getInstance().setAttempt(attempt, climbId);
         state.loading = false;
@@ -90,8 +86,6 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
       yield ClimbState.updateAttempts(false, event.attempts, state);
     } else if (event is SendTypeSelectedEvent) {
       yield ClimbState.selectSendType(event.sendType, state);
-    } else if (event is WarmupToggledEvent) {
-      yield ClimbState.toggleWarmup(event.warmup, state);
     } else if (event is DownclimbedToggledEvent) {
       yield ClimbState.toggleDownclimbed(event.downclimbed, state);
     } else if (event is ClimbErrorEvent) {

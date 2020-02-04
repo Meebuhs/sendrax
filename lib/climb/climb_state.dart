@@ -7,40 +7,35 @@ class ClimbState {
   final TextEditingController notesInputController;
   List<Attempt> attempts;
   String sendType;
-  bool warmup;
   bool downclimbed;
   String notes;
 
   // @formatter:off
   ClimbState._internal(
       this.loading, this.formKey, this.notesInputController, this.attempts, this.sendType,
-      this.warmup, this.downclimbed, this.notes);
+      this.downclimbed, this.notes);
 
   factory ClimbState.initial() =>
       ClimbState._internal(true, new GlobalKey<FormState>(), new TextEditingController(),
-          <Attempt>[], null, false, false, "");
+          <Attempt>[], null, false, "");
 
   factory ClimbState.loading(bool loading, ClimbState state) => ClimbState._internal(
       loading, state.formKey, state.notesInputController, state.attempts, state.sendType,
-          state.warmup, state.downclimbed, state.notes);
+          state.downclimbed, state.notes);
 
   factory ClimbState.updateAttempts(bool loading, List<Attempt> attempts, ClimbState state) =>
       ClimbState._internal(
-      loading, state.formKey, state.notesInputController, attempts, state.sendType, state.warmup,
+      loading, state.formKey, state.notesInputController, attempts, state.sendType,
           state.downclimbed, state.notes);
 
   factory ClimbState.selectSendType(String sendType, ClimbState state) =>
       ClimbState._internal(
       state.loading, state.formKey, state.notesInputController, state.attempts, sendType,
-          state.warmup, state.downclimbed, state.notes);
-
-  factory ClimbState.toggleWarmup(bool warmup, ClimbState state) => ClimbState._internal(
-      state.loading, state.formKey, state.notesInputController, state.attempts, state.sendType,
-          warmup, state.downclimbed, state.notes);
+          state.downclimbed, state.notes);
 
   factory ClimbState.toggleDownclimbed(bool downclimbed, ClimbState state) => ClimbState._internal(
       state.loading, state.formKey, state.notesInputController, state.attempts, state.sendType,
-          state.warmup, downclimbed, state.notes);
+          downclimbed, state.notes);
 }
 // @formatter:on
 

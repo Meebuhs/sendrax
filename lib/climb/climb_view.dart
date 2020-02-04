@@ -203,15 +203,14 @@ class ClimbWidget extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
                     child: Row(children: <Widget>[
                       Expanded(
-                        flex: 2,
                         child: _showSendTypeDropdown(state, context),
                       ),
-                      Expanded(
-                        child: _showWarmupCheckbox(state, context),
-                      ),
-                      Expanded(
-                        child: _showDownclimbedCheckbox(state, context),
-                      )
+                      Padding(
+                          padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
+                          child: SizedBox(
+                            width: 80,
+                            child: _showDownclimbedCheckbox(state, context),
+                          )),
                     ])),
                 Row(children: <Widget>[
                   Expanded(child: _showNotesInput(state, context)),
@@ -260,22 +259,6 @@ class ClimbWidget extends StatelessWidget {
     }
   }
 
-  Widget _showWarmupCheckbox(ClimbState state, BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text("Warmup", style: Theme.of(context).accentTextTheme.subtitle2),
-        Checkbox(
-            checkColor: Colors.black,
-            hoverColor: Theme.of(context).accentColor,
-            activeColor: Theme.of(context).accentColor,
-            focusColor: Theme.of(context).accentColor,
-            value: state.warmup,
-            onChanged: (value) => BlocProvider.of<ClimbBloc>(context).toggleWarmupCheckbox(value)),
-      ],
-    );
-  }
-
   Widget _showDownclimbedCheckbox(ClimbState state, BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -314,7 +297,8 @@ class ClimbWidget extends StatelessWidget {
   Widget _showSubmitButton(ClimbState state, BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
-        child: Container(
+        child: SizedBox(
+          width: 80,
           child: RaisedButton(
             elevation: 5.0,
             shape: RoundedRectangleBorder(

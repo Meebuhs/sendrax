@@ -39,41 +39,23 @@ class AttemptItem extends StatelessWidget {
             child: Row(children: <Widget>[
               Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Text(
-                  "${formatDate(attempt.timestamp.toDate())} - ${attempt.sendType}",
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).accentTextTheme.subtitle2,
-                ),
+                Padding(
+                    padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING / 2),
+                    child: Text(
+                      "${formatDate(attempt.timestamp.toDate())} - ${attempt.sendType}",
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).accentTextTheme.subtitle2,
+                    )),
                 Text(
                   attempt.notes,
                   style: Theme.of(context).accentTextTheme.caption,
                 )
               ])),
               Container(
-                  padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[_showWarmupTick(context), _showDownclimbedTick(context)],
-                  )),
+                padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
+                child: _showDownclimbedTick(context),
+              ),
             ])));
-  }
-
-  Widget _showWarmupTick(BuildContext context) {
-    return Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-      Text("W: ", style: Theme.of(context).accentTextTheme.bodyText2),
-      (attempt.warmup)
-          ? Icon(
-              Icons.check,
-              color: Theme.of(context).accentColor,
-              size: Theme.of(context).accentTextTheme.bodyText2.fontSize,
-            )
-          : Icon(
-              Icons.close,
-              color: Theme.of(context).accentColor,
-              size: Theme.of(context).accentTextTheme.bodyText2.fontSize,
-            )
-    ]);
   }
 
   Widget _showDownclimbedTick(BuildContext context) {

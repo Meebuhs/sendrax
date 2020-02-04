@@ -55,8 +55,8 @@ class Deserializer {
   }
 
   static Attempt _deserializeAttempt(DocumentSnapshot attempt) {
-    return Attempt(attempt['id'], attempt['timestamp'], attempt['sendType'], attempt['warmup'],
-        attempt['downclimbed'], attempt['notes']);
+    return Attempt(attempt['id'], attempt['timestamp'], attempt['sendType'], attempt['downclimbed'],
+        attempt['notes']);
   }
 
   static GradeSet deserializeGradeSet(DocumentSnapshot grade) {
