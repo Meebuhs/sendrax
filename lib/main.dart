@@ -26,17 +26,65 @@ class _sendraxState extends State<sendrax> {
             errorColor: errorColour,
             backgroundColor: Color(0x00000000),
             cardColor: Color(0xff111111),
+            canvasColor: Color(0xff111111),
             primaryTextTheme: TextTheme(
-              headline5: TextStyle(fontSize: 20.0, color: Colors.black, letterSpacing: 0),
-              headline6: TextStyle(fontSize: 16.0, color: Colors.black, letterSpacing: 0.15),
-              button: TextStyle(fontSize: 14.0, color: Colors.black, letterSpacing: 1.25),
-              bodyText1: TextStyle(fontSize: 12.0, color: Colors.black, letterSpacing: 0.5),
+              headline5: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0),
+              headline6: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.15),
+              button: TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.25),
+              bodyText1: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.5),
+              bodyText2: TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.25),
             ),
             accentTextTheme: TextTheme(
-              headline5: TextStyle(fontSize: 20.0, color: accentColour, letterSpacing: 0),
-              headline6: TextStyle(fontSize: 16.0, color: accentColour, letterSpacing: 0.15),
-              subtitle2: TextStyle(fontSize: 14.0, color: accentColour, letterSpacing: 0.1),
-              bodyText1: TextStyle(fontSize: 12.0, color: accentColour, letterSpacing: 0.5),
+              headline5: TextStyle(
+                  fontSize: 20.0,
+                  color: accentColour,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0),
+              headline6: TextStyle(
+                  fontSize: 18.0,
+                  color: accentColour,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.15),
+              subtitle1: TextStyle(
+                  fontSize: 16.0,
+                  color: accentColour,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.15),
+              subtitle2: TextStyle(
+                  fontSize: 14.0,
+                  color: accentColour,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.1),
+              bodyText1: TextStyle(
+                  fontSize: 16.0,
+                  color: accentColour,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.5),
+              bodyText2: TextStyle(
+                  fontSize: 14.0,
+                  color: accentColour,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.25),
             ),
             inputDecorationTheme: InputDecorationTheme(
               focusedBorder: OutlineInputBorder(

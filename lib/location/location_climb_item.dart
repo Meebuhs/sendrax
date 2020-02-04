@@ -15,20 +15,22 @@ class ClimbItem extends StatelessWidget {
       if (climb.categories.isEmpty) {
         label = "${climb.grade}";
       } else {
-        label = "${climb.grade} - ${climb.categories.join(', ')}";
+        label = "${climb.grade} - ${(climb.categories..sort()).join(', ')}";
       }
     } else {
-      label = "${climb.grade} - ${climb.displayName}";
+      if (climb.categories.isEmpty) {
+        label = "${climb.grade} - ${climb.displayName}";
+      } else {
+        label = "${climb.grade} - ${climb.displayName} - ${(climb.categories..sort()).join(', ')}";
+      }
     }
 
-    return Center(
-      child: Container(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-        child: Text(
-          label,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.pinkAccent),
-        ),
+    return Container(
+      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+      child: Text(
+        label,
+        overflow: TextOverflow.ellipsis,
+        style: Theme.of(context).accentTextTheme.subtitle2,
       ),
     );
   }

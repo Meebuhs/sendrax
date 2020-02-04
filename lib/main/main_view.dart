@@ -82,6 +82,7 @@ class MainWidget extends StatelessWidget {
               child: Text(
                 "Looks like you don't have any locations\nLet's create one right now!",
                 textAlign: TextAlign.center,
+                style: Theme.of(context).accentTextTheme.subtitle2,
               ),
             );
           } else {
@@ -190,7 +191,7 @@ class MainWidget extends StatelessWidget {
                       left: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
               child: Text(
                 labelText,
-                style: Theme.of(context).primaryTextTheme.bodyText1,
+                style: Theme.of(context).primaryTextTheme.subtitle2,
               ))),
     );
   }

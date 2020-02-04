@@ -53,106 +53,116 @@ class LocationWidget extends StatelessWidget {
           )
         ],
       ),
-      body: BlocBuilder(
-          bloc: BlocProvider.of<LocationBloc>(context),
-          builder: (context, LocationState state) {
-            Widget content;
-            if (state.loading) {
-              content = Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 4.0,
-                ),
-              );
-            } else if (state.climbs.isEmpty) {
-              content = Column(children: <Widget>[
-                _showImage(),
-                Expanded(
-                    child: Center(
-                  child: Text(
-                    "This location doesn't have any climbs.\nLet's create one right now!",
-                    textAlign: TextAlign.center,
-                  ),
-                ))
-              ]);
-            } else {
-              content = Column(children: <Widget>[
-                _showFilterDropdownRow(state, context),
-                Expanded(
-                  child: _buildFilteredList(state, context),
-                )
-              ]);
-            }
-            return _wrapContentWithFab(state, context, content);
-          }),
+      body: _buildBody(context),
+      backgroundColor: Theme.of(context).backgroundColor,
     );
   }
 
-  Widget _buildFilteredList(LocationState state, BuildContext context) {
-    if (List.from(state.climbs.where((climb) =>
-        (state.filterSection == null || climb.section == state.filterSection) &&
-        (state.filterGrade == null || climb.grade == state.filterGrade))).isEmpty) {
-      return _showEmptyFilteredList(state, context);
-    }
-    if (state.sections.isNotEmpty) {
-      return _buildContentWithSections(state, context, state.filterSection, state.filterGrade);
-    } else {
-      return _buildContentWithoutSections(state, context, state.filterGrade);
-    }
+  Widget _buildBody(BuildContext context) {
+    return BlocBuilder(
+        bloc: BlocProvider.of<LocationBloc>(context),
+        builder: (context, LocationState state) {
+          Widget content;
+          if (state.loading) {
+            content = Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 4.0,
+              ),
+            );
+          } else if (state.climbs.isEmpty) {
+            content = Column(children: <Widget>[
+              _showImage(),
+              Expanded(
+                  child: Center(
+                child: Text(
+                  "This location doesn't have any climbs.\nLet's create one right now!",
+                  textAlign: TextAlign.center,
+                ),
+              ))
+            ]);
+          } else {
+            content = Column(children: <Widget>[
+              _showFilterDropdownRow(state, context),
+              Expanded(
+                child: _buildFilteredList(state, context),
+              )
+            ]);
+          }
+          return _wrapContentWithFab(state, context, content);
+        });
   }
 
   Widget _showFilterDropdownRow(LocationState state, BuildContext context) {
-    return Row(children: <Widget>[
-      Expanded(
-        child: _showGradeDropdown(state, context),
-      ),
-      Expanded(
-        child: _showSectionDropdown(state, context),
+    return Column(children: <Widget>[
+      Row(children: <Widget>[
+        Expanded(
+          child: _showGradeDropdown(state, context),
+        ),
+        Expanded(
+          child: _showSectionDropdown(state, context),
+        )
+      ]),
+      Divider(
+        color: Theme.of(context).accentColor,
+        thickness: 1.0,
+        height: 0.0,
       )
     ]);
   }
 
   Widget _showGradeDropdown(LocationState state, BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(UIConstants.SMALLER_PADDING),
+    return Container(
+        color: Theme.of(context).cardColor,
+        padding:
+            EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0, UIConstants.SMALLER_PADDING, 0.0),
         child: Row(children: <Widget>[
           Expanded(
-              child: DropdownButton<String>(
+              child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
             items: _createDropdownItems(state.grades),
             value: state.filterGrade,
-            hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-              Icon(Icons.filter_list, color: Colors.grey),
+            hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  child: Icon(Icons.filter_list, color: Colors.grey)),
               Text("Grade"),
             ]),
             isExpanded: true,
             onChanged: (value) => BlocProvider.of<LocationBloc>(context).setGradeFilter(value),
-          )),
+          ))),
           IconButton(
-              icon: Icon(Icons.cancel),
+              icon: Icon(Icons.cancel,
+                  color: (state.filterGrade == null) ? Colors.grey : Theme.of(context).accentColor),
               onPressed: () => BlocProvider.of<LocationBloc>(context).setGradeFilter(null))
         ]));
   }
 
   Widget _showSectionDropdown(LocationState state, BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(UIConstants.SMALLER_PADDING),
+    return Container(
+        color: Theme.of(context).cardColor,
+        padding:
+            EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, 0.0, UIConstants.SMALLER_PADDING, 0.0),
         child: Row(children: <Widget>[
           Expanded(
-            child: DropdownButton<String>(
-              disabledHint: Text("No sections"),
-              iconDisabledColor: Colors.grey,
-              items: _createDropdownItems(state.sections),
-              value: state.filterSection,
-              hint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-                Icon(Icons.filter_list, color: Colors.grey),
-                Text("Section"),
-              ]),
-              isExpanded: true,
-              onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
-            ),
-          ),
+              child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+            disabledHint: Text("No sections"),
+            iconDisabledColor: Theme.of(context).cardColor,
+            items: _createDropdownItems(state.sections),
+            value: state.filterSection,
+            hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.fromLTRB(0.0, 0.0, UIConstants.SMALLER_PADDING, 0.0),
+                  child: Icon(Icons.filter_list, color: Colors.grey)),
+              Text("Section"),
+            ]),
+            isExpanded: true,
+            onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
+          ))),
           IconButton(
-              icon:
-                  Icon(Icons.cancel, color: (state.sections.isEmpty) ? Colors.grey : Colors.black),
+              icon: Icon(Icons.cancel,
+                  color:
+                      (state.filterSection == null) ? Colors.grey : Theme.of(context).accentColor),
               onPressed: () => BlocProvider.of<LocationBloc>(context).setSectionFilter(null))
         ]));
   }
@@ -171,6 +181,19 @@ class LocationWidget extends StatelessWidget {
     }
   }
 
+  Widget _buildFilteredList(LocationState state, BuildContext context) {
+    if (List.from(state.climbs.where((climb) =>
+        (state.filterSection == null || climb.section == state.filterSection) &&
+        (state.filterGrade == null || climb.grade == state.filterGrade))).isEmpty) {
+      return _showEmptyFilteredList(state, context);
+    }
+    if (state.sections.isNotEmpty) {
+      return _buildContentWithSections(state, context, state.filterSection, state.filterGrade);
+    } else {
+      return _buildContentWithoutSections(state, context, state.filterGrade);
+    }
+  }
+
   Widget _showEmptyFilteredList(LocationState state, BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
@@ -181,6 +204,7 @@ class LocationWidget extends StatelessWidget {
           child: Text(
             "There are no climbs matching these filter parameters.",
             textAlign: TextAlign.center,
+            style: Theme.of(context).accentTextTheme.subtitle2,
           ),
         ))
       ]),
@@ -223,27 +247,29 @@ class LocationWidget extends StatelessWidget {
         (climb) => climb.section == section && (filterGrade == null || climb.grade == filterGrade)))
       ..sort((a, b) => state.grades.indexOf(a.grade).compareTo(state.grades.indexOf(b.grade)));
     if (climbsToInclude.isNotEmpty) {
-      return Column(children: <Widget>[
+      return Card(
+          child: Column(children: <Widget>[
         Row(children: <Widget>[
           Expanded(
+              child: Padding(
+            padding: EdgeInsets.all(1.0),
             child: Container(
-              color: Colors.pinkAccent,
+              decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                color: Theme.of(context).accentColor,
+              ),
               padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
               child: Text(section,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.white)),
+                  style: Theme.of(context).primaryTextTheme.subtitle2),
             ),
-          ),
+          )),
         ]),
         Column(
-            children: climbsToInclude
-                .map((climb) => new InkWell(
-                    child: _buildItem(climb),
-                    onTap: () {
-                      navigateToClimb(climb, state);
-                    }))
-                .toList())
-      ]);
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: climbsToInclude.map((climb) => _buildClimbItem(climb, state)).toList())
+      ]));
     } else {
       return Column();
     }
@@ -251,7 +277,6 @@ class LocationWidget extends StatelessWidget {
 
   Widget _buildContentWithoutSections(
       LocationState state, BuildContext context, String filterGrade) {
-    int indexOffset = widget.location.imagePath != "" ? 1 : 0;
     List<Climb> climbsToInclude = List.from(
         state.climbs.where((climb) => (filterGrade == null || climb.grade == filterGrade)))
       ..sort((a, b) => state.grades.indexOf(a.grade).compareTo(state.grades.indexOf(b.grade)));
@@ -262,35 +287,40 @@ class LocationWidget extends StatelessWidget {
         if (index == 0 && widget.location.imagePath != "") {
           return _showImage();
         } else {
-          return _buildClimb(context, state, climbsToInclude, index - indexOffset);
+          return _buildClimbs(context, state, climbsToInclude);
         }
       },
-      itemCount: climbsToInclude.length + indexOffset,
+      itemCount: widget.location.imagePath != "" ? 2 : 1,
     );
   }
 
-  Widget _buildClimb(BuildContext context, LocationState state, List<Climb> climbs, int index) {
-    if (climbs.isNotEmpty) {
-      return Column(children: [
-        new InkWell(
-            child: _buildItem(climbs[index]),
-            onTap: () {
-              navigateToClimb(climbs[index], state);
-            })
-      ]);
-    } else {
-      return Column();
-    }
+  Widget _buildClimbs(BuildContext context, LocationState state, List<Climb> climbs) {
+    List<Widget> climbItems = climbs.map((climb) => _buildClimbItem(climb, state)).toList();
+    return Container(
+        color: Theme.of(context).cardColor,
+        child: Column(
+          children: climbItems,
+        ));
   }
 
-  ClimbItem _buildItem(Climb climb) {
-    return ClimbItem(climb: climb);
+  Widget _buildClimbItem(Climb climb, LocationState state) {
+    return Row(children: <Widget>[
+      Expanded(
+          child: InkWell(
+              child: ClimbItem(
+                climb: climb,
+              ),
+              onTap: () {
+                navigateToClimb(climb, state);
+              }))
+    ]);
   }
 
   Widget _showImage() {
     if (widget.location.imagePath != "") {
       return Container(
         height: 200,
+        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, UIConstants.SMALLER_PADDING),
         child: CachedNetworkImage(
           imageUrl: widget.location.imagePath,
           imageBuilder: (context, imageProvider) => Container(
@@ -324,8 +354,8 @@ class LocationWidget extends StatelessWidget {
           padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
           child: FloatingActionButton(
               onPressed: () => _createClimb(state),
-              child: Icon(Icons.add, color: Colors.white),
-              backgroundColor: Colors.pinkAccent,
+              child: Icon(Icons.add, color: Colors.black),
+              backgroundColor: Theme.of(context).accentColor,
               elevation: UIConstants.STANDARD_ELEVATION),
         )
       ],

@@ -45,8 +45,8 @@ class LocationItem extends StatelessWidget {
               imageUrl: location.imagePath,
               imageBuilder: (context, imageProvider) => Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
                     image: DecorationImage(
                       image: imageProvider,
                       fit: BoxFit.cover,
@@ -65,23 +65,22 @@ class LocationItem extends StatelessWidget {
         ),
       ),
       Padding(
-          padding: EdgeInsets.fromLTRB(
-              0.0, UIConstants.SMALLER_PADDING, 0.0, UIConstants.SMALLER_PADDING),
-          child: Text(
-            location.displayName,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).accentTextTheme.headline6,
-          )),
+        padding:
+            EdgeInsets.fromLTRB(0.0, UIConstants.SMALLER_PADDING, 0.0, UIConstants.SMALLER_PADDING),
+        child: _showText(location, context),
+      )
     ]);
   }
 
   Widget _buildTextContent(Location location, BuildContext context) {
-    return Container(
-        child: Center(
-            child: Text(
+    return Container(child: Center(child: _showText(location, context)));
+  }
+
+  Widget _showText(Location location, BuildContext context) {
+    return Text(
       location.displayName,
       overflow: TextOverflow.ellipsis,
       style: Theme.of(context).accentTextTheme.headline6,
-    )));
+    );
   }
 }
