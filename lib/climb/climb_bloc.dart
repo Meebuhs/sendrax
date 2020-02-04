@@ -79,7 +79,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
   }
 
   void resetNotesInput() {
-    state.notesInputController.clear();
+    WidgetsBinding.instance.addPostFrameCallback((_) => state.notesInputController.clear());
   }
 
   @override
