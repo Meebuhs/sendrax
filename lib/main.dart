@@ -65,6 +65,11 @@ class _sendraxState extends State<sendrax> {
                   color: accentColour,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.15),
+              button: TextStyle(
+                  fontSize: 14.0,
+                  color: accentColour,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.25),
               subtitle1: TextStyle(
                   fontSize: 16.0,
                   color: accentColour,
