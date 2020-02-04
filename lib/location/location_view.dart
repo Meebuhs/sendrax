@@ -219,8 +219,9 @@ class LocationWidget extends StatelessWidget {
 
   Widget _buildSection(
       BuildContext context, LocationState state, String filterGrade, String section) {
-    List<Climb> climbsToInclude = List.from(state.climbs.where((climb) =>
-        climb.section == section && (filterGrade == null || climb.grade == filterGrade)));
+    List<Climb> climbsToInclude = List.from(state.climbs.where(
+        (climb) => climb.section == section && (filterGrade == null || climb.grade == filterGrade)))
+      ..sort((a, b) => state.grades.indexOf(a.grade).compareTo(state.grades.indexOf(b.grade)));
     if (climbsToInclude.isNotEmpty) {
       return Column(children: <Widget>[
         Row(children: <Widget>[
@@ -252,7 +253,9 @@ class LocationWidget extends StatelessWidget {
       LocationState state, BuildContext context, String filterGrade) {
     int indexOffset = widget.location.imagePath != "" ? 1 : 0;
     List<Climb> climbsToInclude = List.from(
-        state.climbs.where((climb) => (filterGrade == null || climb.grade == filterGrade)));
+        state.climbs.where((climb) => (filterGrade == null || climb.grade == filterGrade)))
+      ..sort((a, b) => state.grades.indexOf(a.grade).compareTo(state.grades.indexOf(b.grade)));
+    ;
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
