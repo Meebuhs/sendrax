@@ -60,27 +60,29 @@ class ClimbWidget extends StatelessWidget {
           )
         ],
       ),
-      body: BlocBuilder(
-          bloc: BlocProvider.of<ClimbBloc>(context),
-          builder: (context, ClimbState state) {
-            Widget content;
-            if (state.loading) {
-              content = Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 4.0,
-                ),
-              );
-            } else {
-              content = Column(
-                children: <Widget>[
-                  Expanded(child: _showListView(state)),
-                  _showForm(state, context)
-                ],
-              );
-            }
-            return content;
-          }),
+      body: _buildBody(context),
+      backgroundColor: Theme.of(context).backgroundColor,
     );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return BlocBuilder(
+        bloc: BlocProvider.of<ClimbBloc>(context),
+        builder: (context, ClimbState state) {
+          Widget content;
+          if (state.loading) {
+            content = Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 4.0,
+              ),
+            );
+          } else {
+            content = Column(
+              children: <Widget>[Expanded(child: _showListView(state)), _showForm(state, context)],
+            );
+          }
+          return content;
+        });
   }
 
   Widget _showListView(ClimbState state) {
@@ -94,24 +96,23 @@ class ClimbWidget extends StatelessWidget {
       itemCount += state.attempts.length;
     }
     return ListView.builder(
-      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       shrinkWrap: true,
       itemBuilder: (context, index) {
         if (widget.climb.imagePath != "") {
           if (index == 0) {
             return _showImage();
           } else if (index == 1) {
-            return _showClimbInformation();
+            return _showClimbInformation(context);
           } else if (state.attempts.isEmpty) {
-            return _showEmptyAttemptList();
+            return _showEmptyAttemptList(context);
           } else {
             return _buildAttempt(state.attempts[index - 2], widget.climb.id);
           }
         } else {
           if (index == 0) {
-            return _showClimbInformation();
+            return _showClimbInformation(context);
           } else if (state.attempts.isEmpty) {
-            return _showEmptyAttemptList();
+            return _showEmptyAttemptList(context);
           } else {
             return _buildAttempt(state.attempts[index - 1], widget.climb.id);
           }
@@ -121,20 +122,22 @@ class ClimbWidget extends StatelessWidget {
     );
   }
 
-  Widget _showEmptyAttemptList() {
+  Widget _showEmptyAttemptList(BuildContext context) {
     return Container(
       child: Center(
         child: Text(
           "This climb doesn't have any attempts.\nLet's create one right now!",
           textAlign: TextAlign.center,
+          style: Theme.of(context).accentTextTheme.subtitle2,
         ),
       ),
-      padding: EdgeInsets.fromLTRB(0.0, UIConstants.STANDARD_PADDING, 0.0, 0.0),
+      padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
     );
   }
 
   Widget _showImage() {
     return Container(
+      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       height: 200,
       child: CachedNetworkImage(
         imageUrl: widget.climb.imagePath,
@@ -157,20 +160,24 @@ class ClimbWidget extends StatelessWidget {
     );
   }
 
-  Widget _showClimbInformation() {
-    List<Widget> rowComponents = [];
+  Widget _showClimbInformation(BuildContext context) {
     String firstComponentText = (widget.climb.section == null)
         ? "${widget.climb.grade}"
         : "${widget.climb.grade} - ${widget.climb.section}";
-    rowComponents.add(Expanded(child: Center(child: Text(firstComponentText))));
-    rowComponents.add(Expanded(child: Text("${widget.climb.categories.join(', ')}"), flex: 2));
 
-    return Column(children: <Widget>[
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Container(
           child: Padding(
               padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              child: Row(children: rowComponents))),
-      Divider()
+              child: Text("$firstComponentText - ${widget.climb.categories.join(', ')}",
+                  style: Theme.of(context).accentTextTheme.subtitle2))),
+      Padding(
+          padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+          child: Divider(
+            color: Theme.of(context).accentColor,
+            thickness: 1.0,
+            height: 0.0,
+          ))
     ]);
   }
 
@@ -179,38 +186,52 @@ class ClimbWidget extends StatelessWidget {
   }
 
   Widget _showForm(ClimbState state, BuildContext context) {
-    return Container(
-        padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
-        alignment: Alignment.bottomCenter,
-        child: new Form(
-          key: state.formKey,
-          child: new ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              Row(children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: _showSendTypeDropdown(state, context),
-                ),
-                Expanded(
-                  child: _showWarmupCheckbox(state, context),
-                ),
-                Expanded(
-                  child: _showDownclimbedCheckbox(state, context),
-                )
-              ]),
-              _showNotesInput(state, context),
-              _showSubmitButton(state, context)
-            ],
-          ),
-        ));
+    return Column(children: <Widget>[
+      Divider(
+        color: Theme.of(context).accentColor,
+        thickness: 1.0,
+        height: 0.0,
+      ),
+      Container(
+          padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
+          alignment: Alignment.bottomCenter,
+          child: new Form(
+            key: state.formKey,
+            child: Column(
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+                    child: Row(children: <Widget>[
+                      Expanded(
+                        flex: 2,
+                        child: _showSendTypeDropdown(state, context),
+                      ),
+                      Expanded(
+                        child: _showWarmupCheckbox(state, context),
+                      ),
+                      Expanded(
+                        child: _showDownclimbedCheckbox(state, context),
+                      )
+                    ])),
+                Row(children: <Widget>[
+                  Expanded(child: _showNotesInput(state, context)),
+                  _showSubmitButton(state, context)
+                ])
+              ],
+            ),
+          ))
+    ]);
   }
 
   Widget _showSendTypeDropdown(ClimbState state, BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-            UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
-        child: DropdownButtonFormField<String>(
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+        decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.all(Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<String>(
+          style: Theme.of(context).accentTextTheme.subtitle2,
           items: _createDropdownItems(SendTypes.SEND_TYPES),
           value: state.sendType,
           hint: Text("Send"),
@@ -222,7 +243,7 @@ class ClimbWidget extends StatelessWidget {
             return null;
           },
           onChanged: (value) => BlocProvider.of<ClimbBloc>(context).selectSendType(value),
-        ));
+        )));
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
@@ -243,8 +264,12 @@ class ClimbWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text("Warmup"),
+        Text("Warmup", style: Theme.of(context).accentTextTheme.subtitle2),
         Checkbox(
+            checkColor: Colors.black,
+            hoverColor: Theme.of(context).accentColor,
+            activeColor: Theme.of(context).accentColor,
+            focusColor: Theme.of(context).accentColor,
             value: state.warmup,
             onChanged: (value) => BlocProvider.of<ClimbBloc>(context).toggleWarmupCheckbox(value)),
       ],
@@ -255,8 +280,12 @@ class ClimbWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text("Downclimbed"),
+        Text("Downclimbed", style: Theme.of(context).accentTextTheme.subtitle2),
         Checkbox(
+            checkColor: Colors.black,
+            hoverColor: Theme.of(context).accentColor,
+            activeColor: Theme.of(context).accentColor,
+            focusColor: Theme.of(context).accentColor,
             value: state.downclimbed,
             onChanged: (value) =>
                 BlocProvider.of<ClimbBloc>(context).toggleDownclimbedCheckbox(value)),
@@ -265,34 +294,33 @@ class ClimbWidget extends StatelessWidget {
   }
 
   Widget _showNotesInput(ClimbState state, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-          UIConstants.STANDARD_PADDING, UIConstants.BIGGER_PADDING),
-      child: new TextFormField(
-        controller: state.notesInputController,
-        maxLines: 3,
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Attempt notes',
-            suffixIcon: IconButton(
-                icon: Icon(Icons.cancel),
-                onPressed: () => BlocProvider.of<ClimbBloc>(context).resetNotesInput())),
-      ),
+    return TextFormField(
+      controller: state.notesInputController,
+      maxLines: 3,
+      keyboardType: TextInputType.text,
+      textCapitalization: TextCapitalization.sentences,
+      autofocus: false,
+      style: Theme.of(context).accentTextTheme.subtitle2,
+      decoration: new InputDecoration(
+          labelText: 'Attempt notes',
+          filled: true,
+          fillColor: Theme.of(context).cardColor,
+          suffixIcon: IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: () => BlocProvider.of<ClimbBloc>(context).resetNotesInput())),
     );
   }
 
   Widget _showSubmitButton(ClimbState state, BuildContext context) {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(
-            UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 0.0),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
+        child: Container(
+          child: RaisedButton(
             elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-            color: Colors.pink,
-            child: new Text('Submit', style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+            shape: RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+            color: Theme.of(context).accentColor,
+            child: Text('SUBMIT', style: Theme.of(context).accentTextTheme.button),
             onPressed: () => BlocProvider.of<ClimbBloc>(context).validateAndSubmit(state, context),
           ),
         ));
