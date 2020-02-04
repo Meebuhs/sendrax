@@ -208,7 +208,7 @@ class ClimbWidget extends StatelessWidget {
                       Padding(
                           padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
                           child: SizedBox(
-                            width: 80,
+                            width: 90,
                             child: _showDownclimbedCheckbox(state, context),
                           )),
                     ])),
@@ -223,18 +223,17 @@ class ClimbWidget extends StatelessWidget {
   }
 
   Widget _showSendTypeDropdown(ClimbState state, BuildContext context) {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.all(Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
-        child: DropdownButtonHideUnderline(
+    return DropdownButtonHideUnderline(
             child: DropdownButtonFormField<String>(
           style: Theme.of(context).accentTextTheme.subtitle2,
           items: _createDropdownItems(SendTypes.SEND_TYPES),
           value: state.sendType,
           hint: Text("Send"),
           isExpanded: true,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Theme.of(context).cardColor
+          ),
           validator: (String value) {
             if (value == null) {
               return 'A send type must be selected';
@@ -242,7 +241,7 @@ class ClimbWidget extends StatelessWidget {
             return null;
           },
           onChanged: (value) => BlocProvider.of<ClimbBloc>(context).selectSendType(value),
-        )));
+        ));
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
@@ -298,7 +297,7 @@ class ClimbWidget extends StatelessWidget {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
         child: SizedBox(
-          width: 80,
+          width: 90,
           child: RaisedButton(
             elevation: 5.0,
             shape: RoundedRectangleBorder(
