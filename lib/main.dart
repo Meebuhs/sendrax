@@ -25,7 +25,7 @@ class _sendraxState extends State<sendrax> {
             accentColor: accentColour,
             errorColor: errorColour,
             backgroundColor: Color(0x00000000),
-            cardColor: Color(0xff1f1f1f),
+            cardColor: Color(0xff111111),
             primaryTextTheme: TextTheme(
               headline5: TextStyle(fontSize: 20.0, color: Colors.black, letterSpacing: 0),
               headline6: TextStyle(fontSize: 16.0, color: Colors.black, letterSpacing: 0.15),
@@ -44,7 +44,7 @@ class _sendraxState extends State<sendrax> {
                 borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey[300], width: 1),
+                borderSide: BorderSide(color: Color(0x00000000), width: 0.0),
                 borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               errorBorder: OutlineInputBorder(

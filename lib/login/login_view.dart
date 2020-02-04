@@ -124,6 +124,8 @@ class LoginWidget extends StatelessWidget {
       autofocus: false,
       decoration: new InputDecoration(
           labelText: 'Username',
+          filled: true,
+          fillColor: Theme.of(context).cardColor,
           focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
           enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
           errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
@@ -159,6 +161,8 @@ class LoginWidget extends StatelessWidget {
         autofocus: false,
         decoration: new InputDecoration(
             labelText: 'Password',
+            filled: true,
+            fillColor: Theme.of(context).cardColor,
             focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
             enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
             errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
@@ -187,6 +191,8 @@ class LoginWidget extends StatelessWidget {
         autofocus: false,
         decoration: new InputDecoration(
             labelText: 'Confirm Password',
+            filled: true,
+            fillColor: Theme.of(context).cardColor,
             focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
             enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
             errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
