@@ -69,6 +69,7 @@ class CreateLocationWidget extends StatelessWidget {
               );
             }
           }),
+      backgroundColor: Theme.of(context).backgroundColor,
     );
   }
 
@@ -80,7 +81,7 @@ class CreateLocationWidget extends StatelessWidget {
           child: new ListView(
             shrinkWrap: true,
             children: <Widget>[
-              _showDisplayNameInput(state),
+              _showDisplayNameInput(state, context),
               _showImageInput(state, context),
               Row(children: <Widget>[
                 Expanded(
@@ -90,112 +91,34 @@ class CreateLocationWidget extends StatelessWidget {
                   child: _showGradeCreationButton(state, context),
                 )
               ]),
-              Center(child: _showSectionsText(state, context)),
-              _showSectionCreator(state, context),
+              Column(
+                children: <Widget>[
+                  _showSectionsText(state, context),
+                  _showSectionCreator(state, context),
+                ],
+              ),
               _showSubmitButton(state, context)
             ],
           ),
         ));
   }
 
-  Widget _showImageInput(CreateLocationState state, BuildContext context) {
-    return Column(
-      children: <Widget>[
-        _showImage(state, context),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _showImagePickerButton(state, context, "Camera",
-                Icon(Icons.camera_alt, color: Colors.white), ImageSource.camera),
-            _showImagePickerButton(state, context, "Gallery",
-                Icon(Icons.image, color: Colors.white), ImageSource.gallery),
-            _showImageRemoveButton(state, context),
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _showImage(CreateLocationState state, BuildContext context) {
-    Widget content;
-    if (state.deleteImage || (state.imageFile == null && state.imagePath == "")) {
-      content = Center(
-        child: Text(
-          "Add an image to this location",
-          textAlign: TextAlign.center,
-        ),
-      );
-    } else if (state.imageFile != null) {
-      content = Image.file(state.imageFile);
-    } else {
-      content = Image.network(state.imagePath);
-    }
-    return SizedBox(
-      height: 200.0,
-      child: content,
-    );
-  }
-
-  Widget _showImagePickerButton(CreateLocationState state, BuildContext context, String buttonText,
-      Icon icon, ImageSource imageSource) {
-    return new Padding(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: UIConstants.STANDARD_ELEVATION,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
-            color: Colors.pink,
-            child: Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING), child: icon),
-              Text(buttonText, style: new TextStyle(fontSize: 14.0, color: Colors.white)),
-            ]),
-            onPressed: () => _openPictureDialog(context, imageSource),
-          ),
-        ));
-  }
-
-  void _openPictureDialog(BuildContext context, ImageSource imageSource) async {
-    File image = await ImagePicker.pickImage(source: imageSource);
-    BlocProvider.of<CreateLocationBloc>(context).setImageFile(image);
-  }
-
-  Widget _showImageRemoveButton(CreateLocationState state, BuildContext context) {
-    return new Padding(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: UIConstants.STANDARD_ELEVATION,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
-            color: Colors.pink,
-            child: Row(children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
-                  child: Icon(Icons.delete_forever, color: Colors.white)),
-              Text("Delete", style: new TextStyle(fontSize: 14.0, color: Colors.white)),
-            ]),
-            onPressed: () => BlocProvider.of<CreateLocationBloc>(context).deleteImage(),
-          ),
-        ));
-  }
-
-  Widget _showDisplayNameInput(CreateLocationState state) {
+  Widget _showDisplayNameInput(CreateLocationState state, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-          UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
+      padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
       child: new TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.text,
+        textCapitalization: TextCapitalization.sentences,
         autofocus: false,
+        style: Theme.of(context).accentTextTheme.subtitle2,
         initialValue: state.displayName,
         decoration: new InputDecoration(
-            hintText: 'Location name',
-            icon: new Icon(
+            labelText: 'Location name',
+            filled: true,
+            fillColor: Theme.of(context).cardColor,
+            prefixIcon: new Icon(
               Icons.text_fields,
-              color: Colors.grey,
             )),
         validator: (String value) {
           if (value.trim().isEmpty) {
@@ -208,49 +131,135 @@ class CreateLocationWidget extends StatelessWidget {
     );
   }
 
+  Widget _showImageInput(CreateLocationState state, BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+        child: Column(
+          children: <Widget>[
+            _showImage(state, context),
+            _showImageButtonBar(state, context),
+          ],
+        ));
+  }
+
+  Widget _showImage(CreateLocationState state, BuildContext context) {
+    Widget content;
+    if (state.deleteImage || (state.imageFile == null && state.imagePath == "")) {
+      content = Container(
+          decoration: BoxDecoration(
+              borderRadius:
+                  BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+              color: Theme.of(context).cardColor),
+          child: Center(
+              child: Text(
+            "Add an image to this climb (optional)",
+            style: Theme.of(context).accentTextTheme.subtitle2,
+            textAlign: TextAlign.center,
+          )));
+    } else if (state.imageFile != null) {
+      content = Image.file(state.imageFile);
+    } else {
+      content = Image.network(state.imagePath);
+    }
+    return SizedBox(
+      height: 200.0,
+      child: content,
+    );
+  }
+
+  Widget _showImageButtonBar(CreateLocationState state, BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+            color: Theme.of(context).accentColor,
+            borderRadius:
+                BorderRadius.vertical(bottom: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: _showImagePickerButton(state, context, "CAMERA",
+                  Icon(Icons.camera_alt, color: Colors.black, size: 22), ImageSource.camera),
+            ),
+            Expanded(
+              child: _showImagePickerButton(state, context, "GALLERY",
+                  Icon(Icons.image, color: Colors.black, size: 22), ImageSource.gallery),
+            ),
+            Expanded(
+              child: _showImageRemoveButton(state, context),
+            )
+          ],
+        ));
+  }
+
+  Widget _showImagePickerButton(CreateLocationState state, BuildContext context, String buttonText,
+      Icon icon, ImageSource imageSource) {
+    return FlatButton(
+      child: Row(children: <Widget>[
+        Padding(padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2), child: icon),
+        Text(buttonText, style: Theme.of(context).primaryTextTheme.button),
+      ]),
+      onPressed: () => _openPictureDialog(context, imageSource),
+    );
+  }
+
+  void _openPictureDialog(BuildContext context, ImageSource imageSource) async {
+    File image = await ImagePicker.pickImage(source: imageSource);
+    BlocProvider.of<CreateLocationBloc>(context).setImageFile(image);
+  }
+
+  Widget _showImageRemoveButton(CreateLocationState state, BuildContext context) {
+    return FlatButton(
+      child: Row(children: <Widget>[
+        Padding(
+            padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2),
+            child: Icon(Icons.delete_forever, color: Colors.black, size: 22)),
+        Text("DELETE", style: Theme.of(context).primaryTextTheme.button),
+      ]),
+      onPressed: () => BlocProvider.of<CreateLocationBloc>(context).deleteImage(),
+    );
+  }
+
   Widget _showGradesDropdown(CreateLocationState state, BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
-        child: new DropdownButtonFormField<String>(
-          items: _createDropdownItems(state),
-          value: state.gradeSet,
-          hint: Text("Grades"),
-          isExpanded: true,
-          validator: (String value) {
-            if (value == null) {
-              return 'A grade set must be selected';
-            }
-            return null;
-          },
-          onChanged: (value) => BlocProvider.of<CreateLocationBloc>(context).selectGrade(value),
-        ));
+        padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                    isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
+                style: Theme.of(context).accentTextTheme.subtitle2,
+                items: _createDropdownItems(state),
+                value: state.gradeSet,
+                hint: Text("Grade set"),
+                isExpanded: true,
+                validator: (String value) {
+                  if (value == null) {
+                    return 'A grade set must be selected';
+                  }
+                  return null;
+                },
+                onChanged: (value) =>
+                    BlocProvider.of<CreateLocationBloc>(context).selectGrade(value))));
   }
 
   List<DropdownMenuItem> _createDropdownItems(CreateLocationState state) {
     return state.grades.map((String value) {
-      return new DropdownMenuItem<String>(
+      return DropdownMenuItem<String>(
         value: value,
-        child: new Text(value),
+        child: Text(value),
       );
     }).toList();
   }
 
   Widget _showGradeCreationButton(CreateLocationState state, BuildContext context) {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 0.0,
-            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: UIConstants.STANDARD_ELEVATION,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
-            color: Colors.pink,
-            child: new Text('Create a grade set',
-                style: new TextStyle(fontSize: 14.0, color: Colors.white)),
-            onPressed: () => _showCreateGradeSetDialog(context),
-          ),
+    return Padding(
+        padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
+        child: RaisedButton(
+          elevation: 5.0,
+          shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+          color: Theme.of(context).accentColor,
+          child: Text('CREATE GRADE SET', style: Theme.of(context).primaryTextTheme.button),
+          onPressed: () => _showCreateGradeSetDialog(context),
         ));
   }
 
@@ -265,36 +274,42 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   Widget _showSectionsText(CreateLocationState state, BuildContext context) {
-    return StreamBuilder(
-        stream: BlocProvider.of<CreateLocationBloc>(context).sectionsStream.stream,
-        initialData: (state.sections == null) ? <String>[] : state.sections,
-        builder: (BuildContext context, snapshot) {
-          return Padding(
-              padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
-              child: Text(
-                (snapshot.data.isEmpty) ? "No sections added" : snapshot.data.join(', '),
-                style: TextStyle(
-                    fontSize: 13.0, color: Colors.grey, height: 1.0, fontWeight: FontWeight.w400),
-                textAlign: TextAlign.center,
-              ));
-        });
+    return Padding(
+        padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
+        child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: 60, minWidth: double.infinity),
+            child: Container(
+                decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                    color: Theme.of(context).cardColor),
+                child: StreamBuilder(
+                    stream: BlocProvider.of<CreateLocationBloc>(context).sectionsStream.stream,
+                    initialData: (state.sections == null) ? <String>[] : state.sections,
+                    builder: (BuildContext context, snapshot) {
+                      return Center(
+                          child: Text(
+                        (snapshot.data.isEmpty)
+                            ? "No sections added"
+                            : "Sections: ${snapshot.data.join(', ')}",
+                        style: Theme.of(context).accentTextTheme.subtitle2,
+                        textAlign: TextAlign.center,
+                      ));
+                    }))));
   }
 
   Widget _showSectionCreator(CreateLocationState state, BuildContext context) {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, UIConstants.SMALLER_PADDING,
-            UIConstants.STANDARD_PADDING, UIConstants.STANDARD_PADDING),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: UIConstants.STANDARD_ELEVATION,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
-            color: Colors.pink,
-            child: new Text('Create sections (optional)',
-                style: new TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.white)),
-            onPressed: () => _showAddSectionsDialog(state, context),
-          ),
+    return SizedBox(
+        width: double.infinity,
+        child: FlatButton(
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.vertical(bottom: Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
+          color: Theme.of(context).accentColor,
+          child:
+              Text('CREATE SECTIONS (optional)', style: Theme.of(context).primaryTextTheme.button),
+          onPressed: () => _showAddSectionsDialog(state, context),
         ));
   }
 
@@ -317,21 +332,19 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   Widget _showSubmitButton(CreateLocationState state, BuildContext context) {
-    return new Padding(
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
+    return Container(
+        padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
         child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: UIConstants.STANDARD_ELEVATION,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(UIConstants.STANDARD_BORDER_RADIUS)),
-            color: Colors.pink,
-            child: new Text('Submit',
-                style: new TextStyle(fontSize: UIConstants.BIGGER_FONT_SIZE, color: Colors.white)),
-            onPressed: () => BlocProvider.of<CreateLocationBloc>(context)
-                .validateAndSubmit(state, context, this),
-          ),
-        ));
+            width: double.infinity,
+            child: FlatButton(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+              color: Theme.of(context).accentColor,
+              child: Text('SUBMIT', style: Theme.of(context).primaryTextTheme.button),
+              onPressed: () => BlocProvider.of<CreateLocationBloc>(context)
+                  .validateAndSubmit(state, context, this),
+            )));
   }
 
   void _showDeleteLocationDialog(BuildContext upperContext, CreateLocationWidget view) {
