@@ -232,8 +232,7 @@ class LoginWidget extends StatelessWidget {
         padding: EdgeInsets.only(top: UIConstants.STANDARD_PADDING),
         child: SizedBox(
           height: 40.0,
-          child: RaisedButton(
-            elevation: UIConstants.STANDARD_ELEVATION,
+          child: FlatButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
             color: Theme.of(context).accentColor,

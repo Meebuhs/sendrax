@@ -356,8 +356,7 @@ class LocationWidget extends StatelessWidget {
           child: FloatingActionButton(
               onPressed: () => _createClimb(state),
               child: Icon(Icons.add, color: Colors.black),
-              backgroundColor: Theme.of(context).accentColor,
-              elevation: UIConstants.STANDARD_ELEVATION),
+              backgroundColor: Theme.of(context).accentColor),
         )
       ],
     );

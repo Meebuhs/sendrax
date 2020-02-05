@@ -346,8 +346,7 @@ class CreateClimbWidget extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         child: Row(children: <Widget>[
           Expanded(
-              child: RaisedButton(
-            elevation: 5.0,
+              child: FlatButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
             color: Theme.of(context).accentColor,

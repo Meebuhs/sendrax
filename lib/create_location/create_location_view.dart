@@ -253,8 +253,7 @@ class CreateLocationWidget extends StatelessWidget {
   Widget _showGradeCreationButton(CreateLocationState state, BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
-        child: RaisedButton(
-          elevation: 5.0,
+        child: FlatButton(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
           color: Theme.of(context).accentColor,

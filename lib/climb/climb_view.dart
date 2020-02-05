@@ -295,8 +295,7 @@ class ClimbWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
         child: SizedBox(
           width: 95,
-          child: RaisedButton(
-            elevation: 5.0,
+          child: FlatButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
             color: Theme.of(context).accentColor,
