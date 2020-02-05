@@ -320,13 +320,17 @@ class CreateLocationWidget extends StatelessWidget {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {
-          return SimpleDialog(title: Text("Edit this location's sections"), children: <Widget>[
-            StringCollectionInputScreen(
-                items: state.sections,
-                itemName: "Section",
-                upperContext: upperContext,
-                submitInput: _submitInput),
-          ]);
+          return SimpleDialog(
+              title: Text("Edit this location's sections",
+                  style: Theme.of(context).accentTextTheme.headline5),
+              backgroundColor: Theme.of(context).cardColor,
+              children: <Widget>[
+                StringCollectionInputScreen(
+                    items: state.sections,
+                    itemName: "Section",
+                    upperContext: upperContext,
+                    submitInput: _submitInput),
+              ]);
         });
   }
 

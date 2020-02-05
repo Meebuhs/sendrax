@@ -20,15 +20,15 @@ class StringCollectionInputBloc
     return StringCollectionInputState.initial(items);
   }
 
-  void addItem(String section) {
-    if (section.trim().isNotEmpty) {
-      add(ItemAddedEvent(section));
+  void addItem(String item) {
+    if (item.trim().isNotEmpty) {
+      add(ItemAddedEvent(item));
       state.itemInputKey.currentState.reset();
     }
   }
 
-  void removeItem(String section) {
-    add(ItemRemovedEvent(section));
+  void removeItem(String item) {
+    add(ItemRemovedEvent(item));
   }
 
   void submitItems(BuildContext context) async {

@@ -58,29 +58,29 @@ class StringCollectionInputWidget extends StatelessWidget {
         builder: (context, StringCollectionInputState state) {
           return Container(
               constraints: BoxConstraints(
-                minHeight: 250.0,
-                maxHeight: 250.0,
+                minHeight: 270.0,
+                maxHeight: 270.0,
                 minWidth: 300.0,
                 maxWidth: 300.0,
               ),
-              child: Column(children: <Widget>[
-                _showItemList(state, context),
-                Row(children: <Widget>[
-                  Expanded(
-                    child: _showAddItemInput(state),
-                  ),
-                  Expanded(
-                    child: _showAddItemButton(state, context),
-                  ),
-                ]),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    _showCancelButton(state, context),
-                    _showSubmitButton(state, context),
-                  ],
-                )
-              ]));
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
+                  child: Column(children: <Widget>[
+                    _showItemList(state, context),
+                    Row(children: <Widget>[
+                      Expanded(
+                        child: _showAddItemInput(state, context),
+                      ),
+                      _showAddItemButton(state, context),
+                    ]),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        _showCancelButton(state, context),
+                        _showSubmitButton(state, context),
+                      ],
+                    )
+                  ])));
         });
   }
 
@@ -90,64 +90,67 @@ class StringCollectionInputWidget extends StatelessWidget {
       itemChips.add(_buildItemChip(state, context, item));
     });
 
-    return Container(
-        constraints: BoxConstraints(
-          minHeight: 140.0,
-          maxHeight: 140.0,
-          maxWidth: 300.0,
-          minWidth: 300.0,
-        ),
-        child: SingleChildScrollView(
-            child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: UIConstants.SMALLER_PADDING,
-                runSpacing: 0.0,
-                children: itemChips)));
+    return Expanded(
+        child: Padding(
+            padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+            child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).dialogBackgroundColor,
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
+                child: ListView(children: <Widget>[
+                  Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: UIConstants.SMALLER_PADDING,
+                      runSpacing: 0.0,
+                      children: itemChips)
+                ]))));
   }
 
   Widget _buildItemChip(StringCollectionInputState state, BuildContext context, String item) {
     return Container(
       child: InputChip(
         label: Text(item),
+        backgroundColor: Theme.of(context).accentColor,
+        labelStyle: Theme.of(context).primaryTextTheme.subtitle2,
         deleteIcon: new Icon(
           Icons.cancel,
-          color: Colors.grey,
+          color: Colors.black,
         ),
         onDeleted: () => BlocProvider.of<StringCollectionInputBloc>(context).removeItem(item),
       ),
     );
   }
 
-  Widget _showAddItemInput(StringCollectionInputState state) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-          UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 10.0),
-      child: new TextFormField(
-        key: state.itemInputKey,
-        maxLines: 1,
-        keyboardType: TextInputType.text,
-        autofocus: true,
-        decoration: new InputDecoration(
-            hintText: widget.itemName,
-            icon: new Icon(
-              Icons.add,
-              color: Colors.grey,
-            )),
-      ),
+  Widget _showAddItemInput(StringCollectionInputState state, BuildContext context) {
+    return TextFormField(
+      key: state.itemInputKey,
+      maxLines: 1,
+      keyboardType: TextInputType.text,
+      textCapitalization: TextCapitalization.sentences,
+      autofocus: true,
+      style: Theme.of(context).accentTextTheme.subtitle2,
+      decoration: InputDecoration(
+          isDense: true,
+          labelText: 'Section',
+          filled: true,
+          fillColor: Theme.of(context).dialogBackgroundColor,
+          prefixIcon: Icon(
+            Icons.add,
+            color: Colors.grey,
+          )),
     );
   }
 
   Widget _showAddItemButton(StringCollectionInputState state, BuildContext context) {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(
-            UIConstants.STANDARD_PADDING, 0.0, UIConstants.STANDARD_PADDING, 10.0),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-            color: Colors.pink,
-            child: new Text('Add', style: new TextStyle(fontSize: 14.0, color: Colors.white)),
+    return Padding(
+        padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
+        child: Container(
+          child: FlatButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+            color: Theme.of(context).accentColor,
+            child: Text('ADD', style: Theme.of(context).primaryTextTheme.button),
             onPressed: () => BlocProvider.of<StringCollectionInputBloc>(context)
                 .addItem(state.itemInputKey.currentState.value.trim()),
           ),
@@ -159,7 +162,7 @@ class StringCollectionInputWidget extends StatelessWidget {
       alignment: Alignment.bottomRight,
       child: FlatButton(
         onPressed: () => NavigationHelper.navigateBackOne(context),
-        child: Text('Cancel'),
+        child: Text('CANCEL', style: Theme.of(context).accentTextTheme.button),
       ),
     );
   }
@@ -169,7 +172,7 @@ class StringCollectionInputWidget extends StatelessWidget {
       alignment: Alignment.bottomRight,
       child: FlatButton(
         onPressed: () => BlocProvider.of<StringCollectionInputBloc>(context).submitItems(context),
-        child: Text('Finished'),
+        child: Text('FINISHED', style: Theme.of(context).accentTextTheme.button),
       ),
     );
   }
