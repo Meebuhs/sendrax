@@ -17,4 +17,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Location, climb, attempt and category deletion
 - Climb filtering and archiving
 - Image addition and deletion for locations and climbs
-- App icon
+- App icon and theme
