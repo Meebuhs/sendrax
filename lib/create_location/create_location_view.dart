@@ -267,9 +267,12 @@ class CreateLocationWidget extends StatelessWidget {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return SimpleDialog(title: Text("Create a grade set"), children: <Widget>[
-            CreateGradeSet(),
-          ]);
+          return SimpleDialog(
+              title: Text("Create a grade set", style: Theme.of(context).accentTextTheme.headline5),
+              backgroundColor: Theme.of(context).cardColor,
+              children: <Widget>[
+                CreateGradeSet(),
+              ]);
         });
   }
 
@@ -352,15 +355,17 @@ class CreateLocationWidget extends StatelessWidget {
         context: upperContext,
         builder: (BuildContext context) {
           return AlertDialog(
-              title: Text("Are you sure you want to delete this location?"),
-              content: Text("There is no way to get it (or any of its climbs) back"),
+              title: Text("Are you sure you want to delete this location?",
+                  style: Theme.of(context).accentTextTheme.headline5),
+              content: Text("There is no way to get it (or any of its climbs) back",
+                  style: Theme.of(context).accentTextTheme.bodyText2),
               actions: <Widget>[
                 FlatButton(
-                  child: Text("Cancel"),
-                  onPressed: () => navigateBackOne,
+                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () => navigateBackOne(),
                 ),
                 FlatButton(
-                  child: Text("Delete"),
+                  child: Text("DELETE", style: Theme.of(context).accentTextTheme.button),
                   onPressed: () => BlocProvider.of<CreateLocationBloc>(upperContext)
                       .deleteLocation(upperContext, view),
                 )
