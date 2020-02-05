@@ -344,17 +344,19 @@ class CreateClimbWidget extends StatelessWidget {
   Widget _showSubmitButton(CreateClimbState state, BuildContext context) {
     return Align(
         alignment: Alignment.bottomCenter,
-        child: Row(children: <Widget>[
-          Expanded(
-              child: FlatButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-            color: Theme.of(context).accentColor,
-            child: Text('SUBMIT', style: Theme.of(context).primaryTextTheme.button),
-            onPressed: () =>
-                BlocProvider.of<CreateClimbBloc>(context).validateAndSubmit(state, context, this),
-          ))
-        ]));
+        child: Container(
+            padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
+            child: SizedBox(
+                width: double.infinity,
+                child: FlatButton(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+                  color: Theme.of(context).accentColor,
+                  child: Text('SUBMIT', style: Theme.of(context).primaryTextTheme.button),
+                  onPressed: () => BlocProvider.of<CreateClimbBloc>(context)
+                      .validateAndSubmit(state, context, this),
+                ))));
   }
 
   void _showDeleteClimbDialog(
