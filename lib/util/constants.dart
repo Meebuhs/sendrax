@@ -9,12 +9,6 @@ class StorageKeys {
 }
 
 class UIConstants {
-  // FONT SIZE
-  static const double SMALLER_FONT_SIZE = 10.0;
-  static const double STANDARD_FONT_SIZE = 14.0;
-  static const double BIG_FONT_SIZE = 16.0;
-  static const double BIGGER_FONT_SIZE = 18.0;
-
   // PADDING
   static const double SMALLER_PADDING = 8.0;
   static const double STANDARD_PADDING = 16.0;

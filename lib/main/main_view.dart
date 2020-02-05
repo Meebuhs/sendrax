@@ -221,13 +221,17 @@ class MainWidget extends StatelessWidget {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {
-          return SimpleDialog(title: Text("Edit your climb categories"), children: <Widget>[
-            StringCollectionInputScreen(
-                items: state.categories,
-                itemName: "Category",
-                upperContext: upperContext,
-                submitInput: _submitInput),
-          ]);
+          return SimpleDialog(
+              title: Text("Edit your climb categories",
+                  style: Theme.of(context).accentTextTheme.headline5),
+              backgroundColor: Theme.of(context).cardColor,
+              children: <Widget>[
+                StringCollectionInputScreen(
+                    items: state.categories,
+                    itemName: "Category",
+                    upperContext: upperContext,
+                    submitInput: _submitInput),
+              ]);
         });
   }
 
