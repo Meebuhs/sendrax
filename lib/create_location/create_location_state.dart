@@ -22,7 +22,7 @@ class CreateLocationState {
       this.sections, this.gradeSet, this.grades, this.errorMessage);
 
   factory CreateLocationState.initial(Location location, bool isEdit) =>
-      CreateLocationState._internal(true, new GlobalKey<FormState>(), location.displayName,
+      CreateLocationState._internal(true, GlobalKey<FormState>(), location.displayName,
           location.imagePath, location.imageUri, null, false, location.sections, location.gradeSet,
           <String>[], "");
 

@@ -113,7 +113,7 @@ class StringCollectionInputWidget extends StatelessWidget {
         label: Text(item),
         backgroundColor: Theme.of(context).accentColor,
         labelStyle: Theme.of(context).primaryTextTheme.subtitle2,
-        deleteIcon: new Icon(
+        deleteIcon: Icon(
           Icons.cancel,
           color: Colors.black,
         ),

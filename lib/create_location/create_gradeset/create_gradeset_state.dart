@@ -13,7 +13,7 @@ class CreateGradeSetState {
       this.errorMessage);
 
   factory CreateGradeSetState.initial() => CreateGradeSetState._internal(
-      "", <String>[], new GlobalKey<FormFieldState>(), new GlobalKey<FormState>(), "");
+      "", <String>[], GlobalKey<FormFieldState>(), GlobalKey<FormState>(), "");
 
   factory CreateGradeSetState.addGrade(String grade, CreateGradeSetState state) =>
       CreateGradeSetState._internal(state.name, state.grades..add(grade), state.itemInputKey,

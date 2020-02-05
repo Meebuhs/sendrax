@@ -16,7 +16,7 @@ class ClimbState {
       this.downclimbed, this.notes);
 
   factory ClimbState.initial() =>
-      ClimbState._internal(true, new GlobalKey<FormState>(), new TextEditingController(),
+      ClimbState._internal(true, GlobalKey<FormState>(), TextEditingController(),
           <Attempt>[], null, false, "");
 
   factory ClimbState.loading(bool loading, ClimbState state) => ClimbState._internal(

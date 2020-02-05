@@ -43,7 +43,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
         state.imagePath = await StorageRepo.getInstance().decodeUri(state.imageUri);
       }
 
-      Climb climb = new Climb(
+      Climb climb = Climb(
           this.climb.id,
           state.displayName,
           state.imagePath,

@@ -23,9 +23,9 @@ class _MainState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _animationController = new AnimationController(
+    _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: Duration(milliseconds: 400),
     );
     super.initState();
   }
@@ -88,7 +88,7 @@ class MainWidget extends StatelessWidget {
           } else {
             content = GridView.builder(
               padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               itemBuilder: (context, index) {
                 return _buildItem(state.locations[index], state.categories, _onLocationTap);
               },
@@ -117,7 +117,7 @@ class MainWidget extends StatelessWidget {
         Container(
           alignment: Alignment.bottomRight,
           padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
-          child: new Column(
+          child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
@@ -232,9 +232,9 @@ class MainWidget extends StatelessWidget {
   }
 
   void _createLocation(MainState state, BuildContext context) {
-    var uuid = new Uuid();
+    var uuid = Uuid();
     Location location =
-        new Location("location-${uuid.v1()}", "", "", "", null, state.categories, <String>[], null);
+        Location("location-${uuid.v1()}", "", "", "", null, state.categories, <String>[], null);
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
         addToBackStack: true);
   }

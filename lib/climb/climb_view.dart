@@ -195,7 +195,7 @@ class ClimbWidget extends StatelessWidget {
       Container(
           padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
           alignment: Alignment.bottomCenter,
-          child: new Form(
+          child: Form(
             key: state.formKey,
             child: Column(
               children: <Widget>[
@@ -244,9 +244,9 @@ class ClimbWidget extends StatelessWidget {
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
     if (items.isNotEmpty) {
       return items.map((String value) {
-        return new DropdownMenuItem<String>(
+        return DropdownMenuItem<String>(
           value: value,
-          child: new Text(value),
+          child: Text(value),
         );
       }).toList();
     } else {
@@ -280,7 +280,7 @@ class ClimbWidget extends StatelessWidget {
       textCapitalization: TextCapitalization.sentences,
       autofocus: false,
       style: Theme.of(context).accentTextTheme.subtitle2,
-      decoration: new InputDecoration(
+      decoration: InputDecoration(
           labelText: 'Attempt notes',
           filled: true,
           fillColor: Theme.of(context).cardColor,
@@ -298,7 +298,7 @@ class ClimbWidget extends StatelessWidget {
           child: RaisedButton(
             elevation: 5.0,
             shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+                borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
             color: Theme.of(context).accentColor,
             child: Text('SUBMIT', style: Theme.of(context).primaryTextTheme.button),
             onPressed: () => BlocProvider.of<ClimbBloc>(context).validateAndSubmit(state, context),

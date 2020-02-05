@@ -76,7 +76,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
         state.imagePath = await StorageRepo.getInstance().decodeUri(state.imageUri);
       }
 
-      Location location = new Location(this.location.id, state.displayName, state.imagePath,
+      Location location = Location(this.location.id, state.displayName, state.imagePath,
           state.imageUri, state.gradeSet, <String>[], state.sections, <Climb>[]);
       try {
         LocationRepo.getInstance().setLocation(location);
@@ -130,7 +130,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     } else if (event is LocationClearedEvent) {
       yield CreateLocationState.updateLocation(
           true,
-          new Location(this.location.id, state.displayName, state.imagePath, state.imageUri,
+          Location(this.location.id, state.displayName, state.imagePath, state.imageUri,
               state.gradeSet, <String>[]),
           state);
     } else if (event is GradesUpdatedEvent) {

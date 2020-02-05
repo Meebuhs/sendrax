@@ -76,6 +76,7 @@ class LocationWidget extends StatelessWidget {
                   child: Center(
                 child: Text(
                   "This location doesn't have any climbs.\nLet's create one right now!",
+                  style: Theme.of(context).accentTextTheme.subtitle2,
                   textAlign: TextAlign.center,
                 ),
               ))
@@ -170,9 +171,9 @@ class LocationWidget extends StatelessWidget {
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
     if (items.isNotEmpty) {
       return items.map((String value) {
-        return new DropdownMenuItem<String>(
+        return DropdownMenuItem<String>(
           value: value,
-          child: new Text(value),
+          child: Text(value),
         );
       }).toList();
     } else {
@@ -363,10 +364,10 @@ class LocationWidget extends StatelessWidget {
   }
 
   void _createClimb(LocationState state) {
-    var uuid = new Uuid();
+    var uuid = Uuid();
     // the null values for grade and section here are required as they are used as the initial
     // values for the dropdowns
-    Climb climb = new Climb("climb-${uuid.v1()}", "", "", "", widget.location.id, null,
+    Climb climb = Climb("climb-${uuid.v1()}", "", "", "", widget.location.id, null,
         widget.location.gradeSet, null, false, <String>[]);
     NavigationHelper.navigateToCreateClimb(
         widgetState.context,
@@ -381,7 +382,7 @@ class LocationWidget extends StatelessWidget {
   }
 
   void _editLocation(SelectedLocation selectedLocation) {
-    Location location = new Location(
+    Location location = Location(
         selectedLocation.id,
         selectedLocation.displayName,
         selectedLocation.imagePath,

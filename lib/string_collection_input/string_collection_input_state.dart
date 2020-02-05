@@ -8,7 +8,7 @@ class StringCollectionInputState {
   StringCollectionInputState._internal(this.items, this.itemInputKey);
 
   factory StringCollectionInputState.initial(List<String> sections) =>
-      StringCollectionInputState._internal(sections, new GlobalKey<FormFieldState>());
+      StringCollectionInputState._internal(sections, GlobalKey<FormFieldState>());
 
   factory StringCollectionInputState.addItem(String item, StringCollectionInputState state) =>
       StringCollectionInputState._internal(state.items..add(item), state.itemInputKey);

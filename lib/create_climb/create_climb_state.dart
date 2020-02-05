@@ -24,7 +24,7 @@ class CreateClimbState {
       this.selectedCategories);
 
   factory CreateClimbState.initial(Climb climb, List<String> grades) =>
-      CreateClimbState._internal(false, new GlobalKey<FormState>(), climb.displayName,
+      CreateClimbState._internal(false, GlobalKey<FormState>(), climb.displayName,
           climb.imagePath, climb.imageUri, null, false, climb.grade, climb.gradeSet, grades,
           climb.section, climb.categories);
 

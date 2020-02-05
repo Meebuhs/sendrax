@@ -16,7 +16,7 @@ class LoginState {
       this.password, this.confirmPassword, this.errorMessage);
 
   factory LoginState.initial() =>
-      LoginState._internal(true, true, new GlobalKey<FormState>(), new GlobalKey<FormFieldState>(),
+      LoginState._internal(true, true, GlobalKey<FormState>(), GlobalKey<FormFieldState>(),
           "", "", "", "");
 
   factory LoginState.loading(bool loading, LoginState state) =>
@@ -24,8 +24,8 @@ class LoginState {
           state.password, state.confirmPassword, state.errorMessage);
 
   factory LoginState.toggleForm(LoginState state) =>
-      LoginState._internal(state.loading, !state.isLogin, state.formKey, state.passwordKey, state.username,
-          state.password, state.confirmPassword, "");
+      LoginState._internal(state.loading, !state.isLogin, state.formKey, state.passwordKey,
+          state.username, state.password, state.confirmPassword, "");
 
   factory LoginState.error(String errorMessage, LoginState state) =>
       LoginState._internal(false, state.isLogin, state.formKey, state.passwordKey, state.username,

@@ -78,12 +78,12 @@ class CreateGradeSetWidget extends StatelessWidget {
             textCapitalization: TextCapitalization.sentences,
             autofocus: false,
             style: Theme.of(context).accentTextTheme.subtitle2,
-            decoration: new InputDecoration(
+            decoration: InputDecoration(
                 isDense: true,
                 labelText: 'Name',
                 filled: true,
                 fillColor: Theme.of(context).dialogBackgroundColor,
-                prefixIcon: new Icon(
+                prefixIcon: Icon(
                   Icons.text_fields,
                 )),
             onSaved: (value) => state.name = value.trim(),
@@ -119,7 +119,7 @@ class CreateGradeSetWidget extends StatelessWidget {
         label: Text(item),
         backgroundColor: Theme.of(context).accentColor,
         labelStyle: Theme.of(context).primaryTextTheme.subtitle2,
-        deleteIcon: new Icon(
+        deleteIcon: Icon(
           Icons.cancel,
           color: Colors.black,
         ),
@@ -176,7 +176,7 @@ class CreateGradeSetWidget extends StatelessWidget {
                     fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w400),
               )));
     } else {
-      return new Container(
+      return Container(
         height: 0.0,
       );
     }

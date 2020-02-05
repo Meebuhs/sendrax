@@ -74,11 +74,11 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   Widget _showForm(CreateLocationState state, BuildContext context) {
-    return new Container(
+    return Container(
         padding: EdgeInsets.all(16.0),
-        child: new Form(
+        child: Form(
           key: state.formKey,
-          child: new ListView(
+          child: ListView(
             shrinkWrap: true,
             children: <Widget>[
               _showDisplayNameInput(state, context),
@@ -106,18 +106,18 @@ class CreateLocationWidget extends StatelessWidget {
   Widget _showDisplayNameInput(CreateLocationState state, BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
-      child: new TextFormField(
+      child: TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.text,
         textCapitalization: TextCapitalization.sentences,
         autofocus: false,
         style: Theme.of(context).accentTextTheme.subtitle2,
         initialValue: state.displayName,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
             labelText: 'Location name',
             filled: true,
             fillColor: Theme.of(context).cardColor,
-            prefixIcon: new Icon(
+            prefixIcon: Icon(
               Icons.text_fields,
             )),
         validator: (String value) {
@@ -256,7 +256,7 @@ class CreateLocationWidget extends StatelessWidget {
         child: RaisedButton(
           elevation: 5.0,
           shape: RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+              borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
           color: Theme.of(context).accentColor,
           child: Text('CREATE GRADE SET', style: Theme.of(context).primaryTextTheme.button),
           onPressed: () => _showCreateGradeSetDialog(context),

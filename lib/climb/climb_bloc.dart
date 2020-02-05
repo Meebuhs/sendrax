@@ -51,8 +51,8 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     state.loading = true;
 
     if (_validateAndSave(state)) {
-      Attempt attempt = new Attempt("attempt-${uuid.v1()}", new Timestamp.now(), state.sendType,
-          state.downclimbed, state.notes);
+      Attempt attempt = Attempt(
+          "attempt-${uuid.v1()}", Timestamp.now(), state.sendType, state.downclimbed, state.notes);
       try {
         ClimbRepo.getInstance().setAttempt(attempt, climbId);
         state.loading = false;

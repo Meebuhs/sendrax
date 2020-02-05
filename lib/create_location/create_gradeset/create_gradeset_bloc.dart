@@ -28,7 +28,7 @@ class CreateGradeSetBloc extends Bloc<CreateGradeSetEvent, CreateGradeSetState> 
 
   void createGradeSet(BuildContext context) async {
     if (_validateAndSave(state)) {
-      GradeRepo.getInstance().setGradeSet(new GradeSet(state.name, state.grades));
+      GradeRepo.getInstance().setGradeSet(GradeSet(state.name, state.grades));
       NavigationHelper.navigateBackOne(context);
     }
   }

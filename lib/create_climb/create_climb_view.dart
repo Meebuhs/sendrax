@@ -95,9 +95,9 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   Widget _showForm(CreateClimbState state, BuildContext context) {
-    return new Container(
+    return Container(
         padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
-        child: new Form(
+        child: Form(
           key: state.formKey,
           child: Column(
             children: <Widget>[
@@ -114,18 +114,18 @@ class CreateClimbWidget extends StatelessWidget {
   Widget _showDisplayNameInput(CreateClimbState state, BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
-      child: new TextFormField(
+      child: TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.text,
         textCapitalization: TextCapitalization.sentences,
         autofocus: false,
         style: Theme.of(context).accentTextTheme.subtitle2,
         initialValue: state.displayName,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
             labelText: 'Climb name (Optional)',
             filled: true,
             fillColor: Theme.of(context).cardColor,
-            prefixIcon: new Icon(
+            prefixIcon: Icon(
               Icons.text_fields,
             )),
         onSaved: (value) => state.displayName = value.trim(),
@@ -139,13 +139,7 @@ class CreateClimbWidget extends StatelessWidget {
         child: Column(
           children: <Widget>[
             _showImage(state, context),
-            Container(
-              decoration: BoxDecoration(
-                  color: Theme.of(context).accentColor,
-                  borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
-              child: _showImageButtonBar(state, context),
-            )
+            _showImageButtonBar(state, context),
           ],
         ));
   }
@@ -160,7 +154,7 @@ class CreateClimbWidget extends StatelessWidget {
               color: Theme.of(context).cardColor),
           child: Center(
               child: Text(
-            "Add an image to this climb",
+            "Add an image to this climb (optional)",
             style: Theme.of(context).accentTextTheme.subtitle2,
             textAlign: TextAlign.center,
           )));
@@ -176,22 +170,27 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   Widget _showImageButtonBar(CreateClimbState state, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: _showImagePickerButton(state, context, "CAMERA",
-              Icon(Icons.camera_alt, color: Colors.black, size: 22), ImageSource.camera),
-        ),
-        Expanded(
-          child: _showImagePickerButton(state, context, "GALLERY",
-              Icon(Icons.image, color: Colors.black, size: 22), ImageSource.gallery),
-        ),
-        Expanded(
-          child: _showImageRemoveButton(state, context),
-        )
-      ],
-    );
+    return Container(
+        decoration: BoxDecoration(
+            color: Theme.of(context).accentColor,
+            borderRadius:
+                BorderRadius.vertical(bottom: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: _showImagePickerButton(state, context, "CAMERA",
+                  Icon(Icons.camera_alt, color: Colors.black, size: 22), ImageSource.camera),
+            ),
+            Expanded(
+              child: _showImagePickerButton(state, context, "GALLERY",
+                  Icon(Icons.image, color: Colors.black, size: 22), ImageSource.gallery),
+            ),
+            Expanded(
+              child: _showImageRemoveButton(state, context),
+            )
+          ],
+        ));
   }
 
   Widget _showImagePickerButton(CreateClimbState state, BuildContext context, String buttonText,
@@ -286,9 +285,9 @@ class CreateClimbWidget extends StatelessWidget {
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
     if (items.isNotEmpty) {
       return items.map((String value) {
-        return new DropdownMenuItem<String>(
+        return DropdownMenuItem<String>(
           value: value,
-          child: new Text(value),
+          child: Text(value),
         );
       }).toList();
     } else {
@@ -330,6 +329,7 @@ class CreateClimbWidget extends StatelessWidget {
       child: InputChip(
         label: Text(item),
         selected: state.selectedCategories.contains(item),
+        showCheckmark: true,
         checkmarkColor: Colors.black,
         selectedColor: Theme.of(context).accentColor,
         labelStyle: state.selectedCategories.contains(item)
