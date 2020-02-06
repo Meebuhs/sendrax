@@ -24,7 +24,7 @@ class _sendraxState extends State<sendrax> {
             primaryColor: primaryColour,
             accentColor: accentColour,
             errorColor: errorColour,
-            backgroundColor: Color(0x00000000),
+            backgroundColor: Color(0xff000000),
             cardColor: Color(0xff1f1f1f),
             dialogBackgroundColor: Color(0xff333333),
             canvasColor: Color(0xff1f1f1f),
