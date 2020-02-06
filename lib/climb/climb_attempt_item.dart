@@ -28,6 +28,22 @@ class AttemptItem extends StatelessWidget {
   }
 
   Widget _buildAttempt(BuildContext context) {
+    List<Widget> columnTexts = [
+      Padding(
+          padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING / 2),
+          child: Text(
+            "${formatDate(attempt.timestamp.toDate())} - ${attempt.sendType}",
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).accentTextTheme.subtitle2,
+          ))
+    ];
+    if (attempt.notes != "") {
+      columnTexts.add(Text(
+        attempt.notes,
+        style: Theme.of(context).accentTextTheme.caption,
+      ));
+    }
+
     return Padding(
         padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
         child: Container(
@@ -38,19 +54,8 @@ class AttemptItem extends StatelessWidget {
             ),
             child: Row(children: <Widget>[
               Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING / 2),
-                    child: Text(
-                      "${formatDate(attempt.timestamp.toDate())} - ${attempt.sendType}",
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).accentTextTheme.subtitle2,
-                    )),
-                Text(
-                  attempt.notes,
-                  style: Theme.of(context).accentTextTheme.caption,
-                )
-              ])),
+                  child:
+                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: columnTexts)),
               Container(
                 padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
                 child: _showDownclimbedTick(context),
