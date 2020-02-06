@@ -52,13 +52,21 @@ class LocationItem extends StatelessWidget {
                       fit: BoxFit.cover,
                     )),
               ),
-              placeholder: (context, url) => SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: Center(
-                      child: CircularProgressIndicator(
-                    strokeWidth: 4.0,
-                  ))),
+              placeholder: (context, url) => Row(
+                children: <Widget>[
+                  Expanded(
+                    child: SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 4.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),
