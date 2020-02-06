@@ -21,7 +21,14 @@ I want/need in my own climbing sessions.
 
 ## Download
 
-The app will be made available for download after its first release.
+I have only made an apk available. If you are looking to install on ios you will have to build it
+yourself. I will in future look at releasing an ipa.
+
+[Download the latest release](https://github.com/Meebuhs/sendrax/releases)
+
+Releases for web are pending support from 
+[flutter's firebase plugins](https://github.com/FirebaseExtended/flutterfire) and desktop is pending
+ [flutter support](https://flutter.dev/desktop)
 
 ## Build
 

@@ -5,16 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.1.0 - 2020-02-06
 
 ### Added
 
-- Firebase account creation and authentication
-- Retrieval of locations, climbs and attempts from firebase
-- Views for locations and climbs
-- Location, climb, attempt, categories and grade set creation
-- Location and climb editing
-- Location, climb, attempt and category deletion
-- Climb filtering and archiving
-- Image addition and deletion for locations and climbs
-- App icon and theme
+- Added base functionality of the app
+    - Firebase account creation and authentication
+    - Ability to create, edit and delete locations and climbs
+        - Locations can have a name, an image, a grade set and sections
+        - Climbs can have a name, a grade, a section (if they exist in the location) and descriptive categories
+    - Ability to log and delete attempts made on a climb
+    - Ability to filter the climbs being displayed in a location
+    - Ability to archive climbs so they no longer appear in a location's list of climbs
