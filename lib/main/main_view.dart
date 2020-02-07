@@ -6,10 +6,13 @@ import 'package:sendrax/navigation_helper.dart';
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: _buildBody(context),
-      backgroundColor: Theme.of(context).backgroundColor,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        body: _buildBody(context),
+        backgroundColor: Theme.of(context).backgroundColor,
+      ),
     );
   }
 
@@ -17,11 +20,26 @@ class MainScreen extends StatelessWidget {
     return AppBar(
       title: Text('sendrax'),
       actions: <Widget>[IconButton(icon: Icon(Icons.lock_open), onPressed: () => logout(context))],
+      bottom: _buildTabBar(context),
+    );
+  }
+
+  Widget _buildTabBar(BuildContext context) {
+    return TabBar(
+      tabs: <Widget>[
+        Tab(icon: Icon(Icons.assignment)),
+        Tab(icon: Icon(Icons.history)),
+      ],
     );
   }
 
   Widget _buildBody(BuildContext context) {
-    return LogScreen();
+    return TabBarView(
+      children: [
+        LogScreen(),
+        Icon(Icons.history),
+      ],
+    );
   }
 
   void logout(BuildContext context) {
