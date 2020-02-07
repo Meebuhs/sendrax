@@ -51,7 +51,7 @@ class ClimbRepo {
     int docCounter = 0;
     QuerySnapshot attempts = await _firestore
         .collection(
-        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .getDocuments();
     attempts.documents.forEach((attempt) async {
       docCounter++;
@@ -90,6 +90,12 @@ class ClimbRepo {
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .document(attempt.id)
         .setData(attempt.map, merge: true);
+    // Store duplicate in attempts collection for use in log and stats
+    await _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .document(attempt.id)
+        .setData(attempt.map, merge: true);
   }
 
   void deleteAttempt(String attemptId, String climbId) async {
@@ -97,6 +103,11 @@ class ClimbRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .document(attemptId)
+        .delete();
+    await _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .document(attemptId)
         .delete();
   }
