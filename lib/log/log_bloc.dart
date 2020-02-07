@@ -3,31 +3,21 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
-import 'package:sendrax/models/login_repo.dart';
 import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 
-import 'main_event.dart';
-import 'main_state.dart';
-import 'main_view.dart';
+import 'log_event.dart';
+import 'log_state.dart';
 
-class MainBloc extends Bloc<MainEvent, MainState> {
+class LogBloc extends Bloc<LogEvent, LogState> {
   StreamSubscription<List<Location>> locationsSubscription;
   StreamSubscription<List<String>> categoriesSubscription;
 
-  void logout(MainWidget view) {
-    LoginRepo.getInstance().signOut().then((success) {
-      if (success) {
-        view.navigateToLogin();
-      }
-    });
-  }
-
   @override
-  MainState get initialState {
+  LogState get initialState {
     _retrieveUserLocations();
     _retrieveUserCategories();
-    return MainState.initial();
+    return LogState.initial();
   }
 
   void _retrieveUserLocations() async {
@@ -36,22 +26,22 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     if (user != null) {
       locationsSubscription =
           LocationRepo.getInstance().getLocationsForUser(user).listen((locations) async {
-        Stream<Location> processedLocationsStream =
+            Stream<Location> processedLocationsStream =
             Stream.fromIterable(locations).asyncMap((location) async {
-          if (location.imageUri != "") {
-            final String url = await StorageRepo.getInstance().decodeUri(location.imageUri);
-            return Location(location.id, location.displayName, url, location.imageUri,
-                location.gradeSet, location.categories, location.sections, location.climbs);
-          } else {
-            return location;
-          }
-        });
-        final List<Location> processedLocations = await processedLocationsStream.toList();
-        add(LocationsUpdatedEvent(
-            processedLocations..sort((a, b) => a.displayName.compareTo(b.displayName))));
-      });
+              if (location.imageUri != "") {
+                final String url = await StorageRepo.getInstance().decodeUri(location.imageUri);
+                return Location(location.id, location.displayName, url, location.imageUri,
+                    location.gradeSet, location.categories, location.sections, location.climbs);
+              } else {
+                return location;
+              }
+            });
+            final List<Location> processedLocations = await processedLocationsStream.toList();
+            add(LocationsUpdatedEvent(
+                processedLocations..sort((a, b) => a.displayName.compareTo(b.displayName))));
+          });
     } else {
-      add(MainErrorEvent());
+      add(LogErrorEvent());
     }
   }
 
@@ -63,7 +53,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         add(CategoriesUpdatedEvent(categories));
       });
     } else {
-      add(MainErrorEvent());
+      add(LogErrorEvent());
     }
   }
 
@@ -73,17 +63,17 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   @override
-  Stream<MainState> mapEventToState(MainEvent event) async* {
+  Stream<LogState> mapEventToState(LogEvent event) async* {
     if (event is ClearLocationsEvent) {
-      yield MainState.updateLocations(true, <Location>[], state);
+      yield LogState.updateLocations(true, <Location>[], state);
     } else if (event is ClearCategoriesEvent) {
-      yield MainState.updateCategories(true, <String>[], state);
+      yield LogState.updateCategories(true, <String>[], state);
     } else if (event is LocationsUpdatedEvent) {
-      yield MainState.updateLocations(false, event.locations, state);
+      yield LogState.updateLocations(false, event.locations, state);
     } else if (event is CategoriesUpdatedEvent) {
-      yield MainState.updateCategories(state.loading, event.categories, state);
-    } else if (event is MainErrorEvent) {
-      yield MainState.loading(false, state);
+      yield LogState.updateCategories(state.loading, event.categories, state);
+    } else if (event is LogErrorEvent) {
+      yield LogState.loading(false, state);
     }
   }
 
