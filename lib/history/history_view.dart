@@ -95,33 +95,74 @@ class HistoryWidget extends StatelessWidget {
         (attempt.timestamp.toDate().difference(dates[index]) > Duration() &&
             attempt.timestamp.toDate().difference(dates[index]) < Duration(days: 1))));
     if (attemptsOnDate.isNotEmpty) {
-      return Card(
-          child: Column(children: <Widget>[
-        Row(children: <Widget>[
-          Expanded(
-              child: Padding(
-            padding: EdgeInsets.all(1.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                color: Theme.of(context).accentColor,
-              ),
-              padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              child: Text(DateFormat('EEEE d/M').format(dates[index]),
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).primaryTextTheme.subtitle2),
+      List<String> climbsToInclude = <String>[];
+      attemptsOnDate.forEach((attempt) {
+        if (!climbsToInclude.contains(attempt.climbId)) {
+          climbsToInclude.add(attempt.climbId);
+        }
+      });
+
+      List<Widget> climbItems = <Widget>[];
+      climbItems.add(
+        Padding(
+          padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
+          child: SizedBox(
+            width: double.infinity,
+            child: Text(
+              DateFormat('EEEE d/M').format(dates[index]),
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).accentTextTheme.subtitle2,
+              textAlign: TextAlign.start,
             ),
-          )),
-        ]),
-        Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children:
-                attemptsOnDate.map((attempt) => _buildAttempt(context, state, attempt)).toList())
-      ]));
+          ),
+        ),
+      );
+      for (String climb in climbsToInclude) {
+        climbItems.insert(
+            1,
+            _buildClimb(
+                context,
+                state,
+                climb,
+                attemptsOnDate
+                    .where((attempt) => attempt.climbId == climb)
+                    .toList()
+                    .reversed
+                    .toList()));
+      }
+      return Column(
+        children: climbItems,
+      );
     } else {
       return Column();
     }
+  }
+
+  Widget _buildClimb(
+      BuildContext context, HistoryState state, String climbId, List<Attempt> climbAttempts) {
+    return Card(
+        child: Column(children: <Widget>[
+      Row(children: <Widget>[
+        Expanded(
+            child: Padding(
+          padding: EdgeInsets.all(1.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius:
+                  BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+              color: Theme.of(context).accentColor,
+            ),
+            padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+            child: Text(climbId,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).primaryTextTheme.subtitle2),
+          ),
+        )),
+      ]),
+      Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: climbAttempts.map((attempt) => _buildAttempt(context, state, attempt)).toList())
+    ]));
   }
 
   Widget _buildAttempt(BuildContext context, HistoryState state, Attempt attempt) {

@@ -26,23 +26,20 @@ class AttemptItem extends StatelessWidget {
       ));
     }
 
-    return Padding(
+    return Container(
         padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-        child: Container(
-            padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-              color: Theme.of(context).cardColor,
-            ),
-            child: Row(children: <Widget>[
-              Expanded(
-                  child:
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: columnTexts)),
-              Container(
-                padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
-                child: _showDownclimbedTick(context),
-              ),
-            ])));
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+          color: Theme.of(context).cardColor,
+        ),
+        child: Row(children: <Widget>[
+          Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: columnTexts)),
+          Container(
+            padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
+            child: _showDownclimbedTick(context),
+          ),
+        ]));
   }
 
   Widget _showDownclimbedTick(BuildContext context) {
