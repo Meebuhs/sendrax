@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
-import 'package:sendrax/models/climb_repo.dart';
+import 'package:sendrax/models/attempt_repo.dart';
 import 'package:sendrax/util/constants.dart';
 
 class AttemptItem extends StatelessWidget {
@@ -23,7 +23,7 @@ class AttemptItem extends StatelessWidget {
               ),
               alignment: Alignment.centerRight,
             ))),
-        onDismissed: (direction) => ClimbRepo.getInstance().deleteAttempt(attempt.id, climbId),
+        onDismissed: (direction) => AttemptRepo.getInstance().deleteAttempt(attempt.id, climbId),
         child: _buildAttempt(context));
   }
 

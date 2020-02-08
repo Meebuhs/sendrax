@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sendrax/models/attempt.dart';
+import 'package:sendrax/models/attempt_repo.dart';
 import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 import 'package:uuid/uuid.dart';
@@ -54,7 +55,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
       Attempt attempt = Attempt(
           "attempt-${uuid.v1()}", Timestamp.now(), state.sendType, state.downclimbed, state.notes);
       try {
-        ClimbRepo.getInstance().setAttempt(attempt, climbId);
+        AttemptRepo.getInstance().setAttempt(attempt, climbId);
         state.loading = false;
       } catch (e) {
         state.loading = false;
