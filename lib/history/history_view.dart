@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sendrax/history/history_attempt_item.dart';
 import 'package:sendrax/models/attempt.dart';
+import 'package:sendrax/models/location.dart';
 import 'package:sendrax/util/constants.dart';
 
 import 'history_bloc.dart';
 import 'history_state.dart';
 
 class HistoryScreen extends StatefulWidget {
-  HistoryScreen({Key key}) : super(key: key);
+  HistoryScreen({Key key, @required this.locations}) : super(key: key);
+
+  final List<Location> locations;
 
   @override
   State<StatefulWidget> createState() => _HistoryState();

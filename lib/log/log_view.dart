@@ -13,7 +13,10 @@ import 'log_state.dart';
 import 'mini_fab_label_clipper.dart';
 
 class LogScreen extends StatefulWidget {
-  LogScreen({Key key}) : super(key: key);
+  LogScreen({Key key, @required this.locations, @required this.categories}) : super(key: key);
+
+  final List<Location> locations;
+  final List<String> categories;
 
   @override
   State<StatefulWidget> createState() => _LogState();
@@ -50,13 +53,7 @@ class LogWidget extends StatelessWidget {
         bloc: BlocProvider.of<LogBloc>(context),
         builder: (context, LogState state) {
           Widget content;
-          if (state.loading) {
-            content = Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 4.0,
-              ),
-            );
-          } else if (state.locations.isEmpty) {
+          if (widget.locations.isEmpty) {
             content = Center(
               child: Text(
                 "Looks like you don't have any locations\nLet's create one right now!",
@@ -69,9 +66,9 @@ class LogWidget extends StatelessWidget {
               padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               itemBuilder: (context, index) {
-                return _buildItem(state.locations[index], state.categories, _onLocationTap);
+                return _buildItem(widget.locations[index], widget.categories, _onLocationTap);
               },
-              itemCount: state.locations.length,
+              itemCount: widget.locations.length,
             );
           }
           return _wrapContentWithFab(context, state, content);
@@ -206,7 +203,7 @@ class LogWidget extends StatelessWidget {
               backgroundColor: Theme.of(context).cardColor,
               children: <Widget>[
                 StringCollectionInputScreen(
-                    items: state.categories,
+                    items: widget.categories,
                     itemName: "Category",
                     upperContext: upperContext,
                     submitInput: _submitInput),
@@ -217,7 +214,7 @@ class LogWidget extends StatelessWidget {
   void _createLocation(LogState state, BuildContext context) {
     var uuid = Uuid();
     Location location =
-        Location("location-${uuid.v1()}", "", "", "", null, state.categories, <String>[], null);
+        Location("location-${uuid.v1()}", "", "", "", null, widget.categories, <String>[], null);
     NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
         addToBackStack: true);
   }
