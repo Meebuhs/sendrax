@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/attempt_repo.dart';
+import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 import 'package:uuid/uuid.dart';
@@ -13,9 +14,9 @@ import 'climb_event.dart';
 import 'climb_state.dart';
 
 class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
-  ClimbBloc(this.climbId);
+  ClimbBloc(this.climb);
 
-  final String climbId;
+  final Climb climb;
   final Uuid uuid = Uuid();
   StreamSubscription<List<Attempt>> climbSubscription;
 
@@ -30,7 +31,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       climbSubscription =
-          ClimbRepo.getInstance().getAttemptsForClimb(climbId, user).listen((attempts) {
+          ClimbRepo.getInstance().getAttemptsForClimb(climb.id, user).listen((attempts) {
         // compare b to a so that the most recent attempt appears at the start of the list.
         add(AttemptsUpdatedEvent(attempts..sort((a, b) => b.timestamp.compareTo(a.timestamp))));
       });
@@ -47,15 +48,16 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     add(DownclimbedToggledEvent(downclimbed));
   }
 
-  void validateAndSubmit(ClimbState state, BuildContext context) async {
+  void validateAndSubmit(
+      ClimbState state, BuildContext context) async {
     FocusScope.of(context).unfocus();
     state.loading = true;
 
     if (_validateAndSave(state)) {
-      Attempt attempt = Attempt(
-          "attempt-${uuid.v1()}", Timestamp.now(), state.sendType, state.downclimbed, state.notes);
+      Attempt attempt = Attempt("attempt-${uuid.v1()}", climb.id, climb.locationId, climb.grade,
+          Timestamp.now(), state.sendType, state.downclimbed, state.notes);
       try {
-        AttemptRepo.getInstance().setAttempt(attempt, climbId);
+        AttemptRepo.getInstance().setAttempt(attempt);
         state.loading = false;
       } catch (e) {
         state.loading = false;

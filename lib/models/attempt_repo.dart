@@ -34,11 +34,11 @@ class AttemptRepo {
     });
   }
 
-  void setAttempt(Attempt attempt, String climbId) async {
+  void setAttempt(Attempt attempt) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
-            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/${attempt.climbId}/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .document(attempt.id)
         .setData(attempt.map, merge: true);
     // Store duplicate in attempts collection for use in log and stats

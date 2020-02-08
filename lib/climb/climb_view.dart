@@ -35,7 +35,7 @@ class _ClimbState extends State<ClimbScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ClimbBloc>(
-      create: (context) => ClimbBloc(widget.climb.id),
+      create: (context) => ClimbBloc(widget.climb),
       child: ClimbWidget(widget: widget, widgetState: this),
     );
   }
