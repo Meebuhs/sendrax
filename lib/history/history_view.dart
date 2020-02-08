@@ -156,7 +156,7 @@ class HistoryWidget extends StatelessWidget {
               color: Theme.of(context).accentColor,
             ),
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-            child: Text(climbId,
+            child: Text(_buildClimbText(climbAttempts[0]),
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).primaryTextTheme.subtitle2),
           ),
@@ -166,6 +166,26 @@ class HistoryWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: climbAttempts.map((attempt) => _buildAttempt(context, state, attempt)).toList())
     ]));
+  }
+
+  String _buildClimbText(Attempt attempt) {
+    String label;
+
+    if (attempt.climbName == "") {
+      if (attempt.climbCategories.isEmpty) {
+        label = "${attempt.climbGrade}";
+      } else {
+        label = "${attempt.climbGrade} - ${(attempt.climbCategories..sort()).join(', ')}";
+      }
+    } else {
+      if (attempt.climbCategories.isEmpty) {
+        label = "${attempt.climbGrade} - ${attempt.climbName}";
+      } else {
+        label = "${attempt.climbGrade} - ${attempt.climbName} - ${(attempt.climbCategories..sort()).join(', ')}";
+      }
+    }
+
+    return label;
   }
 
   Widget _buildAttempt(BuildContext context, HistoryState state, Attempt attempt) {
