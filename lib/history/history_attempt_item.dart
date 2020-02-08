@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/util/constants.dart';
 
@@ -13,7 +14,7 @@ class AttemptItem extends StatelessWidget {
       Padding(
           padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING / 2),
           child: Text(
-            "${formatDate(attempt.timestamp.toDate())} - ${attempt.sendType}",
+            "${DateFormat('h:mm a').format(attempt.timestamp.toDate())} - ${attempt.sendType}",
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).accentTextTheme.subtitle2,
           ))
@@ -62,12 +63,5 @@ class AttemptItem extends StatelessWidget {
               size: Theme.of(context).accentTextTheme.bodyText2.fontSize,
             )
     ]);
-  }
-
-  String formatDate(DateTime time) {
-    String ampm = (time.hour < 12) ? "AM" : "PM";
-    int hour =
-        (time.hour <= 12) ? (time.hour == 0 || time.hour == 12) ? 12 : time.hour : time.hour % 12;
-    return "${time.day}/${time.month} $hour:${time.minute.toString().padLeft(2, '0')} $ampm";
   }
 }
