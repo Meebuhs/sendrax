@@ -27,7 +27,7 @@ class AttemptRepo {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
-        .orderBy('timestamp')
+        .orderBy('timestamp', descending: true)
         .snapshots()
         .map((data) {
       return Deserializer.deserializeAttempts(data.documents);

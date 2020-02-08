@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sendrax/history/history_view.dart';
 import 'package:sendrax/log/log_view.dart';
 import 'package:sendrax/models/login_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
@@ -37,7 +38,7 @@ class MainScreen extends StatelessWidget {
     return TabBarView(
       children: [
         LogScreen(),
-        Icon(Icons.history),
+        HistoryScreen(),
       ],
     );
   }
