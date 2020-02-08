@@ -25,13 +25,21 @@ class Deserializer {
   }
 
   static List<Climb> deserializeClimbs(List<DocumentSnapshot> climbs) {
-    return climbs.map((climb) => _deserializeClimb(climb)).toList();
+    return climbs.map((climb) => deserializeClimb(climb)).toList();
   }
 
   // @formatter:off
-  static Climb _deserializeClimb(DocumentSnapshot climb) {
-    return Climb(climb['id'], climb['displayName'], "", climb['imageUri'], climb['locationId'],
-        climb['grade'], climb['gradeSet'], climb['section'], climb['archived'],
+  static Climb deserializeClimb(DocumentSnapshot climb) {
+    return Climb(
+        climb['id'],
+        climb['displayName'],
+        "",
+        climb['imageUri'],
+        climb['locationId'],
+        climb['grade'],
+        climb['gradeSet'],
+        climb['section'],
+        climb['archived'],
         _deserializeClimbCategories(climb['categories']), <Attempt>[]);
   }
   // @formatter:on
@@ -40,8 +48,8 @@ class Deserializer {
     return List.from(categories);
   }
 
-  static Location deserializeLocationSections(DocumentSnapshot locationDocument,
-      Location location) {
+  static Location deserializeLocationSections(
+      DocumentSnapshot locationDocument, Location location) {
     if (locationDocument.data != null) {
       if (locationDocument['sections'] != null) {
         location.sections.addAll(List.from(locationDocument['sections']));
@@ -66,6 +74,12 @@ class Deserializer {
         attempt['sendType'],
         attempt['downclimbed'],
         attempt['notes']);
+  }
+
+  static Climb deserializeClimbAttempts(List<DocumentSnapshot> attempts, Climb climb) {
+    climb.attempts
+        .addAll(deserializeAttempts(attempts)..sort((a, b) => b.timestamp.compareTo(a.timestamp)));
+    return climb;
   }
 
   static GradeSet deserializeGradeSet(DocumentSnapshot grade) {

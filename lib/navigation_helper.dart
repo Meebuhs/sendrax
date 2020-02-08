@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sendrax/view_only_climb/view_only_climb_view.dart';
 
 import 'climb/climb_view.dart';
 import 'create_climb/create_climb_view.dart';
@@ -12,17 +13,29 @@ import 'models/location.dart';
 class NavigationHelper {
   static void navigateToLogin(BuildContext context, {bool addToBackStack: false}) {
     if (addToBackStack) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen(), settings: RouteSettings(name: '/login')));
     } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen(), settings: RouteSettings(name: '/login')));
     }
   }
 
   static void navigateToMain(BuildContext context, {bool addToBackStack: false}) {
     if (addToBackStack) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MainScreen(), settings: RouteSettings(name: '/')));
     } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MainScreen(), settings: RouteSettings(name: '/')));
     }
   }
 
@@ -36,7 +49,8 @@ class NavigationHelper {
               builder: (context) => LocationScreen(
                     location: location,
                     categories: categories,
-                  )));
+                  ),
+              settings: RouteSettings(name: '/location')));
     } else {
       Navigator.pushReplacement(
           context,
@@ -44,7 +58,8 @@ class NavigationHelper {
               builder: (context) => LocationScreen(
                     location: location,
                     categories: categories,
-                  )));
+                  ),
+              settings: RouteSettings(name: '/location')));
     }
   }
 
@@ -109,7 +124,8 @@ class NavigationHelper {
                   selectedLocation: selectedLocation,
                   sections: sections,
                   grades: grades,
-                  categories: categories)));
+                  categories: categories),
+              settings: RouteSettings(name: '/location/climb')));
     } else {
       Navigator.pushReplacement(
           context,
@@ -119,7 +135,23 @@ class NavigationHelper {
                   selectedLocation: selectedLocation,
                   sections: sections,
                   grades: grades,
-                  categories: categories)));
+                  categories: categories),
+              settings: RouteSettings(name: '/location/climb')));
+    }
+  }
+
+  static void navigateToViewOnlyClimb(BuildContext context, String climbId, String climbName,
+      {bool addToBackStack: false}) {
+    if (addToBackStack) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ViewOnlyClimbScreen(climbId: climbId, climbName: climbName)));
+    } else {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ViewOnlyClimbScreen(climbId: climbId, climbName: climbName)));
     }
   }
 
@@ -127,9 +159,14 @@ class NavigationHelper {
     Navigator.pop(context);
   }
 
+  static void navigateBackTwo(BuildContext context) {
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
+
   static void resetToMain(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
+        MaterialPageRoute(builder: (context) => MainScreen()), ModalRoute.withName('/'));
   }
 
   static void resetToLocation(
@@ -140,6 +177,6 @@ class NavigationHelper {
                   location: location,
                   categories: categories,
                 )),
-        (Route<dynamic> route) => false);
+        ModalRoute.withName('/'));
   }
 }

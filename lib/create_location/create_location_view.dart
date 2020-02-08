@@ -381,15 +381,9 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   void navigateToLocationAfterEdit(CreateLocationState state) {
-    NavigationHelper.navigateBackOne(widgetState.context);
-    // when editing, pop back to main then reload location
-    if (widget.isEdit) {
-      NavigationHelper.navigateBackOne(widgetState.context);
-    }
     SelectedLocation selectedLocation = SelectedLocation(
         widget.location.id, state.displayName, state.imagePath, state.imageUri, state.gradeSet);
-    NavigationHelper.navigateToLocation(
-        widgetState.context, selectedLocation, widget.location.categories,
-        addToBackStack: true);
+    NavigationHelper.resetToLocation(
+        widgetState.context, selectedLocation, widget.location.categories);
   }
 }

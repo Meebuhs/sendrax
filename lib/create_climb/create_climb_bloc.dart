@@ -104,7 +104,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
 
   void archiveClimb(BuildContext context, CreateClimbWidget view, SelectedLocation location,
       List<String> categories) {
-    ClimbRepo.getInstance().archiveClimb(this.climb.id);
+    ClimbRepo.getInstance().setClimbArchived(this.climb.id, true);
     NavigationHelper.resetToLocation(context, location, categories);
   }
 

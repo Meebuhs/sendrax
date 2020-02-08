@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:sendrax/history/history_attempt_item.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
+import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
 import 'history_bloc.dart';
@@ -148,23 +149,27 @@ class HistoryWidget extends StatelessWidget {
       Row(children: <Widget>[
         Expanded(
             child: Padding(
-          padding: EdgeInsets.all(1.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-              color: Theme.of(context).accentColor,
-            ),
-            padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-            child: Text(_buildClimbText(climbAttempts[0]),
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).primaryTextTheme.subtitle2),
-          ),
-        )),
+                padding: EdgeInsets.all(1.0),
+                child: InkWell(
+                  onTap: () {
+                    navigateToClimb(context, climbId, climbAttempts.first.climbName);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                      color: Theme.of(context).accentColor,
+                    ),
+                    padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                    child: Text(_buildClimbText(climbAttempts.first),
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).primaryTextTheme.subtitle2),
+                  ),
+                ))),
       ]),
       Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: climbAttempts.map((attempt) => _buildAttempt(context, state, attempt)).toList())
+          children: climbAttempts.map((attempt) => _buildAttempt(attempt)).toList())
     ]));
   }
 
@@ -181,14 +186,19 @@ class HistoryWidget extends StatelessWidget {
       if (attempt.climbCategories.isEmpty) {
         label = "${attempt.climbGrade} - ${attempt.climbName}";
       } else {
-        label = "${attempt.climbGrade} - ${attempt.climbName} - ${(attempt.climbCategories..sort()).join(', ')}";
+        label =
+            "${attempt.climbGrade} - ${attempt.climbName} - ${(attempt.climbCategories..sort()).join(', ')}";
       }
     }
 
     return label;
   }
 
-  Widget _buildAttempt(BuildContext context, HistoryState state, Attempt attempt) {
+  Widget _buildAttempt(Attempt attempt) {
     return AttemptItem(attempt: attempt);
+  }
+
+  void navigateToClimb(BuildContext context, String climbId, String climbName) {
+    NavigationHelper.navigateToViewOnlyClimb(context, climbId, climbName, addToBackStack: true);
   }
 }

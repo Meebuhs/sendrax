@@ -25,7 +25,27 @@ class ClimbRepo {
     return _instance;
   }
 
-  Stream<List<Attempt>> getAttemptsForClimb(String climbId, User user) {
+  Stream<Climb> getClimbFromId(String climbId, User user) {
+    return _firestore
+        .document(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId")
+        .snapshots()
+        .map((data) {
+      return Deserializer.deserializeClimb(data);
+    });
+  }
+
+  Stream<Climb> getAttemptsForClimb(Climb climb, User user) {
+    return _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/${climb.id}/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .snapshots()
+        .map((data) {
+      return Deserializer.deserializeClimbAttempts(data.documents, climb);
+    });
+  }
+
+  Stream<List<Attempt>> getAttemptsByClimbId(String climbId, User user) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
@@ -74,12 +94,12 @@ class ClimbRepo {
     }
   }
 
-  void archiveClimb(String climbId) async {
+  void setClimbArchived(String climbId, bool archived) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
         .document(climbId)
-        .updateData({"archived": true});
+        .updateData({"archived": archived});
   }
 }

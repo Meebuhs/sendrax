@@ -2,7 +2,7 @@ import 'package:sendrax/models/attempt.dart';
 
 abstract class ClimbEvent {}
 
-class AttempsClearedEvent extends ClimbEvent {}
+class AttemptsClearedEvent extends ClimbEvent {}
 
 class AttemptsUpdatedEvent extends ClimbEvent {
   AttemptsUpdatedEvent(this.attempts);

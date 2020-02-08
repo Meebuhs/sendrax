@@ -27,11 +27,11 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
   }
 
   void _retrieveAttemptsForThisClimb() async {
-    add(AttempsClearedEvent());
+    add(AttemptsClearedEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       climbSubscription =
-          ClimbRepo.getInstance().getAttemptsForClimb(climb.id, user).listen((attempts) {
+          ClimbRepo.getInstance().getAttemptsByClimbId(climb.id, user).listen((attempts) {
         // compare b to a so that the most recent attempt appears at the start of the list.
         add(AttemptsUpdatedEvent(attempts..sort((a, b) => b.timestamp.compareTo(a.timestamp))));
       });
@@ -91,7 +91,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
   @override
   Stream<ClimbState> mapEventToState(ClimbEvent event) async* {
-    if (event is AttempsClearedEvent) {
+    if (event is AttemptsClearedEvent) {
       yield ClimbState.updateAttempts(true, state.attempts, state);
     } else if (event is AttemptsUpdatedEvent) {
       yield ClimbState.updateAttempts(false, event.attempts, state);

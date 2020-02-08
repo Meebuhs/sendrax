@@ -237,27 +237,25 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   Widget _showGradeDropdown(CreateClimbState state, BuildContext context) {
-    return DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-                isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
-            style: Theme.of(context).accentTextTheme.subtitle2,
-            items: _createDropdownItems(state.grades),
-            value: state.grade,
-            hint: Text("Grade"),
-            isExpanded: true,
-            validator: (String value) {
-              if (value == null) {
-                return 'A grade must be selected';
-              }
-              return null;
-            },
-            onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectGrade(value)));
+    return DropdownButtonFormField<String>(
+        decoration:
+            InputDecoration(isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
+        style: Theme.of(context).accentTextTheme.subtitle2,
+        items: _createDropdownItems(state.grades),
+        value: state.grade,
+        hint: Text("Grade"),
+        isExpanded: true,
+        validator: (String value) {
+          if (value == null) {
+            return 'A grade must be selected';
+          }
+          return null;
+        },
+        onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectGrade(value));
   }
 
   Widget _showSectionDropdown(CreateClimbState state, BuildContext context) {
-    return DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<String>(
+    return DropdownButtonFormField<String>(
       decoration:
           InputDecoration(isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
       style: Theme.of(context).accentTextTheme.subtitle2,
@@ -279,7 +277,7 @@ class CreateClimbWidget extends StatelessWidget {
         return null;
       },
       onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectSection(value),
-    ));
+    );
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
