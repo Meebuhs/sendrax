@@ -71,6 +71,7 @@ class LocationWidget extends StatelessWidget {
             );
           } else if (state.climbs.isEmpty) {
             content = Column(children: <Widget>[
+              _showFilterDropdownRow(state, context),
               _showImage(),
               Expanded(
                   child: Center(
