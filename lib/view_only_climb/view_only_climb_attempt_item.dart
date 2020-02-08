@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sendrax/models/attempt.dart';
-import 'package:sendrax/models/attempt_repo.dart';
 import 'package:sendrax/util/constants.dart';
 
 class AttemptItem extends StatelessWidget {
@@ -12,20 +11,7 @@ class AttemptItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-        key: Key(attempt.id),
-        direction: DismissDirection.endToStart,
-        background: Container(
-            color: Theme.of(context).errorColor,
-            child: (Container(
-              child: Padding(
-                padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
-                child: Icon(Icons.delete_forever, color: Colors.black),
-              ),
-              alignment: Alignment.centerRight,
-            ))),
-        onDismissed: (direction) => AttemptRepo.getInstance().deleteAttempt(attempt.id, climbId),
-        child: _buildAttempt(context));
+    return _buildAttempt(context);
   }
 
   Widget _buildAttempt(BuildContext context) {
