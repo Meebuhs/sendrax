@@ -48,14 +48,22 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     add(DownclimbedToggledEvent(downclimbed));
   }
 
-  void validateAndSubmit(
-      ClimbState state, BuildContext context) async {
+  void validateAndSubmit(ClimbState state, BuildContext context) async {
     FocusScope.of(context).unfocus();
     state.loading = true;
 
     if (_validateAndSave(state)) {
-      Attempt attempt = Attempt("attempt-${uuid.v1()}", climb.id, climb.locationId, climb.grade,
-          Timestamp.now(), state.sendType, state.downclimbed, state.notes);
+      Attempt attempt = Attempt(
+          "attempt-${uuid.v1()}",
+          climb.id,
+          climb.displayName,
+          climb.grade,
+          climb.categories,
+          climb.locationId,
+          Timestamp.now(),
+          state.sendType,
+          state.downclimbed,
+          state.notes);
       try {
         AttemptRepo.getInstance().setAttempt(attempt);
         state.loading = false;
