@@ -29,4 +29,8 @@ class Attempt {
       "notes": notes,
     };
   }
+
+  bool operator ==(o) => o is Attempt && o.id == id;
+
+  int get hashCode => id.hashCode;
 }

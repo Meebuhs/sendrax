@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/attempt_repo.dart';
+import 'package:sendrax/models/user.dart';
 import 'package:sendrax/models/user_repo.dart';
+import 'package:sendrax/util/constants.dart';
 
 import 'history_event.dart';
 import 'history_state.dart';
@@ -19,18 +21,33 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 
   void _retrieveAttempts() async {
     add(ClearAttemptsEvent());
-    final user = await UserRepo.getInstance().getCurrentUser();
-    attemptsSubscription = AttemptRepo.getInstance().getAttempts(user).listen((attempts) {
-      add(AttemptsUpdatedEvent(attempts));
-    });
+    final User user = await UserRepo.getInstance().getCurrentUser();
+    _getRemainingAttemptsForBatch(
+        await AttemptRepo.getInstance().getBatchOfAttempts(state.attempts, user).first, user, 0);
+  }
+
+  void retrieveMoreAttempts() async {
+    int attemptsLength = state.attempts.length;
+    final User user = await UserRepo.getInstance().getCurrentUser();
+    _getRemainingAttemptsForBatch(
+        await AttemptRepo.getInstance().getBatchOfAttempts(state.attempts, user).first,
+        user,
+        attemptsLength);
+  }
+
+  void _getRemainingAttemptsForBatch(List<Attempt> batch, User user, int attemptsLength) async {
+    final List<Attempt> attempts =
+        await AttemptRepo.getInstance().getRemainingAttemptsForBatch(batch, user).first;
+    add(AttemptsUpdatedEvent(
+        (attempts.length - attemptsLength < LazyLoadConstants.BATCH_SIZE), attempts));
   }
 
   @override
   Stream<HistoryState> mapEventToState(HistoryEvent event) async* {
     if (event is ClearAttemptsEvent) {
-      yield HistoryState.updateAttempts(true, <Attempt>[]);
+      yield HistoryState.loading(true, state);
     } else if (event is AttemptsUpdatedEvent) {
-      yield HistoryState.updateAttempts(false, event.attempts);
+      yield HistoryState.updateAttempts(event.reachedEnd, event.attempts, state);
     } else if (event is HistoryErrorEvent) {
       yield HistoryState.loading(false, state);
     }

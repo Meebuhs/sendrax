@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added history view
+    - Ability to view all past completed attempts
+    - Lazy loads attempt list in segments that contain full days worth of attempts
+    - Tap a climb to view its full attempt history
 
 ## 0.1.0 - 2020-02-06
 

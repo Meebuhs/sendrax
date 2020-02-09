@@ -48,8 +48,8 @@ class Deserializer {
     return List.from(categories);
   }
 
-  static Location deserializeLocationSections(
-      DocumentSnapshot locationDocument, Location location) {
+  static Location deserializeLocationSections(DocumentSnapshot locationDocument,
+      Location location) {
     if (locationDocument.data != null) {
       if (locationDocument['sections'] != null) {
         location.sections.addAll(List.from(locationDocument['sections']));
@@ -60,6 +60,12 @@ class Deserializer {
 
   static List<Attempt> deserializeAttempts(List<DocumentSnapshot> attempts) {
     return attempts.map((attempt) => _deserializeAttempt(attempt)).toList();
+  }
+
+  static List<Attempt> deserializeBatchOfAttempts(List<DocumentSnapshot> attemptDocuments,
+      List<Attempt> attempts) {
+    attempts.addAll(attemptDocuments.map((attempt) => _deserializeAttempt(attempt)).toList());
+    return attempts;
   }
 
   static Attempt _deserializeAttempt(DocumentSnapshot attempt) {

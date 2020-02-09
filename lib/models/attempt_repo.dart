@@ -34,6 +34,61 @@ class AttemptRepo {
     });
   }
 
+  Stream<List<Attempt>> getBatchOfAttempts(List<Attempt> attempts, User user) {
+    if (attempts.isEmpty) {
+      return _getFirstBatchOfAttempts(attempts, user);
+    } else {
+      return _getNextBatchOfAttempts(attempts, user);
+    }
+  }
+
+  Stream<List<Attempt>> _getFirstBatchOfAttempts(List<Attempt> attempts, User user) {
+    return _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .orderBy('timestamp', descending: true)
+        .limit(LazyLoadConstants.BATCH_SIZE)
+        .snapshots()
+        .map((data) {
+      return Deserializer.deserializeBatchOfAttempts(data.documents, attempts);
+    });
+  }
+
+  Stream<List<Attempt>> _getNextBatchOfAttempts(List<Attempt> attempts, User user) {
+    return _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .orderBy('timestamp', descending: true)
+        .startAfter([attempts.last.timestamp])
+        .limit(LazyLoadConstants.BATCH_SIZE)
+        .snapshots()
+        .map((data) {
+          return Deserializer.deserializeBatchOfAttempts(data.documents, attempts);
+        });
+  }
+
+  Stream<List<Attempt>> getRemainingAttemptsForBatch(List<Attempt> batch, User user) {
+    DateTime lastAttemptDate = batch.last.timestamp.toDate();
+    DateTime startDate = DateTime(lastAttemptDate.year, lastAttemptDate.month, lastAttemptDate.day);
+    DateTime endDate = startDate.add(Duration(days: 1));
+
+    return _firestore
+        .collection(
+        "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .orderBy('timestamp', descending: true)
+        .where('timestamp', isGreaterThanOrEqualTo: startDate).where('timestamp', isLessThan: endDate)
+        .snapshots()
+        .map((data) {
+      List<Attempt> remainingAttempts = Deserializer.deserializeBatchOfAttempts(data.documents, <Attempt>[]);
+      for (Attempt attempt in remainingAttempts) {
+        if (!batch.contains(attempt)) {
+          batch.add(attempt);
+        }
+      }
+      return batch;
+    });
+  }
+
   void setAttempt(Attempt attempt) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore

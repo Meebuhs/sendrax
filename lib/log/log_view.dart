@@ -27,11 +27,11 @@ class _LogState extends State<LogScreen> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 400),
     );
-    super.initState();
   }
 
   @override

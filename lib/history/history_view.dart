@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +22,8 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryState extends State<HistoryScreen> {
+  Timer scrollEventDebounceTimer;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<HistoryBloc>(
@@ -73,13 +77,30 @@ class HistoryWidget extends StatelessWidget {
 
   Widget _buildGroupedList(HistoryState state, BuildContext context) {
     List<DateTime> datesToBuild = _generateDates(state);
-    return ListView.builder(
-      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-      itemBuilder: (context, index) {
-        return _buildDateCard(context, state, datesToBuild, index);
-      },
-      itemCount: datesToBuild.length,
+    return NotificationListener<ScrollUpdateNotification>(
+      child: ListView.builder(
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        itemBuilder: (context, index) {
+          return _buildDateCard(context, state, datesToBuild, index);
+        },
+        itemCount: datesToBuild.length,
+      ),
+      onNotification: (notification) => _onNotification(notification, state, context),
     );
+  }
+
+  bool _onNotification(
+      ScrollUpdateNotification notification, HistoryState state, BuildContext context) {
+    if (notification.metrics.extentAfter < LazyLoadConstants.SCROLL_OFFSET && !state.reachedEnd) {
+      if (widgetState.scrollEventDebounceTimer == null ||
+          !widgetState.scrollEventDebounceTimer.isActive) {
+        widgetState.scrollEventDebounceTimer =
+            Timer(Duration(milliseconds: LazyLoadConstants.DEBOUNCE_DURATION), () => {});
+        BlocProvider.of<HistoryBloc>(context).retrieveMoreAttempts();
+      }
+    }
+    // "Return false to allow the notification to continue to be dispatched to further ancestors."
+    return false;
   }
 
   List<DateTime> _generateDates(HistoryState state) {
