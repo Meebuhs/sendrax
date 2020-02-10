@@ -51,10 +51,8 @@ class ViewOnlyClimbWidget extends StatelessWidget {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-      IconButton(
-          icon: Icon(Icons.unarchive), onPressed: () => _showUnarchiveClimbDialog(context, this)),
-      IconButton(
-          icon: Icon(Icons.delete_forever), onPressed: () => _showDeleteClimbDialog(context, this))
+      IconButton(icon: Icon(Icons.unarchive), onPressed: () => _showUnarchiveClimbDialog(context)),
+      IconButton(icon: Icon(Icons.delete_forever), onPressed: () => _showDeleteClimbDialog(context))
     ];
   }
 
@@ -178,10 +176,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
     return AttemptItem(attempt: attempt, climbId: climbId);
   }
 
-  void _showDeleteClimbDialog(
-    BuildContext upperContext,
-    ViewOnlyClimbWidget view,
-  ) {
+  void _showDeleteClimbDialog(BuildContext upperContext) {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {
@@ -205,7 +200,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
         });
   }
 
-  void _showUnarchiveClimbDialog(BuildContext upperContext, ViewOnlyClimbWidget view) {
+  void _showUnarchiveClimbDialog(BuildContext upperContext) {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {

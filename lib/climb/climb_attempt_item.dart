@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sendrax/edit_attempt/edit_attempt_view.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/attempt_repo.dart';
+import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
 class AttemptItem extends StatelessWidget {
@@ -14,17 +16,31 @@ class AttemptItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dismissible(
         key: Key(attempt.id),
-        direction: DismissDirection.endToStart,
+        secondaryBackground: Container(
+          color: Theme.of(context).errorColor,
+          child: Padding(
+            padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
+            child: Icon(Icons.delete_forever, color: Colors.black),
+          ),
+          alignment: Alignment.centerRight,
+        ),
         background: Container(
-            color: Theme.of(context).errorColor,
-            child: (Container(
-              child: Padding(
-                padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
-                child: Icon(Icons.delete_forever, color: Colors.black),
-              ),
-              alignment: Alignment.centerRight,
-            ))),
-        onDismissed: (direction) => AttemptRepo.getInstance().deleteAttempt(attempt.id, climbId),
+          color: Theme.of(context).accentColor,
+          child: Padding(
+            padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
+            child: Icon(Icons.mode_edit, color: Colors.black),
+          ),
+          alignment: Alignment.centerLeft,
+        ),
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.endToStart) {
+            AttemptRepo.getInstance().deleteAttempt(attempt.id, climbId);
+            return true;
+          } else {
+            _showEditAttemptDialog(context);
+            return false;
+          }
+        },
         child: _buildAttempt(context));
   }
 
@@ -82,5 +98,24 @@ class AttemptItem extends StatelessWidget {
               size: Theme.of(context).accentTextTheme.bodyText2.fontSize,
             )
     ]);
+  }
+
+  void _showEditAttemptDialog(BuildContext upperContext) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              title: Text("Edit attempt", style: Theme.of(context).accentTextTheme.headline5),
+              children: <Widget>[
+                EditAttemptScreen(
+                  attempt: attempt,
+                ),
+              ]);
+        });
+  }
+
+  void navigateBackOne(BuildContext context) {
+    NavigationHelper.navigateBackOne(context);
   }
 }
