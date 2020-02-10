@@ -165,11 +165,14 @@ class ClimbWidget extends StatelessWidget {
         ? "${widget.climb.grade}"
         : "${widget.climb.grade} - ${widget.climb.section}";
 
+    String secondComponentText =
+        (widget.climb.categories.isNotEmpty) ? "- ${widget.climb.categories.join(', ')}" : "";
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Container(
           child: Padding(
               padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              child: Text("$firstComponentText - ${widget.climb.categories.join(', ')}",
+              child: Text("$firstComponentText$secondComponentText",
                   style: Theme.of(context).accentTextTheme.subtitle2))),
       Padding(
           padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
