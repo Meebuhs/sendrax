@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/location.dart';
@@ -86,6 +87,8 @@ class ClimbWidget extends StatelessWidget {
   }
 
   Widget _showListView(ClimbState state) {
+    List<DateTime> datesToBuild = _generateDates(state);
+
     int itemCount = 1;
     if (widget.climb.imagePath != "") {
       itemCount++;
@@ -93,8 +96,9 @@ class ClimbWidget extends StatelessWidget {
     if (state.attempts.isEmpty) {
       itemCount++;
     } else {
-      itemCount += state.attempts.length;
+      itemCount += datesToBuild.length;
     }
+
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
@@ -106,7 +110,7 @@ class ClimbWidget extends StatelessWidget {
           } else if (state.attempts.isEmpty) {
             return _showEmptyAttemptList(context);
           } else {
-            return _buildAttempt(state.attempts[index - 2], widget.climb.id);
+            return _buildDateCard(context, state, datesToBuild, index - 2);
           }
         } else {
           if (index == 0) {
@@ -114,12 +118,24 @@ class ClimbWidget extends StatelessWidget {
           } else if (state.attempts.isEmpty) {
             return _showEmptyAttemptList(context);
           } else {
-            return _buildAttempt(state.attempts[index - 1], widget.climb.id);
+            return _buildDateCard(context, state, datesToBuild, index - 1);
           }
         }
       },
       itemCount: itemCount,
     );
+  }
+
+  List<DateTime> _generateDates(ClimbState state) {
+    List<DateTime> dates = <DateTime>[];
+    for (Attempt attempt in state.attempts) {
+      DateTime attemptDate = attempt.timestamp.toDate();
+      DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
+      if (!dates.contains(startOfDay)) {
+        dates.add(startOfDay);
+      }
+    }
+    return dates;
   }
 
   Widget _showEmptyAttemptList(BuildContext context) {
@@ -174,14 +190,40 @@ class ClimbWidget extends StatelessWidget {
               padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
               child: Text("$firstComponentText$secondComponentText",
                   style: Theme.of(context).accentTextTheme.subtitle2))),
-      Padding(
-          padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
-          child: Divider(
-            color: Theme.of(context).accentColor,
-            thickness: 1.0,
-            height: 0.0,
-          ))
+      Divider(
+        color: Theme.of(context).accentColor,
+        thickness: 1.0,
+        height: 0.0,
+      )
     ]);
+  }
+
+  Widget _buildDateCard(BuildContext context, ClimbState state, List<DateTime> dates, int index) {
+    List<Attempt> attemptsOnDate = List.from(state.attempts.where((attempt) =>
+        (attempt.timestamp.toDate().difference(dates[index]) > Duration() &&
+            attempt.timestamp.toDate().difference(dates[index]) < Duration(days: 1))));
+    List<Widget> attemptItems = <Widget>[];
+    attemptItems.add(
+      Padding(
+        padding:
+            EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, 0, 0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Text(
+            DateFormat('EEEE d/M').format(dates[index]),
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).accentTextTheme.subtitle2,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      ),
+    );
+    for (Attempt attempt in attemptsOnDate) {
+      attemptItems.insert(1, _buildAttempt(attempt, widget.climb.id));
+    }
+    return Column(
+      children: attemptItems,
+    );
   }
 
   AttemptItem _buildAttempt(Attempt attempt, String climbId) {

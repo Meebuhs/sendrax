@@ -59,7 +59,7 @@ class AttemptItem extends StatelessWidget {
       Padding(
           padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING / 2),
           child: Text(
-            "${DateFormat('EEEE d/M h:mm a').format(attempt.timestamp.toDate())} - ${attempt.sendType}",
+            "${DateFormat('h:mm a').format(attempt.timestamp.toDate())} - ${attempt.sendType}",
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).accentTextTheme.subtitle2,
           ))

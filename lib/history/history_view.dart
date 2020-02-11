@@ -79,7 +79,7 @@ class HistoryWidget extends StatelessWidget {
     List<DateTime> datesToBuild = _generateDates(state);
     return NotificationListener<ScrollUpdateNotification>(
       child: ListView.builder(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
         itemBuilder: (context, index) {
           return _buildDateCard(context, state, datesToBuild, index);
         },
@@ -105,12 +105,12 @@ class HistoryWidget extends StatelessWidget {
 
   List<DateTime> _generateDates(HistoryState state) {
     List<DateTime> dates = <DateTime>[];
-    DateTime startDate = state.attempts.last.timestamp.toDate();
-    DateTime endDate = state.attempts.first.timestamp.toDate();
-    DateTime currentDate = DateTime(startDate.year, startDate.month, startDate.day);
-    while (currentDate.isBefore(endDate)) {
-      dates.insert(0, currentDate);
-      currentDate = currentDate.add(Duration(days: 1));
+    for (Attempt attempt in state.attempts) {
+      DateTime attemptDate = attempt.timestamp.toDate();
+      DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
+      if (!dates.contains(startOfDay)) {
+        dates.add(startOfDay);
+      }
     }
     return dates;
   }
