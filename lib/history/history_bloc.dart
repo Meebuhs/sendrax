@@ -26,6 +26,12 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
         await AttemptRepo.getInstance().getBatchOfAttempts(state.attempts, user).first, user, 0);
   }
 
+  Future<void> refreshAttempts() async {
+    final User user = await UserRepo.getInstance().getCurrentUser();
+    _getRemainingAttemptsForBatch(
+        await AttemptRepo.getInstance().getBatchOfAttempts(state.attempts, user).first, user, 0);
+  }
+
   void retrieveMoreAttempts() async {
     int attemptsLength = state.attempts.length;
     final User user = await UserRepo.getInstance().getCurrentUser();
@@ -45,11 +51,11 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   @override
   Stream<HistoryState> mapEventToState(HistoryEvent event) async* {
     if (event is ClearAttemptsEvent) {
-      yield HistoryState.loading(true, state);
+      yield HistoryState.updateAttempts(true, state.reachedEnd, <Attempt>[]);
     } else if (event is AttemptsUpdatedEvent) {
-      yield HistoryState.updateAttempts(event.reachedEnd, event.attempts, state);
+      yield HistoryState.updateAttempts(false, event.reachedEnd, event.attempts);
     } else if (event is HistoryErrorEvent) {
-      yield HistoryState.loading(false, state);
+      yield HistoryState.updateAttempts(false, state.reachedEnd, state.attempts);
     }
   }
 

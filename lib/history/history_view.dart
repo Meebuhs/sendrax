@@ -77,15 +77,18 @@ class HistoryWidget extends StatelessWidget {
 
   Widget _buildGroupedList(HistoryState state, BuildContext context) {
     List<DateTime> datesToBuild = _generateDates(state);
-    return NotificationListener<ScrollUpdateNotification>(
-      child: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        itemBuilder: (context, index) {
-          return _buildDateCard(context, state, datesToBuild, index);
-        },
-        itemCount: datesToBuild.length,
+    return RefreshIndicator(
+      onRefresh: () => BlocProvider.of<HistoryBloc>(context).refreshAttempts(),
+      child: NotificationListener<ScrollUpdateNotification>(
+        child: ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+          itemBuilder: (context, index) {
+            return _buildDateCard(context, state, datesToBuild, index);
+          },
+          itemCount: datesToBuild.length,
+        ),
+        onNotification: (notification) => _onNotification(notification, state, context),
       ),
-      onNotification: (notification) => _onNotification(notification, state, context),
     );
   }
 

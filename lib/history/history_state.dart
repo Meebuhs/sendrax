@@ -10,11 +10,8 @@ class HistoryState {
 
   factory HistoryState.initial() => HistoryState._internal(true, false, <Attempt>[]);
 
-  factory HistoryState.loading(bool loading, HistoryState state) =>
-      HistoryState._internal(loading, state.reachedEnd, state.attempts);
-
   factory HistoryState.updateAttempts(
-      bool reachedEnd,  List<Attempt> attempts, HistoryState state) =>
-      HistoryState._internal(false, reachedEnd, attempts);
+      bool loading, bool reachedEnd,  List<Attempt> attempts) =>
+      HistoryState._internal(loading, reachedEnd, attempts);
 }
 // @formatter:on
