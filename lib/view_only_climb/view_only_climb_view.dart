@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
@@ -77,6 +78,8 @@ class ViewOnlyClimbWidget extends StatelessWidget {
   }
 
   Widget _showListView(ViewOnlyClimbState state) {
+    List<DateTime> datesToBuild = _generateDates(state);
+
     int itemCount = 1;
     if (state.climb.imagePath != "") {
       itemCount++;
@@ -84,8 +87,9 @@ class ViewOnlyClimbWidget extends StatelessWidget {
     if (state.climb.attempts.isEmpty) {
       itemCount++;
     } else {
-      itemCount += state.climb.attempts.length;
+      itemCount += datesToBuild.length;
     }
+
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
@@ -97,7 +101,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
           } else if (state.climb.attempts.isEmpty) {
             return _showEmptyAttemptList(context);
           } else {
-            return _buildAttempt(state.climb.attempts[index - 2], state.climb.id);
+            return _buildDateCard(context, state, datesToBuild, index - 2);
           }
         } else {
           if (index == 0) {
@@ -105,12 +109,24 @@ class ViewOnlyClimbWidget extends StatelessWidget {
           } else if (state.climb.attempts.isEmpty) {
             return _showEmptyAttemptList(context);
           } else {
-            return _buildAttempt(state.climb.attempts[index - 1], state.climb.id);
+            return _buildDateCard(context, state, datesToBuild, index - 1);
           }
         }
       },
       itemCount: itemCount,
     );
+  }
+
+  List<DateTime> _generateDates(ViewOnlyClimbState state) {
+    List<DateTime> dates = <DateTime>[];
+    for (Attempt attempt in state.climb.attempts) {
+      DateTime attemptDate = attempt.timestamp.toDate();
+      DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
+      if (!dates.contains(startOfDay)) {
+        dates.add(startOfDay);
+      }
+    }
+    return dates;
   }
 
   Widget _showEmptyAttemptList(BuildContext context) {
@@ -156,11 +172,14 @@ class ViewOnlyClimbWidget extends StatelessWidget {
         ? "${state.climb.grade}"
         : "${state.climb.grade} - ${state.climb.section}";
 
+    String secondComponentText =
+        (state.climb.categories.isNotEmpty) ? "- ${state.climb.categories.join(', ')}" : "";
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Container(
           child: Padding(
               padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              child: Text("$firstComponentText - ${state.climb.categories.join(', ')}",
+              child: Text("$firstComponentText$secondComponentText",
                   style: Theme.of(context).accentTextTheme.subtitle2))),
       Padding(
           padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
@@ -170,6 +189,35 @@ class ViewOnlyClimbWidget extends StatelessWidget {
             height: 0.0,
           ))
     ]);
+  }
+
+  Widget _buildDateCard(
+      BuildContext context, ViewOnlyClimbState state, List<DateTime> dates, int index) {
+    List<Attempt> attemptsOnDate = List.from(state.climb.attempts.where((attempt) =>
+        (attempt.timestamp.toDate().difference(dates[index]) > Duration() &&
+            attempt.timestamp.toDate().difference(dates[index]) < Duration(days: 1))));
+    List<Widget> attemptItems = <Widget>[];
+    attemptItems.add(
+      Padding(
+        padding:
+            EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, 0, 0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Text(
+            DateFormat('EEEE d/M').format(dates[index]),
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).accentTextTheme.subtitle2,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      ),
+    );
+    for (Attempt attempt in attemptsOnDate) {
+      attemptItems.insert(1, _buildAttempt(attempt, state.climb.id));
+    }
+    return Column(
+      children: attemptItems,
+    );
   }
 
   AttemptItem _buildAttempt(Attempt attempt, String climbId) {
