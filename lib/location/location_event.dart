@@ -21,4 +21,5 @@ class SectionFilteredEvent extends LocationEvent {
 
   final String filterSection;
 }
+
 class LocationErrorEvent extends LocationEvent {}

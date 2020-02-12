@@ -48,14 +48,38 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
         (attempts.length - attemptsLength < LazyLoadConstants.BATCH_SIZE), attempts));
   }
 
+  void setGradeFilter(String grade) {
+    add(GradeFilteredEvent(grade));
+  }
+
+  void setLocationFilter(String location) {
+    add(LocationFilteredEvent(location));
+  }
+
+  void setCategoryFilter(String category) {
+    add(CategoryFilteredEvent(category));
+  }
+
+  void clearFilters() {
+    add(FiltersClearedEvent());
+  }
+
   @override
   Stream<HistoryState> mapEventToState(HistoryEvent event) async* {
     if (event is ClearAttemptsEvent) {
-      yield HistoryState.updateAttempts(true, state.reachedEnd, <Attempt>[]);
+      yield HistoryState.clearAttempts(state);
     } else if (event is AttemptsUpdatedEvent) {
-      yield HistoryState.updateAttempts(false, event.reachedEnd, event.attempts);
+      yield HistoryState.updateAttempts(false, event.reachedEnd, event.attempts, state);
+    } else if (event is FiltersClearedEvent) {
+      yield HistoryState.clearFilters(state);
+    } else if (event is GradeFilteredEvent) {
+      yield HistoryState.setFilterGrade(event.filterGrade, state);
+    } else if (event is LocationFilteredEvent) {
+      yield HistoryState.setFilterLocation(event.filterLocation, state);
+    } else if (event is CategoryFilteredEvent) {
+      yield HistoryState.setFilterCategory(event.filterCategory, state);
     } else if (event is HistoryErrorEvent) {
-      yield HistoryState.updateAttempts(false, state.reachedEnd, state.attempts);
+      yield HistoryState.loading(false, state);
     }
   }
 

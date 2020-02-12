@@ -13,9 +13,10 @@ import 'history_bloc.dart';
 import 'history_state.dart';
 
 class HistoryScreen extends StatefulWidget {
-  HistoryScreen({Key key, @required this.locations}) : super(key: key);
+  HistoryScreen({Key key, @required this.locations, @required this.categories}) : super(key: key);
 
   final List<Location> locations;
+  final List<String> categories;
 
   @override
   State<StatefulWidget> createState() => _HistoryState();
@@ -23,6 +24,21 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryState extends State<HistoryScreen> {
   Timer scrollEventDebounceTimer;
+  List<String> grades = <String>[];
+  Map<String, String> locationNamesToIds = <String, String>{};
+
+  @override
+  void initState() {
+    List<String> gradeSets = <String>[];
+    for (Location location in widget.locations) {
+      if (!gradeSets.contains(location.gradeSet)) {
+        gradeSets.add(location.gradeSet);
+        grades.addAll(location.grades);
+      }
+      locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +72,7 @@ class HistoryWidget extends StatelessWidget {
             );
           } else if (state.attempts.isEmpty) {
             return Column(children: <Widget>[
+              _showFilterDropdownRow(state, context),
               Expanded(
                   child: Center(
                 child: Text(
@@ -67,6 +84,7 @@ class HistoryWidget extends StatelessWidget {
             ]);
           } else {
             return Column(children: <Widget>[
+              _showFilterDropdownRow(state, context),
               Expanded(
                 child: _buildGroupedList(state, context),
               )
@@ -75,21 +93,141 @@ class HistoryWidget extends StatelessWidget {
         });
   }
 
-  Widget _buildGroupedList(HistoryState state, BuildContext context) {
-    List<DateTime> datesToBuild = _generateDates(state);
-    return RefreshIndicator(
-      onRefresh: () => BlocProvider.of<HistoryBloc>(context).refreshAttempts(),
-      child: NotificationListener<ScrollUpdateNotification>(
-        child: ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-          itemBuilder: (context, index) {
-            return _buildDateCard(context, state, datesToBuild, index);
-          },
-          itemCount: datesToBuild.length,
+  Widget _showFilterDropdownRow(HistoryState state, BuildContext context) {
+    return Column(children: <Widget>[
+      Row(children: <Widget>[
+        Expanded(
+          child: _showGradeDropdown(state, context),
         ),
-        onNotification: (notification) => _onNotification(notification, state, context),
-      ),
-    );
+        Expanded(
+          child: _showLocationDropdown(state, context),
+        ),
+        Expanded(
+          child: _showCategoryDropdown(state, context),
+        ),
+        _showClearDropdownsButton(state, context),
+      ]),
+      Divider(
+        color: Theme.of(context).accentColor,
+        thickness: 1.0,
+        height: 0.0,
+      )
+    ]);
+  }
+
+  Widget _showGradeDropdown(HistoryState state, BuildContext context) {
+    return Container(
+        color: Theme.of(context).cardColor,
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          style: Theme.of(context).accentTextTheme.subtitle2,
+          items: _createDropdownItems(widgetState.grades),
+          value: state.filterGrade,
+          hint: Text("Grade"),
+          isExpanded: true,
+          onChanged: (value) => BlocProvider.of<HistoryBloc>(context).setGradeFilter(value),
+        )));
+  }
+
+  Widget _showLocationDropdown(HistoryState state, BuildContext context) {
+    return Container(
+        color: Theme.of(context).cardColor,
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          style: Theme.of(context).accentTextTheme.subtitle2,
+          items: _createDropdownItems(widgetState.locationNamesToIds.keys.toList()),
+          value: state.filterLocation,
+          hint: Text("Location"),
+          isExpanded: true,
+          onChanged: (value) => BlocProvider.of<HistoryBloc>(context).setLocationFilter(value),
+        )));
+  }
+
+  Widget _showCategoryDropdown(HistoryState state, BuildContext context) {
+    return Container(
+        color: Theme.of(context).cardColor,
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          style: Theme.of(context).accentTextTheme.subtitle2,
+          items: _createDropdownItems(widget.categories),
+          value: state.filterCategory,
+          hint: Text("Category"),
+          isExpanded: true,
+          onChanged: (value) => BlocProvider.of<HistoryBloc>(context).setCategoryFilter(value),
+        )));
+  }
+
+  Widget _showClearDropdownsButton(HistoryState state, BuildContext context) {
+    return Container(
+        color: Theme.of(context).cardColor,
+        child: IconButton(
+            icon: Icon(Icons.cancel,
+                color: (state.filterGrade == null &&
+                        state.filterLocation == null &&
+                        state.filterCategory == null)
+                    ? Colors.grey
+                    : Theme.of(context).accentColor),
+            onPressed: () => BlocProvider.of<HistoryBloc>(context).clearFilters()));
+  }
+
+  List<DropdownMenuItem> _createDropdownItems(List<String> items) {
+    if (items.isNotEmpty) {
+      return items.map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList();
+    } else {
+      // null disables the dropdown
+      return null;
+    }
+  }
+
+  Widget _buildGroupedList(HistoryState state, BuildContext context) {
+    List<Attempt> filteredAttempts = _filterAttempts(state);
+    List<DateTime> datesToBuild = _generateDates(filteredAttempts);
+
+    print(state.attempts.length);
+
+    Widget content = (filteredAttempts.isEmpty)
+        ? Center(
+            child: Text(
+            "There are no attempts matching the above criteria.",
+            style: Theme.of(context).accentTextTheme.subtitle2,
+          ))
+        : NotificationListener<ScrollUpdateNotification>(
+            child: ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+              itemBuilder: (context, index) {
+                return _buildDateCard(context, filteredAttempts, datesToBuild, index);
+              },
+              itemCount: datesToBuild.length,
+            ),
+            onNotification: (notification) => _onNotification(notification, state, context),
+          );
+
+    return RefreshIndicator(
+        onRefresh: () => BlocProvider.of<HistoryBloc>(context).refreshAttempts(), child: content);
+  }
+
+  List<Attempt> _filterAttempts(HistoryState state) {
+    List<Attempt> filteredAttempts = List.from(state.attempts);
+    if (state.filterGrade != null) {
+      filteredAttempts.retainWhere((attempt) => attempt.climbGrade == state.filterGrade);
+    }
+    if (state.filterLocation != null) {
+      filteredAttempts.retainWhere(
+          (attempt) => attempt.locationId == widgetState.locationNamesToIds[state.filterLocation]);
+    }
+    if (state.filterCategory != null) {
+      filteredAttempts
+          .retainWhere((attempt) => attempt.climbCategories.contains(state.filterCategory));
+    }
+    return filteredAttempts;
   }
 
   bool _onNotification(
@@ -106,9 +244,9 @@ class HistoryWidget extends StatelessWidget {
     return false;
   }
 
-  List<DateTime> _generateDates(HistoryState state) {
+  List<DateTime> _generateDates(List<Attempt> attempts) {
     List<DateTime> dates = <DateTime>[];
-    for (Attempt attempt in state.attempts) {
+    for (Attempt attempt in attempts) {
       DateTime attemptDate = attempt.timestamp.toDate();
       DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
       if (!dates.contains(startOfDay)) {
@@ -118,8 +256,9 @@ class HistoryWidget extends StatelessWidget {
     return dates;
   }
 
-  Widget _buildDateCard(BuildContext context, HistoryState state, List<DateTime> dates, int index) {
-    List<Attempt> attemptsOnDate = List.from(state.attempts.where((attempt) =>
+  Widget _buildDateCard(
+      BuildContext context, List<Attempt> attempts, List<DateTime> dates, int index) {
+    List<Attempt> attemptsOnDate = List.from(attempts.where((attempt) =>
         (attempt.timestamp.toDate().difference(dates[index]) > Duration() &&
             attempt.timestamp.toDate().difference(dates[index]) < Duration(days: 1))));
     if (attemptsOnDate.isNotEmpty) {
@@ -150,7 +289,6 @@ class HistoryWidget extends StatelessWidget {
             1,
             _buildClimb(
                 context,
-                state,
                 climb,
                 attemptsOnDate
                     .where((attempt) => attempt.climbId == climb)
@@ -166,8 +304,7 @@ class HistoryWidget extends StatelessWidget {
     }
   }
 
-  Widget _buildClimb(
-      BuildContext context, HistoryState state, String climbId, List<Attempt> climbAttempts) {
+  Widget _buildClimb(BuildContext context, String climbId, List<Attempt> climbAttempts) {
     return Card(
         child: Column(children: <Widget>[
       Row(children: <Widget>[
