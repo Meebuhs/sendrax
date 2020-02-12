@@ -376,7 +376,18 @@ class HistoryWidget extends StatelessWidget {
             ),
           ));
     } else {
-      return Container();
+      return Padding(
+        padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
+        child: SizedBox(
+          height: 40.0,
+          width: double.infinity,
+          child: Text(
+            "You've reached the end of your ${state.attempts.length} attempts",
+            style: Theme.of(context).accentTextTheme.bodyText2,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
     }
   }
 
