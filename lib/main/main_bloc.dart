@@ -3,25 +3,15 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
-import 'package:sendrax/models/login_repo.dart';
 import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 
 import 'main_event.dart';
 import 'main_state.dart';
-import 'main_view.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
   StreamSubscription<List<Location>> locationsSubscription;
   StreamSubscription<List<String>> categoriesSubscription;
-
-  void logout(MainWidget view) {
-    LoginRepo.getInstance().signOut().then((success) {
-      if (success) {
-        view.navigateToLogin();
-      }
-    });
-  }
 
   @override
   MainState get initialState {
@@ -41,7 +31,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
           if (location.imageUri != "") {
             final String url = await StorageRepo.getInstance().decodeUri(location.imageUri);
             return Location(location.id, location.displayName, url, location.imageUri,
-                location.gradeSet, location.categories, location.sections, location.climbs);
+                location.gradeSet, location.grades, location.sections, location.climbs);
           } else {
             return location;
           }
@@ -65,11 +55,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     } else {
       add(MainErrorEvent());
     }
-  }
-
-  void editCategories(List<String> categories) async {
-    final user = await UserRepo.getInstance().getCurrentUser();
-    UserRepo.getInstance().setUserCategories(user, categories);
   }
 
   @override

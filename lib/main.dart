@@ -17,6 +17,7 @@ class _sendraxState extends State<sendrax> {
     Color primaryColour = Color(0xfffb8d98);
     Color accentColour = Color(0xffffbec2);
     Color errorColour = Color(0xfffb4753);
+    Color cardColor = Color(0xff1f1f1f);
     return MaterialApp(
         title: 'sendrax',
         theme: ThemeData(
@@ -25,7 +26,7 @@ class _sendraxState extends State<sendrax> {
             accentColor: accentColour,
             errorColor: errorColour,
             backgroundColor: Color(0xff000000),
-            cardColor: Color(0xff1f1f1f),
+            cardColor: cardColor,
             dialogBackgroundColor: Color(0xff333333),
             canvasColor: Color(0xff1f1f1f),
             primaryTextTheme: TextTheme(
@@ -115,6 +116,10 @@ class _sendraxState extends State<sendrax> {
                 borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               errorStyle: TextStyle(fontSize: 12.0, color: errorColour, letterSpacing: 0.4),
+            ),
+            snackBarTheme: SnackBarThemeData(
+              backgroundColor: primaryColour,
+              actionTextColor: Colors.black,
             )),
         home: LoginScreen(),
         navigatorKey: key);

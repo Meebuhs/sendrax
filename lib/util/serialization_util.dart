@@ -12,11 +12,11 @@ class Deserializer {
   // @formatter:off
   static Location _deserializeLocation(DocumentSnapshot location) {
     return Location(location['id'], location['displayName'], "", location['imageUri'],
-        location['gradeSet'], <String>[], <String>[], <Climb>[]);
+        location['gradeSet'], List.from(location['grades']), List.from(location['sections']), <Climb>[]);
   }
   // @formatter:on
 
-  static List<String> deserializeCategories(DocumentSnapshot user) {
+  static List<String> deserializeUserCategories(DocumentSnapshot user) {
     if (user['categories'] != null) {
       return List.from(user['categories']);
     } else {
@@ -25,13 +25,21 @@ class Deserializer {
   }
 
   static List<Climb> deserializeClimbs(List<DocumentSnapshot> climbs) {
-    return climbs.map((climb) => _deserializeClimb(climb)).toList();
+    return climbs.map((climb) => deserializeClimb(climb)).toList();
   }
 
   // @formatter:off
-  static Climb _deserializeClimb(DocumentSnapshot climb) {
-    return Climb(climb['id'], climb['displayName'], "", climb['imageUri'], climb['locationId'],
-        climb['grade'], climb['gradeSet'], climb['section'], climb['archived'],
+  static Climb deserializeClimb(DocumentSnapshot climb) {
+    return Climb(
+        climb['id'],
+        climb['displayName'],
+        "",
+        climb['imageUri'],
+        climb['locationId'],
+        climb['grade'],
+        climb['gradeSet'],
+        climb['section'],
+        climb['archived'],
         _deserializeClimbCategories(climb['categories']), <Attempt>[]);
   }
   // @formatter:on
@@ -54,9 +62,30 @@ class Deserializer {
     return attempts.map((attempt) => _deserializeAttempt(attempt)).toList();
   }
 
+  static List<Attempt> deserializeBatchOfAttempts(List<DocumentSnapshot> attemptDocuments,
+      List<Attempt> attempts) {
+    attempts.addAll(attemptDocuments.map((attempt) => _deserializeAttempt(attempt)).toList());
+    return attempts;
+  }
+
   static Attempt _deserializeAttempt(DocumentSnapshot attempt) {
-    return Attempt(attempt['id'], attempt['timestamp'], attempt['sendType'], attempt['downclimbed'],
+    return Attempt(
+        attempt['id'],
+        attempt['climbId'],
+        attempt['climbName'],
+        attempt['climbGrade'],
+        List.from(attempt['climbCategories']),
+        attempt['locationId'],
+        attempt['timestamp'],
+        attempt['sendType'],
+        attempt['downclimbed'],
         attempt['notes']);
+  }
+
+  static Climb deserializeClimbAttempts(List<DocumentSnapshot> attempts, Climb climb) {
+    climb.attempts
+        .addAll(deserializeAttempts(attempts)..sort((a, b) => b.timestamp.compareTo(a.timestamp)));
+    return climb;
   }
 
   static GradeSet deserializeGradeSet(DocumentSnapshot grade) {

@@ -4,11 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:sendrax/location/location_event.dart';
 import 'package:sendrax/location/location_state.dart';
 import 'package:sendrax/models/climb.dart';
-import 'package:sendrax/models/grade_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
 import 'package:sendrax/models/storage_repo.dart';
-import 'package:sendrax/models/user.dart';
 import 'package:sendrax/models/user_repo.dart';
 
 import 'location_event.dart';
@@ -17,27 +15,19 @@ import 'location_state.dart';
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
   LocationBloc(this.location, this.categories);
 
-  final SelectedLocation location;
+  final Location location;
   final List<String> categories;
   StreamSubscription<List<Climb>> climbSubscription;
-  StreamSubscription<Location> locationSubscription;
-  StreamSubscription<List<String>> gradesSubscription;
 
   @override
   LocationState get initialState {
-    _retrieveLocationData();
+    _retrieveClimbsForThisLocation();
     return LocationState.initial();
   }
 
-  void _retrieveLocationData() async {
-    add(ClearDataEvent());
+  void _retrieveClimbsForThisLocation() async {
     final user = await UserRepo.getInstance().getCurrentUser();
-    _retrieveClimbsForThisLocation(user);
-    _retrieveSectionsForThisLocation(user);
-    _retrieveGradesForThisLocation(user);
-  }
 
-  void _retrieveClimbsForThisLocation(User user) async {
     if (user != null) {
       climbSubscription =
           LocationRepo.getInstance().getClimbsForLocation(location.id, user).listen((climbs) async {
@@ -68,30 +58,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     }
   }
 
-  void _retrieveSectionsForThisLocation(User user) async {
-    if (user != null) {
-      Location newLocation = Location(location.id, location.displayName, location.imagePath,
-          location.imageUri, location.gradeSet, categories, <String>[]);
-      locationSubscription =
-          LocationRepo.getInstance().getSectionsForLocation(newLocation, user).listen((location) {
-        add(SectionsUpdatedEvent(location.sections));
-      });
-    } else {
-      add(LocationErrorEvent());
-    }
-  }
-
-  void _retrieveGradesForThisLocation(User user) async {
-    if (user != null) {
-      gradesSubscription =
-          GradeRepo.getInstance().getGradesForId(user, location.gradeSet).listen((grades) {
-        add(GradesUpdatedEvent(grades));
-      });
-    } else {
-      add(LocationErrorEvent());
-    }
-  }
-
   void setGradeFilter(String grade) {
     add(GradeFilteredEvent(grade));
   }
@@ -106,10 +72,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       yield LocationState.clearData(true, state);
     } else if (event is ClimbsUpdatedEvent) {
       yield LocationState.updateClimbs(false, event.climbs, state);
-    } else if (event is SectionsUpdatedEvent) {
-      yield LocationState.updateSections(state.loading, event.sections, state);
-    } else if (event is GradesUpdatedEvent) {
-      yield LocationState.updateGrades(state.loading, event.grades, state);
     } else if (event is GradeFilteredEvent) {
       yield LocationState.setFilterGrade(event.filterGrade, state);
     } else if (event is SectionFilteredEvent) {
@@ -121,14 +83,8 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   @override
   Future<void> close() {
-    if (locationSubscription != null) {
-      locationSubscription.cancel();
-    }
     if (climbSubscription != null) {
       climbSubscription.cancel();
-    }
-    if (gradesSubscription != null) {
-      gradesSubscription.cancel();
     }
     return super.close();
   }

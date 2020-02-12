@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sendrax/view_only_climb/view_only_climb_view.dart';
 
 import 'climb/climb_view.dart';
 import 'create_climb/create_climb_view.dart';
@@ -12,22 +13,33 @@ import 'models/location.dart';
 class NavigationHelper {
   static void navigateToLogin(BuildContext context, {bool addToBackStack: false}) {
     if (addToBackStack) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen(), settings: RouteSettings(name: '/login')));
     } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen(), settings: RouteSettings(name: '/login')));
     }
   }
 
   static void navigateToMain(BuildContext context, {bool addToBackStack: false}) {
     if (addToBackStack) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MainScreen(), settings: RouteSettings(name: '/')));
     } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MainScreen(), settings: RouteSettings(name: '/')));
     }
   }
 
-  static void navigateToLocation(
-      BuildContext context, SelectedLocation location, List<String> categories,
+  static void navigateToLocation(BuildContext context, Location location, List<String> categories,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
@@ -36,7 +48,8 @@ class NavigationHelper {
               builder: (context) => LocationScreen(
                     location: location,
                     categories: categories,
-                  )));
+                  ),
+              settings: RouteSettings(name: '/location')));
     } else {
       Navigator.pushReplacement(
           context,
@@ -44,82 +57,79 @@ class NavigationHelper {
               builder: (context) => LocationScreen(
                     location: location,
                     categories: categories,
-                  )));
+                  ),
+              settings: RouteSettings(name: '/location')));
     }
   }
 
-  static void navigateToCreateLocation(BuildContext context, Location location, bool isEdit,
+  static void navigateToCreateLocation(
+      BuildContext context, Location location, List<String> categories, bool isEdit,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CreateLocationScreen(location: location, isEdit: isEdit)));
+              builder: (context) => CreateLocationScreen(
+                  location: location, categories: categories, isEdit: isEdit)));
     } else {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => CreateLocationScreen(location: location, isEdit: isEdit)));
+              builder: (context) => CreateLocationScreen(
+                  location: location, categories: categories, isEdit: isEdit)));
     }
   }
 
   static void navigateToCreateClimb(
-      BuildContext context,
-      Climb climb,
-      SelectedLocation selectedLocation,
-      List<String> sections,
-      List<String> grades,
-      List<String> categories,
-      bool isEdit,
+      BuildContext context, Climb climb, Location location, List<String> categories, bool isEdit,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => CreateClimbScreen(
-                  climb: climb,
-                  selectedLocation: selectedLocation,
-                  sections: sections,
-                  grades: grades,
-                  categories: categories,
-                  isEdit: isEdit)));
+                  climb: climb, location: location, categories: categories, isEdit: isEdit)));
     } else {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => CreateClimbScreen(
-                  climb: climb,
-                  selectedLocation: selectedLocation,
-                  sections: sections,
-                  grades: grades,
-                  categories: categories,
-                  isEdit: isEdit)));
+                  climb: climb, location: location, categories: categories, isEdit: isEdit)));
     }
   }
 
-  static void navigateToClimb(BuildContext context, Climb climb, SelectedLocation selectedLocation,
-      List<String> sections, List<String> grades, List<String> categories,
+  static void navigateToClimb(
+      BuildContext context, Climb climb, Location location, List<String> categories,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ClimbScreen(
-                  climb: climb,
-                  selectedLocation: selectedLocation,
-                  sections: sections,
-                  grades: grades,
-                  categories: categories)));
+              builder: (context) =>
+                  ClimbScreen(climb: climb, location: location, categories: categories),
+              settings: RouteSettings(name: '/location/climb')));
     } else {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => ClimbScreen(
-                  climb: climb,
-                  selectedLocation: selectedLocation,
-                  sections: sections,
-                  grades: grades,
-                  categories: categories)));
+              builder: (context) =>
+                  ClimbScreen(climb: climb, location: location, categories: categories),
+              settings: RouteSettings(name: '/location/climb')));
+    }
+  }
+
+  static void navigateToViewOnlyClimb(BuildContext context, String climbId, String climbName,
+      {bool addToBackStack: false}) {
+    if (addToBackStack) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ViewOnlyClimbScreen(climbId: climbId, climbName: climbName)));
+    } else {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ViewOnlyClimbScreen(climbId: climbId, climbName: climbName)));
     }
   }
 
@@ -127,19 +137,23 @@ class NavigationHelper {
     Navigator.pop(context);
   }
 
-  static void resetToMain(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
+  static void navigateBackTwo(BuildContext context) {
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
-  static void resetToLocation(
-      BuildContext context, SelectedLocation location, List<String> categories) {
+  static void resetToMain(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MainScreen()), ModalRoute.withName('/'));
+  }
+
+  static void resetToLocation(BuildContext context, Location location, List<String> categories) {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => LocationScreen(
                   location: location,
                   categories: categories,
                 )),
-        (Route<dynamic> route) => false);
+        ModalRoute.withName('/'));
   }
 }

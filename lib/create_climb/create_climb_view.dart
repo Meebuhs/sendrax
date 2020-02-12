@@ -15,17 +15,13 @@ class CreateClimbScreen extends StatefulWidget {
   CreateClimbScreen(
       {Key key,
       @required this.climb,
-      @required this.selectedLocation,
-      @required this.sections,
-      @required this.grades,
+      @required this.location,
       @required this.categories,
       @required this.isEdit})
       : super(key: key);
 
   final Climb climb;
-  final SelectedLocation selectedLocation;
-  final List<String> sections;
-  final List<String> grades;
+  final Location location;
   final List<String> categories;
   final bool isEdit;
 
@@ -37,7 +33,7 @@ class _CreateClimbState extends State<CreateClimbScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateClimbBloc>(
-      create: (context) => CreateClimbBloc(widget.climb, widget.grades),
+      create: (context) => CreateClimbBloc(widget.climb, widget.location.grades),
       child: CreateClimbWidget(
         widget: widget,
         widgetState: this,
@@ -237,27 +233,25 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   Widget _showGradeDropdown(CreateClimbState state, BuildContext context) {
-    return DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-                isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
-            style: Theme.of(context).accentTextTheme.subtitle2,
-            items: _createDropdownItems(state.grades),
-            value: state.grade,
-            hint: Text("Grade"),
-            isExpanded: true,
-            validator: (String value) {
-              if (value == null) {
-                return 'A grade must be selected';
-              }
-              return null;
-            },
-            onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectGrade(value)));
+    return DropdownButtonFormField<String>(
+        decoration:
+            InputDecoration(isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
+        style: Theme.of(context).accentTextTheme.subtitle2,
+        items: _createDropdownItems(state.grades),
+        value: state.grade,
+        hint: Text("Grade"),
+        isExpanded: true,
+        validator: (String value) {
+          if (value == null) {
+            return 'A grade must be selected';
+          }
+          return null;
+        },
+        onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectGrade(value));
   }
 
   Widget _showSectionDropdown(CreateClimbState state, BuildContext context) {
-    return DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<String>(
+    return DropdownButtonFormField<String>(
       decoration:
           InputDecoration(isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
       style: Theme.of(context).accentTextTheme.subtitle2,
@@ -266,12 +260,12 @@ class CreateClimbWidget extends StatelessWidget {
         Text("No sections"),
       ]),
       iconDisabledColor: Colors.grey,
-      items: _createDropdownItems(widget.sections),
+      items: _createDropdownItems(widget.location.sections),
       value: state.section,
       hint: Text("Section"),
       isExpanded: true,
       validator: (String value) {
-        if (widget.sections.isNotEmpty) {
+        if (widget.location.sections.isNotEmpty) {
           if (value == null) {
             return 'A section must be selected';
           }
@@ -279,7 +273,7 @@ class CreateClimbWidget extends StatelessWidget {
         return null;
       },
       onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectSection(value),
-    ));
+    );
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
@@ -380,7 +374,7 @@ class CreateClimbWidget extends StatelessWidget {
                 FlatButton(
                   child: Text("DELETE", style: Theme.of(context).accentTextTheme.button),
                   onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext)
-                      .deleteClimb(upperContext, view, widget.selectedLocation, widget.categories),
+                      .deleteClimb(upperContext, view, widget.location, widget.categories),
                 )
               ]);
         });
@@ -405,7 +399,7 @@ class CreateClimbWidget extends StatelessWidget {
                 FlatButton(
                   child: Text("ARCHIVE", style: Theme.of(context).accentTextTheme.button),
                   onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext)
-                      .archiveClimb(upperContext, view, widget.selectedLocation, widget.categories),
+                      .archiveClimb(upperContext, view, widget.location, widget.categories),
                 )
               ]);
         });
@@ -433,8 +427,7 @@ class CreateClimbWidget extends StatelessWidget {
         widget.climb.archived,
         state.selectedCategories,
         widget.climb.attempts);
-    NavigationHelper.navigateToClimb(widgetState.context, climb, widget.selectedLocation,
-        widget.sections, widget.grades, widget.categories,
+    NavigationHelper.navigateToClimb(widgetState.context, climb, widget.location, widget.categories,
         addToBackStack: true);
   }
 }

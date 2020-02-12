@@ -4,6 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sendrax/models/attempt.dart';
+import 'package:sendrax/models/attempt_repo.dart';
+import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 import 'package:uuid/uuid.dart';
@@ -12,9 +14,9 @@ import 'climb_event.dart';
 import 'climb_state.dart';
 
 class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
-  ClimbBloc(this.climbId);
+  ClimbBloc(this.climb);
 
-  final String climbId;
+  final Climb climb;
   final Uuid uuid = Uuid();
   StreamSubscription<List<Attempt>> climbSubscription;
 
@@ -25,11 +27,11 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
   }
 
   void _retrieveAttemptsForThisClimb() async {
-    add(AttempsClearedEvent());
+    add(AttemptsClearedEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       climbSubscription =
-          ClimbRepo.getInstance().getAttemptsForClimb(climbId, user).listen((attempts) {
+          ClimbRepo.getInstance().getAttemptsByClimbId(climb.id, user).listen((attempts) {
         // compare b to a so that the most recent attempt appears at the start of the list.
         add(AttemptsUpdatedEvent(attempts..sort((a, b) => b.timestamp.compareTo(a.timestamp))));
       });
@@ -52,9 +54,18 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
     if (_validateAndSave(state)) {
       Attempt attempt = Attempt(
-          "attempt-${uuid.v1()}", Timestamp.now(), state.sendType, state.downclimbed, state.notes);
+          "attempt-${uuid.v1()}",
+          climb.id,
+          climb.displayName,
+          climb.grade,
+          climb.categories,
+          climb.locationId,
+          Timestamp.now(),
+          state.sendType,
+          state.downclimbed,
+          state.notes);
       try {
-        ClimbRepo.getInstance().setAttempt(attempt, climbId);
+        AttemptRepo.getInstance().setAttempt(attempt);
         state.loading = false;
       } catch (e) {
         state.loading = false;
@@ -80,7 +91,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
   @override
   Stream<ClimbState> mapEventToState(ClimbEvent event) async* {
-    if (event is AttempsClearedEvent) {
+    if (event is AttemptsClearedEvent) {
       yield ClimbState.updateAttempts(true, state.attempts, state);
     } else if (event is AttemptsUpdatedEvent) {
       yield ClimbState.updateAttempts(false, event.attempts, state);

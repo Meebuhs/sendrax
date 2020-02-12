@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/location.dart';
@@ -15,16 +16,12 @@ class ClimbScreen extends StatefulWidget {
   ClimbScreen(
       {Key key,
       @required this.climb,
-      @required this.selectedLocation,
-      @required this.sections,
-      @required this.grades,
+      @required this.location,
       @required this.categories})
       : super(key: key);
 
   final Climb climb;
-  final SelectedLocation selectedLocation;
-  final List<String> sections;
-  final List<String> grades;
+  final Location location;
   final List<String> categories;
 
   @override
@@ -35,7 +32,7 @@ class _ClimbState extends State<ClimbScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ClimbBloc>(
-      create: (context) => ClimbBloc(widget.climb.id),
+      create: (context) => ClimbBloc(widget.climb),
       child: ClimbWidget(widget: widget, widgetState: this),
     );
   }
@@ -55,8 +52,7 @@ class ClimbWidget extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () => _editClimb(widget.climb, widget.sections, widget.grades,
-                widget.categories, widget.selectedLocation),
+            onPressed: () => _editClimb(),
           )
         ],
       ),
@@ -86,6 +82,8 @@ class ClimbWidget extends StatelessWidget {
   }
 
   Widget _showListView(ClimbState state) {
+    List<DateTime> datesToBuild = _generateDates(state);
+
     int itemCount = 1;
     if (widget.climb.imagePath != "") {
       itemCount++;
@@ -93,8 +91,9 @@ class ClimbWidget extends StatelessWidget {
     if (state.attempts.isEmpty) {
       itemCount++;
     } else {
-      itemCount += state.attempts.length;
+      itemCount += datesToBuild.length;
     }
+
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
@@ -106,7 +105,7 @@ class ClimbWidget extends StatelessWidget {
           } else if (state.attempts.isEmpty) {
             return _showEmptyAttemptList(context);
           } else {
-            return _buildAttempt(state.attempts[index - 2], widget.climb.id);
+            return _buildDateCard(context, state, datesToBuild, index - 2);
           }
         } else {
           if (index == 0) {
@@ -114,12 +113,24 @@ class ClimbWidget extends StatelessWidget {
           } else if (state.attempts.isEmpty) {
             return _showEmptyAttemptList(context);
           } else {
-            return _buildAttempt(state.attempts[index - 1], widget.climb.id);
+            return _buildDateCard(context, state, datesToBuild, index - 1);
           }
         }
       },
       itemCount: itemCount,
     );
+  }
+
+  List<DateTime> _generateDates(ClimbState state) {
+    List<DateTime> dates = <DateTime>[];
+    for (Attempt attempt in state.attempts) {
+      DateTime attemptDate = attempt.timestamp.toDate();
+      DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
+      if (!dates.contains(startOfDay)) {
+        dates.add(startOfDay);
+      }
+    }
+    return dates;
   }
 
   Widget _showEmptyAttemptList(BuildContext context) {
@@ -165,20 +176,49 @@ class ClimbWidget extends StatelessWidget {
         ? "${widget.climb.grade}"
         : "${widget.climb.grade} - ${widget.climb.section}";
 
+    String secondComponentText =
+        (widget.climb.categories.isNotEmpty) ? " - ${widget.climb.categories.join(', ')}" : "";
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Container(
           child: Padding(
               padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              child: Text("$firstComponentText - ${widget.climb.categories.join(', ')}",
+              child: Text("$firstComponentText$secondComponentText",
                   style: Theme.of(context).accentTextTheme.subtitle2))),
-      Padding(
-          padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
-          child: Divider(
-            color: Theme.of(context).accentColor,
-            thickness: 1.0,
-            height: 0.0,
-          ))
+      Divider(
+        color: Theme.of(context).accentColor,
+        thickness: 1.0,
+        height: 0.0,
+      )
     ]);
+  }
+
+  Widget _buildDateCard(BuildContext context, ClimbState state, List<DateTime> dates, int index) {
+    List<Attempt> attemptsOnDate = List.from(state.attempts.where((attempt) =>
+        (attempt.timestamp.toDate().difference(dates[index]) > Duration() &&
+            attempt.timestamp.toDate().difference(dates[index]) < Duration(days: 1))));
+    List<Widget> attemptItems = <Widget>[];
+    attemptItems.add(
+      Padding(
+        padding:
+            EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, 0, 0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Text(
+            DateFormat('EEEE d/M').format(dates[index]),
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).accentTextTheme.subtitle2,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      ),
+    );
+    for (Attempt attempt in attemptsOnDate) {
+      attemptItems.insert(1, _buildAttempt(attempt, widget.climb.id));
+    }
+    return Column(
+      children: attemptItems,
+    );
   }
 
   AttemptItem _buildAttempt(Attempt attempt, String climbId) {
@@ -305,10 +345,9 @@ class ClimbWidget extends StatelessWidget {
         ));
   }
 
-  void _editClimb(Climb climb, List<String> sections, List<String> grades, List<String> categories,
-      SelectedLocation selectedLocation) {
+  void _editClimb() {
     NavigationHelper.navigateToCreateClimb(
-        widgetState.context, climb, selectedLocation, sections, grades, categories, true,
+        widgetState.context, widget.climb, widget.location, widget.categories, true,
         addToBackStack: true);
   }
 
