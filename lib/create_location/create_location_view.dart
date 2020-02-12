@@ -13,9 +13,12 @@ import 'create_location_bloc.dart';
 import 'create_location_state.dart';
 
 class CreateLocationScreen extends StatefulWidget {
-  CreateLocationScreen({Key key, @required this.location, @required this.isEdit}) : super(key: key);
+  CreateLocationScreen(
+      {Key key, @required this.location, @required this.categories, @required this.isEdit})
+      : super(key: key);
 
   final Location location;
+  final List<String> categories;
   final bool isEdit;
 
   @override
@@ -26,7 +29,7 @@ class _CreateLocationState extends State<CreateLocationScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateLocationBloc>(
-      create: (context) => CreateLocationBloc(widget.location, widget.isEdit),
+      create: (context) => CreateLocationBloc(widget.location, widget.categories, widget.isEdit),
       child: CreateLocationWidget(
         widget: widget,
         widgetState: this,
@@ -242,7 +245,7 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   List<DropdownMenuItem> _createDropdownItems(CreateLocationState state) {
-    return state.grades.map((String value) {
+    return state.gradeSets.map((String value) {
       return DropdownMenuItem<String>(
         value: value,
         child: Text(value),
@@ -378,12 +381,5 @@ class CreateLocationWidget extends StatelessWidget {
 
   void navigateBackOne() {
     NavigationHelper.navigateBackOne(widgetState.context);
-  }
-
-  void navigateToLocationAfterEdit(CreateLocationState state) {
-    SelectedLocation selectedLocation = SelectedLocation(
-        widget.location.id, state.displayName, state.imagePath, state.imageUri, state.gradeSet);
-    NavigationHelper.resetToLocation(
-        widgetState.context, selectedLocation, widget.location.categories);
   }
 }

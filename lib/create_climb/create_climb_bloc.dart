@@ -102,13 +102,13 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
     add(ImageFileUpdatedEvent(true, null));
   }
 
-  void archiveClimb(BuildContext context, CreateClimbWidget view, SelectedLocation location,
+  void archiveClimb(BuildContext context, CreateClimbWidget view, Location location,
       List<String> categories) {
     ClimbRepo.getInstance().setClimbArchived(this.climb.id, true);
     NavigationHelper.resetToLocation(context, location, categories);
   }
 
-  void deleteClimb(BuildContext context, CreateClimbWidget view, SelectedLocation location,
+  void deleteClimb(BuildContext context, CreateClimbWidget view, Location location,
       List<String> categories) {
     ClimbRepo.getInstance().deleteClimb(this.climb.id, this.climb.imageUri);
     NavigationHelper.resetToLocation(context, location, categories);

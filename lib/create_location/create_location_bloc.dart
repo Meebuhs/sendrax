@@ -15,9 +15,10 @@ import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
 
 class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> {
-  CreateLocationBloc(this.location, this.isEdit);
+  CreateLocationBloc(this.location, this.categories, this.isEdit);
 
   final Location location;
+  final List<String> categories;
   final bool isEdit;
 
   StreamController sectionsStream = StreamController<List<String>>.broadcast();
@@ -38,7 +39,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
       gradesSubscription = GradeRepo.getInstance().getGradeIds(user).listen((grades) {
-        add(GradesUpdatedEvent(grades));
+        add(GradeSetsUpdatedEvent(grades));
       });
     } else {
       add(CreateLocationErrorEvent());
@@ -75,9 +76,11 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
         state.imageUri = await StorageRepo.getInstance().uploadFile(state.imageFile);
         state.imagePath = await StorageRepo.getInstance().decodeUri(state.imageUri);
       }
-
+      final user = await UserRepo.getInstance().getCurrentUser();
+      List<String> grades =
+          await GradeRepo.getInstance().getGradesForId(user, state.gradeSet).first;
       Location location = Location(this.location.id, state.displayName, state.imagePath,
-          state.imageUri, state.gradeSet, <String>[], state.sections, <Climb>[]);
+          state.imageUri, state.gradeSet, grades, state.sections, <Climb>[]);
       try {
         LocationRepo.getInstance().setLocation(location);
         state.loading = false;
@@ -86,7 +89,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
         state.loading = false;
         add(CreateLocationErrorEvent());
       }
-      view.navigateToLocationAfterEdit(state);
+      _navigateToLocationAfterEdit(state, context);
     }
     state.loading = false;
   }
@@ -123,24 +126,32 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     NavigationHelper.resetToMain(context);
   }
 
+  void _navigateToLocationAfterEdit(CreateLocationState state, BuildContext context) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    List<String> grades = await GradeRepo.getInstance().getGradesForId(user, state.gradeSet).first;
+    Location location = Location(this.location.id, state.displayName, state.imagePath,
+        state.imageUri, state.gradeSet, grades, state.sections, <Climb>[]);
+    NavigationHelper.resetToLocation(context, location, this.categories);
+  }
+
   @override
   Stream<CreateLocationState> mapEventToState(CreateLocationEvent event) async* {
     if (event is GradesClearedEvent) {
-      yield CreateLocationState.updateGrades(true, <String>[], state);
+      yield CreateLocationState.updateGradeSets(true, <String>[], state);
     } else if (event is LocationClearedEvent) {
       yield CreateLocationState.updateLocation(
           true,
           Location(this.location.id, state.displayName, state.imagePath, state.imageUri,
               state.gradeSet, <String>[]),
           state);
-    } else if (event is GradesUpdatedEvent) {
-      yield CreateLocationState.updateGrades(false, event.grades, state);
+    } else if (event is GradeSetsUpdatedEvent) {
+      yield CreateLocationState.updateGradeSets(false, event.gradeSets, state);
     } else if (event is LocationUpdatedEvent) {
       yield CreateLocationState.updateLocation(false, event.location, state);
     } else if (event is CreateLocationErrorEvent) {
       yield CreateLocationState.loading(false, state);
     } else if (event is GradeSelectedEvent) {
-      yield CreateLocationState.selectGrade(event.grade, state);
+      yield CreateLocationState.selectGradeSet(event.gradeSet, state);
     } else if (event is ImageFileUpdatedEvent) {
       yield CreateLocationState.updateImageFile(event.deleteImage, event.imageFile, state);
     }

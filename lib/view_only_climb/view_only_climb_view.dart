@@ -173,7 +173,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
         : "${state.climb.grade} - ${state.climb.section}";
 
     String secondComponentText =
-        (state.climb.categories.isNotEmpty) ? "- ${state.climb.categories.join(', ')}" : "";
+        (state.climb.categories.isNotEmpty) ? " - ${state.climb.categories.join(', ')}" : "";
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Container(

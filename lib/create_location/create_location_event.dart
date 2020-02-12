@@ -8,10 +8,10 @@ class GradesClearedEvent extends CreateLocationEvent {}
 
 class LocationClearedEvent extends CreateLocationEvent {}
 
-class GradesUpdatedEvent extends CreateLocationEvent {
-  GradesUpdatedEvent(this.grades);
+class GradeSetsUpdatedEvent extends CreateLocationEvent {
+  GradeSetsUpdatedEvent(this.gradeSets);
 
-  final List<String> grades;
+  final List<String> gradeSets;
 }
 
 class LocationUpdatedEvent extends CreateLocationEvent {
@@ -21,9 +21,9 @@ class LocationUpdatedEvent extends CreateLocationEvent {
 }
 
 class GradeSelectedEvent extends CreateLocationEvent {
-  GradeSelectedEvent(this.grade);
+  GradeSelectedEvent(this.gradeSet);
 
-  final String grade;
+  final String gradeSet;
 }
 
 class ImageFileUpdatedEvent extends CreateLocationEvent {

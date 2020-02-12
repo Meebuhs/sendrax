@@ -12,11 +12,11 @@ class Deserializer {
   // @formatter:off
   static Location _deserializeLocation(DocumentSnapshot location) {
     return Location(location['id'], location['displayName'], "", location['imageUri'],
-        location['gradeSet'], <String>[], <String>[], <Climb>[]);
+        location['gradeSet'], List.from(location['grades']), List.from(location['sections']), <Climb>[]);
   }
   // @formatter:on
 
-  static List<String> deserializeCategories(DocumentSnapshot user) {
+  static List<String> deserializeUserCategories(DocumentSnapshot user) {
     if (user['categories'] != null) {
       return List.from(user['categories']);
     } else {

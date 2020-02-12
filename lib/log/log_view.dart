@@ -81,9 +81,7 @@ class LogWidget extends StatelessWidget {
   }
 
   void _onLocationTap(Location location, List<String> categories) {
-    SelectedLocation selectedLocation = SelectedLocation(location.id, location.displayName,
-        location.imagePath, location.imageUri, location.gradeSet);
-    navigateToLocation(selectedLocation, categories);
+    navigateToLocation(location, categories);
   }
 
   Widget _wrapContentWithFab(BuildContext context, LogState state, Widget content) {
@@ -215,7 +213,8 @@ class LogWidget extends StatelessWidget {
     var uuid = Uuid();
     Location location =
         Location("location-${uuid.v1()}", "", "", "", null, widget.categories, <String>[], null);
-    NavigationHelper.navigateToCreateLocation(widgetState.context, location, false,
+    NavigationHelper.navigateToCreateLocation(
+        widgetState.context, location, widget.categories, false,
         addToBackStack: true);
   }
 
@@ -223,7 +222,7 @@ class LogWidget extends StatelessWidget {
     BlocProvider.of<LogBloc>(context).editCategories(itemList);
   }
 
-  void navigateToLocation(SelectedLocation location, List<String> categories) {
+  void navigateToLocation(Location location, List<String> categories) {
     NavigationHelper.navigateToLocation(widgetState.context, location, categories,
         addToBackStack: true);
   }

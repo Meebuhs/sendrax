@@ -10,18 +10,6 @@ class ClimbsUpdatedEvent extends LocationEvent {
   final List<Climb> climbs;
 }
 
-class SectionsUpdatedEvent extends LocationEvent {
-  SectionsUpdatedEvent(this.sections);
-
-  final List<String> sections;
-}
-
-class GradesUpdatedEvent extends LocationEvent {
-  GradesUpdatedEvent(this.grades);
-
-  final List<String> grades;
-}
-
 class GradeFilteredEvent extends LocationEvent {
   GradeFilteredEvent(this.filterGrade);
 

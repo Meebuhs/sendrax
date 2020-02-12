@@ -31,7 +31,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
           if (location.imageUri != "") {
             final String url = await StorageRepo.getInstance().decodeUri(location.imageUri);
             return Location(location.id, location.displayName, url, location.imageUri,
-                location.gradeSet, location.categories, location.sections, location.climbs);
+                location.gradeSet, location.grades, location.sections, location.climbs);
           } else {
             return location;
           }

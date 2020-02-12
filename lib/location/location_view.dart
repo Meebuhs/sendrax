@@ -14,7 +14,7 @@ import 'location_state.dart';
 class LocationScreen extends StatefulWidget {
   LocationScreen({Key key, @required this.location, @required this.categories}) : super(key: key);
 
-  final SelectedLocation location;
+  final Location location;
   final List<String> categories;
 
   @override
@@ -121,7 +121,7 @@ class LocationWidget extends StatelessWidget {
               child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
             style: Theme.of(context).accentTextTheme.subtitle2,
-            items: _createDropdownItems(state.grades),
+            items: _createDropdownItems(widget.location.grades),
             value: state.filterGrade,
             hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
               Padding(
@@ -150,7 +150,7 @@ class LocationWidget extends StatelessWidget {
             style: Theme.of(context).accentTextTheme.subtitle2,
             disabledHint: Text("No sections"),
             iconDisabledColor: Theme.of(context).cardColor,
-            items: _createDropdownItems(state.sections),
+            items: _createDropdownItems(widget.location.sections),
             value: state.filterSection,
             hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
               Padding(
@@ -189,7 +189,7 @@ class LocationWidget extends StatelessWidget {
         (state.filterGrade == null || climb.grade == state.filterGrade))).isEmpty) {
       return _showEmptyFilteredList(state, context);
     }
-    if (state.sections.isNotEmpty) {
+    if (widget.location.sections.isNotEmpty) {
       return _buildContentWithSections(state, context, state.filterSection, state.filterGrade);
     } else {
       return _buildContentWithoutSections(state, context, state.filterGrade);
@@ -224,7 +224,7 @@ class LocationWidget extends StatelessWidget {
     if (state.filterSection != null) {
       itemCount++;
     } else {
-      itemCount += state.sections.length;
+      itemCount += widget.location.sections.length;
     }
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
@@ -235,7 +235,8 @@ class LocationWidget extends StatelessWidget {
           if (filterSection != null) {
             return _buildSection(context, state, filterGrade, filterSection);
           } else {
-            return _buildSection(context, state, filterGrade, state.sections[index - indexOffset]);
+            return _buildSection(
+                context, state, filterGrade, widget.location.sections[index - indexOffset]);
           }
         }
       },
@@ -247,7 +248,9 @@ class LocationWidget extends StatelessWidget {
       BuildContext context, LocationState state, String filterGrade, String section) {
     List<Climb> climbsToInclude = List.from(state.climbs.where(
         (climb) => climb.section == section && (filterGrade == null || climb.grade == filterGrade)))
-      ..sort((a, b) => state.grades.indexOf(a.grade).compareTo(state.grades.indexOf(b.grade)));
+      ..sort((a, b) => widget.location.grades
+          .indexOf(a.grade)
+          .compareTo(widget.location.grades.indexOf(b.grade)));
     if (climbsToInclude.isNotEmpty) {
       return Card(
           child: Column(children: <Widget>[
@@ -281,8 +284,9 @@ class LocationWidget extends StatelessWidget {
       LocationState state, BuildContext context, String filterGrade) {
     List<Climb> climbsToInclude = List.from(
         state.climbs.where((climb) => (filterGrade == null || climb.grade == filterGrade)))
-      ..sort((a, b) => state.grades.indexOf(a.grade).compareTo(state.grades.indexOf(b.grade)));
-    ;
+      ..sort((a, b) => widget.location.grades
+          .indexOf(a.grade)
+          .compareTo(widget.location.grades.indexOf(b.grade)));
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
@@ -370,37 +374,18 @@ class LocationWidget extends StatelessWidget {
     Climb climb = Climb("climb-${uuid.v1()}", "", "", "", widget.location.id, null,
         widget.location.gradeSet, null, false, <String>[]);
     NavigationHelper.navigateToCreateClimb(
-        widgetState.context,
-        climb,
-        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.imagePath,
-            widget.location.imageUri, widget.location.gradeSet),
-        state.sections,
-        state.grades,
-        widget.categories,
-        false,
+        widgetState.context, climb, widget.location, widget.categories, false,
         addToBackStack: true);
   }
 
-  void _editLocation(SelectedLocation selectedLocation) {
-    Location location = Location(
-        selectedLocation.id,
-        selectedLocation.displayName,
-        selectedLocation.imagePath,
-        selectedLocation.imageUri,
-        selectedLocation.gradeSet, <String>[], <String>[]);
-    NavigationHelper.navigateToCreateLocation(widgetState.context, location, true,
+  void _editLocation(Location location) {
+    NavigationHelper.navigateToCreateLocation(
+        widgetState.context, location, widget.categories, true,
         addToBackStack: true);
   }
 
   void navigateToClimb(Climb climb, LocationState state) {
-    NavigationHelper.navigateToClimb(
-        widgetState.context,
-        climb,
-        SelectedLocation(widget.location.id, widget.location.displayName, widget.location.imagePath,
-            widget.location.imageUri, widget.location.gradeSet),
-        state.sections,
-        state.grades,
-        widget.categories,
+    NavigationHelper.navigateToClimb(widgetState.context, climb, widget.location, widget.categories,
         addToBackStack: true);
   }
 }

@@ -16,16 +16,12 @@ class ClimbScreen extends StatefulWidget {
   ClimbScreen(
       {Key key,
       @required this.climb,
-      @required this.selectedLocation,
-      @required this.sections,
-      @required this.grades,
+      @required this.location,
       @required this.categories})
       : super(key: key);
 
   final Climb climb;
-  final SelectedLocation selectedLocation;
-  final List<String> sections;
-  final List<String> grades;
+  final Location location;
   final List<String> categories;
 
   @override
@@ -56,8 +52,7 @@ class ClimbWidget extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () => _editClimb(widget.climb, widget.sections, widget.grades,
-                widget.categories, widget.selectedLocation),
+            onPressed: () => _editClimb(),
           )
         ],
       ),
@@ -182,7 +177,7 @@ class ClimbWidget extends StatelessWidget {
         : "${widget.climb.grade} - ${widget.climb.section}";
 
     String secondComponentText =
-        (widget.climb.categories.isNotEmpty) ? "- ${widget.climb.categories.join(', ')}" : "";
+        (widget.climb.categories.isNotEmpty) ? " - ${widget.climb.categories.join(', ')}" : "";
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Container(
@@ -350,10 +345,9 @@ class ClimbWidget extends StatelessWidget {
         ));
   }
 
-  void _editClimb(Climb climb, List<String> sections, List<String> grades, List<String> categories,
-      SelectedLocation selectedLocation) {
+  void _editClimb() {
     NavigationHelper.navigateToCreateClimb(
-        widgetState.context, climb, selectedLocation, sections, grades, categories, true,
+        widgetState.context, widget.climb, widget.location, widget.categories, true,
         addToBackStack: true);
   }
 
