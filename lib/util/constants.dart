@@ -34,7 +34,7 @@ class FirestorePaths {
 class LazyLoadConstants {
   static const int DEBOUNCE_DURATION = 500;
   static const int SCROLL_OFFSET = 300;
-  static const int BATCH_SIZE = 100;
+  static const int BATCH_SIZE = 200;
 }
 
 // @formatter:off

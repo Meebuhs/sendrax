@@ -4,6 +4,8 @@ abstract class HistoryEvent {}
 
 class ClearAttemptsEvent extends HistoryEvent {}
 
+class AttemptsLoadingEvent extends HistoryEvent {}
+
 class AttemptsUpdatedEvent extends HistoryEvent {
   AttemptsUpdatedEvent(this.reachedEnd, this.attempts);
 

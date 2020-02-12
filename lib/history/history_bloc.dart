@@ -33,6 +33,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   }
 
   void retrieveMoreAttempts() async {
+    add(AttemptsLoadingEvent());
     int attemptsLength = state.attempts.length;
     final User user = await UserRepo.getInstance().getCurrentUser();
     _getRemainingAttemptsForBatch(
@@ -68,8 +69,10 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   Stream<HistoryState> mapEventToState(HistoryEvent event) async* {
     if (event is ClearAttemptsEvent) {
       yield HistoryState.clearAttempts(state);
+    } else if (event is AttemptsLoadingEvent) {
+      yield HistoryState.loading(false, true, state);
     } else if (event is AttemptsUpdatedEvent) {
-      yield HistoryState.updateAttempts(false, event.reachedEnd, event.attempts, state);
+      yield HistoryState.updateAttempts(event.reachedEnd, event.attempts, state);
     } else if (event is FiltersClearedEvent) {
       yield HistoryState.clearFilters(state);
     } else if (event is GradeFilteredEvent) {
@@ -79,7 +82,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     } else if (event is CategoryFilteredEvent) {
       yield HistoryState.setFilterCategory(event.filterCategory, state);
     } else if (event is HistoryErrorEvent) {
-      yield HistoryState.loading(false, state);
+      yield HistoryState.loading(false, false, state);
     }
   }
 

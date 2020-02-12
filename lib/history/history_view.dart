@@ -86,8 +86,11 @@ class HistoryWidget extends StatelessWidget {
             return Column(children: <Widget>[
               _showFilterDropdownRow(state, context),
               Expanded(
-                child: _buildGroupedList(state, context),
-              )
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+                  child: _buildGroupedList(state, context),
+                ),
+              ),
             ]);
           }
         });
@@ -191,23 +194,27 @@ class HistoryWidget extends StatelessWidget {
     List<Attempt> filteredAttempts = _filterAttempts(state);
     List<DateTime> datesToBuild = _generateDates(filteredAttempts);
 
-    print(state.attempts.length);
-
     Widget content = (filteredAttempts.isEmpty)
-        ? Center(
-            child: Text(
-            "There are no attempts matching the above criteria.",
-            style: Theme.of(context).accentTextTheme.subtitle2,
-          ))
-        : NotificationListener<ScrollUpdateNotification>(
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-              itemBuilder: (context, index) {
+        ? Column(
+            children: <Widget>[
+              Expanded(
+                  child: Center(
+                      child: Text(
+                "There are no ${(state.reachedEnd) ? "existing" : "loaded"} attempts matching the above criteria.",
+                style: Theme.of(context).accentTextTheme.subtitle2,
+              ))),
+              _showLoadMoreButton(state, context)
+            ],
+          )
+        : ListView.builder(
+            itemBuilder: (context, index) {
+              if (index == datesToBuild.length) {
+                return _showLoadMoreButton(state, context);
+              } else {
                 return _buildDateCard(context, filteredAttempts, datesToBuild, index);
-              },
-              itemCount: datesToBuild.length,
-            ),
-            onNotification: (notification) => _onNotification(notification, state, context),
+              }
+            },
+            itemCount: datesToBuild.length + 1,
           );
 
     return RefreshIndicator(
@@ -228,20 +235,6 @@ class HistoryWidget extends StatelessWidget {
           .retainWhere((attempt) => attempt.climbCategories.contains(state.filterCategory));
     }
     return filteredAttempts;
-  }
-
-  bool _onNotification(
-      ScrollUpdateNotification notification, HistoryState state, BuildContext context) {
-    if (notification.metrics.extentAfter < LazyLoadConstants.SCROLL_OFFSET && !state.reachedEnd) {
-      if (widgetState.scrollEventDebounceTimer == null ||
-          !widgetState.scrollEventDebounceTimer.isActive) {
-        widgetState.scrollEventDebounceTimer =
-            Timer(Duration(milliseconds: LazyLoadConstants.DEBOUNCE_DURATION), () => {});
-        BlocProvider.of<HistoryBloc>(context).retrieveMoreAttempts();
-      }
-    }
-    // "Return false to allow the notification to continue to be dispatched to further ancestors."
-    return false;
   }
 
   List<DateTime> _generateDates(List<Attempt> attempts) {
@@ -357,6 +350,34 @@ class HistoryWidget extends StatelessWidget {
 
   Widget _buildAttempt(Attempt attempt) {
     return AttemptItem(attempt: attempt);
+  }
+
+  Widget _showLoadMoreButton(HistoryState state, BuildContext context) {
+    if (!state.reachedEnd) {
+      return Padding(
+          padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
+          child: SizedBox(
+            height: 40.0,
+            width: double.infinity,
+            child: FlatButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+              color: Theme.of(context).accentColor,
+              child: (state.attemptsLoading)
+                  ? Center(
+                      child: Container(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.black,
+                          )))
+                  : Text('LOAD MORE', style: Theme.of(context).primaryTextTheme.button),
+              onPressed: () => BlocProvider.of<HistoryBloc>(context).retrieveMoreAttempts(),
+            ),
+          ));
+    } else {
+      return Container();
+    }
   }
 
   void navigateToClimb(BuildContext context, String climbId, String climbName) {
