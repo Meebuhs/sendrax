@@ -86,14 +86,7 @@ class CreateLocationWidget extends StatelessWidget {
             children: <Widget>[
               _showDisplayNameInput(state, context),
               _showImageInput(state, context),
-              Row(children: <Widget>[
-                Expanded(
-                  child: _showGradesDropdown(state, context),
-                ),
-                Expanded(
-                  child: _showGradeCreationButton(state, context),
-                )
-              ]),
+              _buildGradeSetConfig(state, context),
               Column(
                 children: <Widget>[
                   _showSectionsText(state, context),
@@ -222,6 +215,24 @@ class CreateLocationWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildGradeSetConfig(CreateLocationState state, BuildContext context) {
+    return (widget.isEdit)
+        ? Container()
+        : Padding(
+            padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: _showGradesDropdown(state, context),
+                ),
+                Expanded(
+                  child: _showGradeCreationButton(state, context),
+                )
+              ],
+            ),
+          );
+  }
+
   Widget _showGradesDropdown(CreateLocationState state, BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2),
@@ -279,28 +290,27 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   Widget _showSectionsText(CreateLocationState state, BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-        child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: 60, minWidth: double.infinity),
-            child: Container(
-                decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                    color: Theme.of(context).cardColor),
-                child: StreamBuilder(
-                    stream: BlocProvider.of<CreateLocationBloc>(context).sectionsStream.stream,
-                    initialData: (state.sections == null) ? <String>[] : state.sections,
-                    builder: (BuildContext context, snapshot) {
-                      return Center(
-                          child: Text(
-                        (snapshot.data.isEmpty)
-                            ? "No sections added"
-                            : "Sections: ${snapshot.data.join(', ')}",
-                        style: Theme.of(context).accentTextTheme.subtitle2,
-                        textAlign: TextAlign.center,
-                      ));
-                    }))));
+    return ConstrainedBox(
+        constraints: BoxConstraints(minHeight: 60, minWidth: double.infinity),
+        child: Container(
+            padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+            decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                color: Theme.of(context).cardColor),
+            child: StreamBuilder(
+                stream: BlocProvider.of<CreateLocationBloc>(context).sectionsStream.stream,
+                initialData: (state.sections == null) ? <String>[] : state.sections,
+                builder: (BuildContext context, snapshot) {
+                  return Center(
+                      child: Text(
+                    (snapshot.data.isEmpty)
+                        ? "No sections added"
+                        : "Sections: ${snapshot.data.join(', ')}",
+                    style: Theme.of(context).accentTextTheme.subtitle2,
+                    textAlign: TextAlign.center,
+                  ));
+                })));
   }
 
   Widget _showSectionCreator(CreateLocationState state, BuildContext context) {
@@ -312,8 +322,8 @@ class CreateLocationWidget extends StatelessWidget {
               borderRadius:
                   BorderRadius.vertical(bottom: Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
           color: Theme.of(context).accentColor,
-          child:
-              Text('CREATE SECTIONS (optional)', style: Theme.of(context).primaryTextTheme.button),
+          child: Text((widget.isEdit) ? "EDIT SECTIONS" : 'CREATE SECTIONS (optional)',
+              style: Theme.of(context).primaryTextTheme.button),
           onPressed: () => _showAddSectionsDialog(state, context),
         ));
   }
