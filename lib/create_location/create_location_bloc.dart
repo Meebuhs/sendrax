@@ -27,9 +27,6 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
 
   @override
   CreateLocationState get initialState {
-    if (isEdit) {
-      _retrieveDataForThisLocation();
-    }
     _retrieveGradeSets();
     return CreateLocationState.initial(location, isEdit);
   }
@@ -40,19 +37,6 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     if (user != null) {
       gradesSubscription = GradeRepo.getInstance().getGradeIds(user).listen((grades) {
         add(GradeSetsUpdatedEvent(grades));
-      });
-    } else {
-      add(CreateLocationErrorEvent());
-    }
-  }
-
-  void _retrieveDataForThisLocation() async {
-    add(LocationClearedEvent());
-    final user = await UserRepo.getInstance().getCurrentUser();
-    if (user != null) {
-      locationSubscription =
-          LocationRepo.getInstance().getSectionsForLocation(location, user).listen((location) {
-        add(LocationUpdatedEvent(location));
       });
     } else {
       add(CreateLocationErrorEvent());
