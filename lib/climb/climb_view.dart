@@ -214,7 +214,7 @@ class ClimbWidget extends StatelessWidget {
       ),
     );
     for (Attempt attempt in attemptsOnDate) {
-      attemptItems.insert(1, _buildAttempt(attempt, widget.climb.id));
+      attemptItems.add(_buildAttempt(attempt, widget.climb.id));
     }
     return Column(
       children: attemptItems,
