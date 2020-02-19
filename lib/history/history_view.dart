@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +21,6 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryState extends State<HistoryScreen> {
-  Timer scrollEventDebounceTimer;
   List<String> grades = <String>[];
   Map<String, String> locationNamesToIds = <String, String>{};
 
