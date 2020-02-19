@@ -73,7 +73,10 @@ class MainWidget extends StatelessWidget {
             return TabBarView(
               children: [
                 LogScreen(locations: state.locations, categories: state.categories),
-                HistoryScreen(locations: state.locations, categories: state.categories),
+                HistoryScreen(
+                    attempts: state.attempts,
+                    locations: state.locations,
+                    categories: state.categories),
               ],
             );
           }

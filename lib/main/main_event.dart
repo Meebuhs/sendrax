@@ -1,6 +1,15 @@
+import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
 
 abstract class MainEvent {}
+
+class ClearAttemptsEvent extends MainEvent {}
+
+class AttemptsUpdatedEvent extends MainEvent {
+  AttemptsUpdatedEvent(this.attempts);
+
+  final List<Attempt> attempts;
+}
 
 class ClearLocationsEvent extends MainEvent {}
 
