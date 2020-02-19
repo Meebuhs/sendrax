@@ -9,7 +9,7 @@ class FirebaseRepo {
   factory FirebaseRepo.getInstance() {
     if (_instance == null) {
       _instance = FirebaseRepo._internal(Firestore.instance);
-      _instance.firestore.settings(persistenceEnabled: true);
+      _instance.firestore.settings(persistenceEnabled: true, cacheSizeBytes: 2147483647);
     }
     return _instance;
   }
