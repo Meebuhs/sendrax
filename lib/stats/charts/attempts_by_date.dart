@@ -15,7 +15,7 @@ class AttemptsByDateChart extends StatefulWidget {
 }
 
 class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
-  List<charts.Series> chartData;
+  List<charts.Series> chartSeries;
   String filterTimeframe;
   String filterLocation;
   String filterSendType;
@@ -26,7 +26,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
 
   @override
   void initState() {
-    chartData = _buildChartData(context);
+    chartSeries = _buildChartSeries(context);
     super.initState();
   }
 
@@ -100,7 +100,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                   isDense: true,
                   onChanged: (value) => setState(() {
                     filterTimeframe = value;
-                    chartData = _buildChartData(context);
+                    chartSeries = _buildChartSeries(context);
                   }),
                 )))));
   }
@@ -126,7 +126,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                   isDense: true,
                   onChanged: (value) => setState(() {
                     filterLocation = value;
-                    chartData = _buildChartData(context);
+                    chartSeries = _buildChartSeries(context);
                   }),
                 )))));
   }
@@ -152,7 +152,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                   isDense: true,
                   onChanged: (value) => setState(() {
                     filterSendType = value;
-                    chartData = _buildChartData(context);
+                    chartSeries = _buildChartSeries(context);
                   }),
                 )))));
   }
@@ -178,7 +178,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                   isDense: true,
                   onChanged: (value) => setState(() {
                     filterCategory = value;
-                    chartData = _buildChartData(context);
+                    chartSeries = _buildChartSeries(context);
                   }),
                 )))));
   }
@@ -198,7 +198,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                   filterLocation = null;
                   filterSendType = null;
                   filterCategory = null;
-                  chartData = _buildChartData(context);
+                  chartSeries = _buildChartSeries(context);
                 })));
   }
 
@@ -217,9 +217,9 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
   }
 
   Widget _buildChart(BuildContext context) {
-    Widget chart = (chartData != null)
+    Widget chart = (chartSeries != null)
         ? charts.TimeSeriesChart(
-            chartData,
+            chartSeries,
             dateTimeFactory: charts.LocalDateTimeFactory(),
             selectionModels: [
               charts.SelectionModelConfig(
@@ -265,7 +265,8 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                 child: chart)));
   }
 
-  List<charts.Series<AttemptsByDateSeries, DateTime>> _buildChartData(BuildContext context) {
+  List<charts.Series<AttemptsByDateSeries, DateTime>> _buildChartSeries(BuildContext context) {
+    _resetChartSelection();
     List<Attempt> filteredAttempts = _filterAttempts();
 
     if (filteredAttempts.isEmpty) {
@@ -291,7 +292,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
     chartData.add(AttemptsByDateSeries(currentDate, currentCount));
 
     return [
-      new charts.Series<AttemptsByDateSeries, DateTime>(
+      charts.Series<AttemptsByDateSeries, DateTime>(
         id: 'attemptsByDate',
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
         domainFn: (AttemptsByDateSeries attempts, _) => attempts.date,
@@ -299,6 +300,13 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
         data: chartData,
       )
     ];
+  }
+
+  void _resetChartSelection() {
+    setState(() {
+      selectedDate = null;
+      selectedCount = null;
+    });
   }
 
   List<Attempt> _filterAttempts() {
