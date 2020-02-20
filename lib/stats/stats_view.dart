@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
 
+import 'charts/attempts_by_date.dart';
+
 class StatsScreen extends StatelessWidget {
   const StatsScreen({Key key, @required this.attempts}) : super(key: key);
 
@@ -33,9 +35,9 @@ class StatsScreen extends StatelessWidget {
                 unselectedLabelColor: Theme.of(context).disabledColor,
                 indicatorColor: Theme.of(context).accentColor,
                 labelColor: Theme.of(context).accentColor,
-                labelStyle: Theme.of(context).accentTextTheme.subtitle2,
+                labelStyle: Theme.of(context).accentTextTheme.overline,
                 tabs: [
-                  Tab(child: Text('Chart 1')),
+                  Tab(child: Text('ATTEMPTS BY DATE')),
                   Tab(child: Text('Chart 2')),
                 ])));
   }
@@ -43,7 +45,9 @@ class StatsScreen extends StatelessWidget {
   Widget _buildTabBarView() {
     return TabBarView(
       children: [
-        Text('Chart 1'),
+        AttemptsByDateChart(
+          attempts: attempts,
+        ),
         Text('Chart 2'),
       ],
     );
