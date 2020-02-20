@@ -1,7 +1,7 @@
 name: sendrax
 description: Easily log climbs and track progress indoors and out.
 
-version: 0.2.1+1
+version: 0.2.2+0
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -15,6 +15,7 @@ dependencies:
   firebase_storage:
   cloud_firestore:
   cached_network_image:
+  charts_flutter:
   shared_preferences:
   image_picker:
   uuid:

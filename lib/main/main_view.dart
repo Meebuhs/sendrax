@@ -5,6 +5,7 @@ import 'package:sendrax/log/log_view.dart';
 import 'package:sendrax/main/main_state.dart';
 import 'package:sendrax/models/login_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
+import 'package:sendrax/stats/stats_view.dart';
 
 import 'main_bloc.dart';
 
@@ -32,7 +33,7 @@ class MainWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: _buildAppBar(context),
         body: _buildBody(context),
@@ -45,15 +46,16 @@ class MainWidget extends StatelessWidget {
     return AppBar(
       title: Text('sendrax'),
       actions: <Widget>[IconButton(icon: Icon(Icons.lock_open), onPressed: () => logout(context))],
-      bottom: _buildTabBar(context),
+      bottom: _buildTabBar(),
     );
   }
 
-  Widget _buildTabBar(BuildContext context) {
+  Widget _buildTabBar() {
     return TabBar(
       tabs: <Widget>[
         Tab(icon: Icon(Icons.assignment)),
         Tab(icon: Icon(Icons.history)),
+        Tab(icon: Icon(Icons.assessment)),
       ],
       indicatorColor: Colors.black,
     );
@@ -77,6 +79,9 @@ class MainWidget extends StatelessWidget {
                     attempts: state.attempts,
                     locations: state.locations,
                     categories: state.categories),
+                StatsScreen(
+                  attempts: state.attempts,
+                ),
               ],
             );
           }
