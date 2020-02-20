@@ -37,6 +37,15 @@ class LazyLoadConstants {
   static const int BATCH_SIZE = 200;
 }
 
+class TimeFrames {
+  static const Map<String, String> TIME_FRAMES = const {
+    "lastWeek": "Last Week",
+    "lastMonth": "Last Month",
+    "lastYear": "Last Year",
+    "allTime": "All Time"
+  };
+}
+
 // @formatter:off
 class SendTypes {
   static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt",

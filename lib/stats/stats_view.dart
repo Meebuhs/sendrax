@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
+import 'package:sendrax/models/location.dart';
 
 import 'charts/attempts_by_date.dart';
 
 class StatsScreen extends StatelessWidget {
-  const StatsScreen({Key key, @required this.attempts}) : super(key: key);
+  const StatsScreen({Key key, @required this.attempts, @required this.locations}) : super(key: key);
 
+  final List<Location> locations;
   final List<Attempt> attempts;
 
   @override
@@ -43,10 +45,16 @@ class StatsScreen extends StatelessWidget {
   }
 
   Widget _buildTabBarView() {
+    Map<String, String> locationNamesToIds = <String, String>{};
+    for (Location location in locations) {
+      locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
+    }
+
     return TabBarView(
       children: [
         AttemptsByDateChart(
           attempts: attempts,
+          locationNamesToIds: locationNamesToIds,
         ),
         Text('Chart 2'),
       ],

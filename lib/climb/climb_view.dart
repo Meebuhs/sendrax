@@ -268,7 +268,7 @@ class ClimbWidget extends StatelessWidget {
       style: Theme.of(context).accentTextTheme.subtitle2,
       items: _createDropdownItems(SendTypes.SEND_TYPES),
       value: state.sendType,
-      hint: Text("Send"),
+      hint: Text("Send type"),
       isExpanded: true,
       decoration: InputDecoration(filled: true, fillColor: Theme.of(context).cardColor),
       validator: (String value) {
