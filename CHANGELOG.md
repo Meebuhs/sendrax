@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added stats view
 
+### Fixed
+
+- Fixed bug where attempts were only being deleted from log view
+
 ## 0.2.0 - 2020-02-12
 
 ### Added
