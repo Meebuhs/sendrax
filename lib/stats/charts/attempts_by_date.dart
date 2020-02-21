@@ -100,6 +100,10 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                               )),
                               domainAxis: charts.DateTimeAxisSpec(
                                   renderSpec: charts.SmallTickRendererSpec(
+                                lineStyle: charts.LineStyleSpec(
+                                  color:
+                                      charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                                ),
                                 labelStyle: charts.TextStyleSpec(
                                   fontSize:
                                       Theme.of(context).accentTextTheme.caption.fontSize.toInt(),

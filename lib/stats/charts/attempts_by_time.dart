@@ -114,6 +114,10 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
                               )),
                               domainAxis: charts.OrdinalAxisSpec(
                                 renderSpec: charts.SmallTickRendererSpec(
+                                  lineStyle: charts.LineStyleSpec(
+                                    color: charts.ColorUtil.fromDartColor(
+                                        Theme.of(context).accentColor),
+                                  ),
                                   labelStyle: charts.TextStyleSpec(
                                     fontSize:
                                         Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
