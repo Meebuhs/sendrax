@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added stats view
     - Charts
         - Number of attempts by date
+        - Number of attempts by time of day
     - Ability to filter attempts shown in the charts
 
 ### Fixed

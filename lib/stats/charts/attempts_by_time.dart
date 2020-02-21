@@ -4,29 +4,31 @@ import 'package:intl/intl.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/util/constants.dart';
 
-class AttemptsByDateChart extends StatefulWidget {
-  AttemptsByDateChart({Key key, @required this.attempts, @required this.locationNamesToIds})
+class AttemptsByTimeChart extends StatefulWidget {
+  AttemptsByTimeChart({Key key, @required this.attempts, @required this.locationNamesToIds})
       : super(key: key);
   final Map<String, String> locationNamesToIds;
   final List<Attempt> attempts;
 
   @override
-  _AttemptsByDateChartState createState() => _AttemptsByDateChartState();
+  _AttemptsByTimeChartState createState() => _AttemptsByTimeChartState();
 }
 
-class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
+class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
   List<charts.Series> chartSeries;
+  List<charts.TickSpec<String>> ticks;
   String filterTimeframe;
   String filterLocation;
   String filterSendType;
   String filterCategory;
 
-  DateTime selectedDate;
+  int selectedHour;
   int selectedCount;
 
   @override
   void initState() {
     chartSeries = _buildChartSeries(context);
+    ticks = _buildTicks();
     super.initState();
   }
 
@@ -35,13 +37,12 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
     List<Widget> children = <Widget>[];
     children.add(_buildFilters(context));
     children.add(_buildChart(context));
-    if (selectedDate != null) {
+    DateTime time = DateTime.now();
+    if (selectedHour != null) {
       children.add(Padding(
-          padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-          child: Text(
-            "${DateFormat('MMM d, y').format(selectedDate)}: $selectedCount",
-            style: Theme.of(context).accentTextTheme.subtitle2,
-          )));
+        padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
+        child: _buildSelectedText(time),
+      ));
     } else {
       children.add(Padding(
           padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
@@ -52,6 +53,19 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
     }
     return Padding(
         padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: Column(children: children));
+  }
+
+  Widget _buildSelectedText(DateTime time) {
+    String firstTime = DateFormat('h a').format(DateTime(time.year, time.month, time.day,
+        selectedHour, time.minute, time.second, time.millisecond, time.microsecond));
+    String secondTime = DateFormat('h a').format(DateTime(time.year, time.month, time.day,
+        selectedHour + 1, time.minute, time.second, time.millisecond, time.microsecond));
+    String rangeText = "$firstTime - $secondTime: $selectedCount";
+
+    return Text(
+      rangeText,
+      style: Theme.of(context).accentTextTheme.subtitle2,
+    );
   }
 
   Widget _buildFilters(BuildContext context) {
@@ -218,9 +232,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
 
   Widget _buildChart(BuildContext context) {
     Widget chart = (chartSeries != null)
-        ? charts.TimeSeriesChart(
-            chartSeries,
-            dateTimeFactory: charts.LocalDateTimeFactory(),
+        ? charts.BarChart(chartSeries,
             selectionModels: [
               charts.SelectionModelConfig(
                 type: charts.SelectionModelType.info,
@@ -238,15 +250,16 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                 color: charts.ColorUtil.fromDartColor(Theme.of(context).dialogBackgroundColor),
               ),
             )),
-            domainAxis: charts.DateTimeAxisSpec(
-                renderSpec: charts.SmallTickRendererSpec(
-              labelStyle: charts.TextStyleSpec(
-                fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+            domainAxis: charts.OrdinalAxisSpec(
+              renderSpec: charts.SmallTickRendererSpec(
+                labelStyle: charts.TextStyleSpec(
+                  fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                  fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                  color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                ),
               ),
-            )),
-          )
+              tickProviderSpec: charts.StaticOrdinalTickProviderSpec(ticks),
+            ))
         : Center(
             child: Text(
             "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
@@ -265,7 +278,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                 child: chart)));
   }
 
-  List<charts.Series<AttemptsByDateSeries, DateTime>> _buildChartSeries(BuildContext context) {
+  List<charts.Series<AttemptsByTimeSeries, String>> _buildChartSeries(BuildContext context) {
     _resetChartSelection();
     List<Attempt> filteredAttempts = _filterAttempts();
 
@@ -273,38 +286,54 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
       return null;
     }
 
-    List<AttemptsByDateSeries> chartData = <AttemptsByDateSeries>[];
-    DateTime firstDate = filteredAttempts[0].timestamp.toDate();
-    DateTime currentDate = DateTime(firstDate.year, firstDate.month, firstDate.day);
-    int currentCount = 1;
+    List<AttemptsByTimeSeries> chartData = <AttemptsByTimeSeries>[];
+    Map<int, int> hourCounts = Map.fromIterable(List<int>.generate(24, (i) => i + 1),
+        key: (item) => item - 1, value: (item) => 0);
 
-    for (Attempt attempt in filteredAttempts.skip(1)) {
-      DateTime attemptDate = attempt.timestamp.toDate();
-      DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
-      if (currentDate != startOfDay) {
-        chartData.add(AttemptsByDateSeries(currentDate, currentCount));
-        currentDate = startOfDay;
-        currentCount = 1;
-      } else {
-        currentCount++;
-      }
+    for (Attempt attempt in filteredAttempts) {
+      int attemptHour = attempt.timestamp.toDate().hour;
+      hourCounts.update(attemptHour, (value) => hourCounts[attemptHour] + 1);
     }
-    chartData.add(AttemptsByDateSeries(currentDate, currentCount));
+    for (int hour in hourCounts.keys) {
+      chartData.add(AttemptsByTimeSeries(hour, hourCounts[hour]));
+    }
 
     return [
-      charts.Series<AttemptsByDateSeries, DateTime>(
-        id: 'attemptsByDate',
+      charts.Series<AttemptsByTimeSeries, String>(
+        id: 'attemptsByTime',
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-        domainFn: (AttemptsByDateSeries attempts, _) => attempts.date,
-        measureFn: (AttemptsByDateSeries attempts, _) => attempts.count,
+        domainFn: (AttemptsByTimeSeries attempts, _) => attempts.hour.toString(),
+        measureFn: (AttemptsByTimeSeries attempts, _) => attempts.count,
         data: chartData,
       )
     ];
   }
 
+  List<charts.TickSpec<String>> _buildTicks() {
+    DateTime time = DateTime.now();
+
+    List<charts.TickSpec<String>> ticks = [];
+
+    for (int hour in Iterable.generate(24)) {
+      if (hour % 6 == 0) {
+        ticks.add(charts.TickSpec(
+          hour.toString(),
+          label:
+              "${DateFormat('h a').format(DateTime(time.year, time.month, time.day, hour, time.minute, time.second, time.millisecond, time.microsecond))}",
+        ));
+      } else {
+        ticks.add(charts.TickSpec(
+          hour.toString(),
+          label: "",
+        ));
+      }
+    }
+    return ticks;
+  }
+
   void _resetChartSelection() {
     setState(() {
-      selectedDate = null;
+      selectedHour = null;
       selectedCount = null;
     });
   }
@@ -350,25 +379,25 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
 
   _onSelectionChanged(charts.SelectionModel model) {
     final selectedDatum = model.selectedDatum;
-    DateTime date;
+    int hour;
     int count;
 
     if (selectedDatum.isNotEmpty) {
-      date = selectedDatum.first.datum.date;
+      hour = selectedDatum.first.datum.hour;
       count = selectedDatum.first.datum.count;
     }
 
     // Request a build.
     setState(() {
-      selectedDate = date;
+      selectedHour = hour;
       selectedCount = count;
     });
   }
 }
 
-class AttemptsByDateSeries {
-  final DateTime date;
+class AttemptsByTimeSeries {
+  final int hour;
   final int count;
 
-  AttemptsByDateSeries(this.date, this.count);
+  AttemptsByTimeSeries(this.hour, this.count);
 }

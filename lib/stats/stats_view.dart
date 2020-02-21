@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
+import 'package:sendrax/stats/charts/attempts_by_time.dart';
 
 import 'charts/attempts_by_date.dart';
 
@@ -40,7 +41,7 @@ class StatsScreen extends StatelessWidget {
                 labelStyle: Theme.of(context).accentTextTheme.overline,
                 tabs: [
                   Tab(child: Text('ATTEMPTS BY DATE')),
-                  Tab(child: Text('Chart 2')),
+                  Tab(child: Text('ATTEMPTS BY TIME')),
                 ])));
   }
 
@@ -56,7 +57,10 @@ class StatsScreen extends StatelessWidget {
           attempts: attempts,
           locationNamesToIds: locationNamesToIds,
         ),
-        Text('Chart 2'),
+        AttemptsByTimeChart(
+          attempts: attempts,
+          locationNamesToIds: locationNamesToIds,
+        ),
       ],
     );
   }
