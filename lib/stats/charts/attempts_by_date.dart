@@ -21,12 +21,20 @@ class AttemptsByDateChart extends StatefulWidget {
 
 class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
   StreamController<List<Attempt>> filteredAttemptsStream;
+  StreamSubscription<List<Attempt>> filteredAttemptsListener;
+  List<charts.Series> chartSeries;
   DateTime selectedDate;
   int selectedCount;
 
   @override
   void initState() {
     filteredAttemptsStream = StreamController<List<Attempt>>.broadcast();
+    filteredAttemptsListener = filteredAttemptsStream.stream.listen((filteredAttempts) {
+      setState(() {
+        chartSeries = _buildChartSeries(context, filteredAttempts);
+      });
+    });
+    chartSeries = _buildChartSeries(context, widget.attempts);
     super.initState();
   }
 
@@ -67,54 +75,46 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
             decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
-            child: StreamBuilder(
-                stream: filteredAttemptsStream.stream,
-                initialData: widget.attempts,
-                builder: (BuildContext context, snapshot) {
-                  List<charts.Series> chartSeries = _buildChartSeries(context, snapshot.data);
-                  return (chartSeries != null)
-                      ? charts.TimeSeriesChart(
-                          chartSeries,
-                          dateTimeFactory: charts.LocalDateTimeFactory(),
-                          selectionModels: [
-                            charts.SelectionModelConfig(
-                              type: charts.SelectionModelType.info,
-                              changedListener: _onSelectionChanged,
-                            )
-                          ],
-                          primaryMeasureAxis: charts.NumericAxisSpec(
-                              renderSpec: charts.GridlineRendererSpec(
-                            labelStyle: charts.TextStyleSpec(
-                              fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                              fontWeight:
-                                  Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-                            ),
-                            lineStyle: charts.LineStyleSpec(
-                              color: charts.ColorUtil.fromDartColor(
-                                  Theme.of(context).dialogBackgroundColor),
-                            ),
-                          )),
-                          domainAxis: charts.DateTimeAxisSpec(
-                              renderSpec: charts.SmallTickRendererSpec(
-                            lineStyle: charts.LineStyleSpec(
-                              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-                            ),
-                            labelStyle: charts.TextStyleSpec(
-                              fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                              fontWeight:
-                                  Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-                            ),
-                          )),
-                        )
-                      : Center(
-                          child: Text(
-                          "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
-                          style: Theme.of(context).accentTextTheme.subtitle2,
-                          textAlign: TextAlign.center,
-                        ));
-                })));
+            child: (chartSeries != null)
+                ? charts.TimeSeriesChart(
+                    chartSeries,
+                    dateTimeFactory: charts.LocalDateTimeFactory(),
+                    selectionModels: [
+                      charts.SelectionModelConfig(
+                        type: charts.SelectionModelType.info,
+                        changedListener: _onSelectionChanged,
+                      )
+                    ],
+                    primaryMeasureAxis: charts.NumericAxisSpec(
+                        renderSpec: charts.GridlineRendererSpec(
+                      labelStyle: charts.TextStyleSpec(
+                        fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                        fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                        color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                      ),
+                      lineStyle: charts.LineStyleSpec(
+                        color:
+                            charts.ColorUtil.fromDartColor(Theme.of(context).dialogBackgroundColor),
+                      ),
+                    )),
+                    domainAxis: charts.DateTimeAxisSpec(
+                        renderSpec: charts.SmallTickRendererSpec(
+                      lineStyle: charts.LineStyleSpec(
+                        color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                      ),
+                      labelStyle: charts.TextStyleSpec(
+                        fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                        fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                        color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                      ),
+                    )),
+                  )
+                : Center(
+                    child: Text(
+                    "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
+                    style: Theme.of(context).accentTextTheme.subtitle2,
+                    textAlign: TextAlign.center,
+                  ))));
   }
 
   List<charts.Series<AttemptsByDateSeries, DateTime>> _buildChartSeries(
@@ -183,6 +183,9 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
   @override
   void dispose() {
     filteredAttemptsStream.close();
+    if (filteredAttemptsListener != null) {
+      filteredAttemptsListener.cancel();
+    }
     super.dispose();
   }
 }
