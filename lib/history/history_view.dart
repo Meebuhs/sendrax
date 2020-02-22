@@ -12,31 +12,27 @@ import 'history_state.dart';
 
 class HistoryScreen extends StatefulWidget {
   HistoryScreen(
-      {Key key, @required this.attempts, @required this.locations, @required this.categories})
+      {Key key,
+      @required this.attempts,
+      @required this.locations,
+      @required this.categories,
+      @required this.locationNamesToIds,
+      @required this.grades})
       : super(key: key);
 
   final List<Attempt> attempts;
   final List<Location> locations;
   final List<String> categories;
+  final Map<String, String> locationNamesToIds;
+  final Map<String, List<String>> grades;
 
   @override
   State<StatefulWidget> createState() => _HistoryState();
 }
 
 class _HistoryState extends State<HistoryScreen> {
-  List<String> grades = <String>[];
-  Map<String, String> locationNamesToIds = <String, String>{};
-
   @override
   void initState() {
-    List<String> gradeSets = <String>[];
-    for (Location location in widget.locations) {
-      if (!gradeSets.contains(location.gradeSet)) {
-        gradeSets.add(location.gradeSet);
-        grades.addAll(location.grades);
-      }
-      locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
-    }
     super.initState();
   }
 
@@ -119,7 +115,7 @@ class HistoryWidget extends StatelessWidget {
         child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
           style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widgetState.grades),
+          items: _createDropdownItems(widget.grades.values.expand((i) => i).toList()),
           value: state.filterGrade,
           hint: Text("Grade"),
           isExpanded: true,
@@ -134,7 +130,7 @@ class HistoryWidget extends StatelessWidget {
         child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
           style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widgetState.locationNamesToIds.keys.toList()),
+          items: _createDropdownItems(widget.locationNamesToIds.keys.toList()),
           value: state.filterLocation,
           hint: Text("Location"),
           isExpanded: true,
@@ -209,7 +205,7 @@ class HistoryWidget extends StatelessWidget {
     }
     if (state.filterLocation != null) {
       filteredAttempts.retainWhere(
-          (attempt) => attempt.locationId == widgetState.locationNamesToIds[state.filterLocation]);
+          (attempt) => attempt.locationId == widget.locationNamesToIds[state.filterLocation]);
     }
     if (state.filterCategory != null) {
       filteredAttempts

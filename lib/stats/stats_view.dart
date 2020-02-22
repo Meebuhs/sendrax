@@ -6,10 +6,18 @@ import 'package:sendrax/stats/charts/attempts_by_time.dart';
 import 'charts/attempts_by_date.dart';
 
 class StatsScreen extends StatelessWidget {
-  const StatsScreen({Key key, @required this.attempts, @required this.locations}) : super(key: key);
+  const StatsScreen(
+      {Key key,
+      @required this.attempts,
+      @required this.locations,
+      @required this.locationNamesToIds,
+      @required this.grades})
+      : super(key: key);
 
-  final List<Location> locations;
   final List<Attempt> attempts;
+  final List<Location> locations;
+  final Map<String, String> locationNamesToIds;
+  final Map<String, List<String>> grades;
 
   @override
   Widget build(BuildContext context) {

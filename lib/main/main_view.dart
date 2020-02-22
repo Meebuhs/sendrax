@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/history/history_view.dart';
 import 'package:sendrax/log/log_view.dart';
 import 'package:sendrax/main/main_state.dart';
+import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/login_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/stats/stats_view.dart';
@@ -72,16 +73,28 @@ class MainWidget extends StatelessWidget {
               ),
             );
           } else {
+            Map<String, List<String>> grades = <String, List<String>>{};
+            Map<String, String> locationNamesToIds = <String, String>{};
+
+            for (Location location in state.locations) {
+              grades.putIfAbsent(location.gradeSet, () => location.grades);
+              locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
+            }
             return TabBarView(
               children: [
                 LogScreen(locations: state.locations, categories: state.categories),
                 HistoryScreen(
-                    attempts: state.attempts,
-                    locations: state.locations,
-                    categories: state.categories),
+                  attempts: state.attempts,
+                  locations: state.locations,
+                  categories: state.categories,
+                  locationNamesToIds: locationNamesToIds,
+                  grades: grades,
+                ),
                 StatsScreen(
                   attempts: state.attempts,
                   locations: state.locations,
+                  locationNamesToIds: locationNamesToIds,
+                  grades: grades,
                 ),
               ],
             );
