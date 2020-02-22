@@ -8,10 +8,12 @@ import 'package:sendrax/stats/charts/attempt_filter.dart';
 import 'package:sendrax/util/constants.dart';
 
 class AttemptsByDateChart extends StatefulWidget {
-  AttemptsByDateChart({Key key, @required this.attempts, @required this.locationNamesToIds})
+  AttemptsByDateChart(
+      {Key key, @required this.attempts, @required this.locationNamesToIds, @required this.grades})
       : super(key: key);
-  final Map<String, String> locationNamesToIds;
   final List<Attempt> attempts;
+  final Map<String, String> locationNamesToIds;
+  final Map<String, List<String>> grades;
 
   @override
   _AttemptsByDateChartState createState() => _AttemptsByDateChartState();
@@ -32,9 +34,12 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
   Widget build(BuildContext context) {
     List<Widget> children = <Widget>[];
     children.add(AttemptFilter(
-        attempts: widget.attempts,
-        locationNamesToIds: widget.locationNamesToIds,
-        filteredAttemptsStream: filteredAttemptsStream));
+      attempts: widget.attempts,
+      locationNamesToIds: widget.locationNamesToIds,
+      filteredAttemptsStream: filteredAttemptsStream,
+      filterGrades: true,
+      grades: widget.grades,
+    ));
     children.add(_buildChart(context));
     if (selectedDate != null) {
       children.add(Padding(

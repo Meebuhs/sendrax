@@ -11,6 +11,7 @@ class StorageKeys {
 class UIConstants {
   // PADDING
   static const double SMALLER_PADDING = 8.0;
+  static const double SMALL_PADDING = 12.0;
   static const double STANDARD_PADDING = 16.0;
   static const double BIGGER_PADDING = 24.0;
 

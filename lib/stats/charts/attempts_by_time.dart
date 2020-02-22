@@ -9,10 +9,12 @@ import 'package:sendrax/util/constants.dart';
 import 'attempt_filter.dart';
 
 class AttemptsByTimeChart extends StatefulWidget {
-  AttemptsByTimeChart({Key key, @required this.attempts, @required this.locationNamesToIds})
+  AttemptsByTimeChart(
+      {Key key, @required this.attempts, @required this.locationNamesToIds, @required this.grades})
       : super(key: key);
-  final Map<String, String> locationNamesToIds;
   final List<Attempt> attempts;
+  final Map<String, String> locationNamesToIds;
+  final Map<String, List<String>> grades;
 
   @override
   _AttemptsByTimeChartState createState() => _AttemptsByTimeChartState();
@@ -36,9 +38,12 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
   Widget build(BuildContext context) {
     List<Widget> children = <Widget>[];
     children.add(AttemptFilter(
-        attempts: widget.attempts,
-        locationNamesToIds: widget.locationNamesToIds,
-        filteredAttemptsStream: filteredAttemptsStream));
+      attempts: widget.attempts,
+      locationNamesToIds: widget.locationNamesToIds,
+      filteredAttemptsStream: filteredAttemptsStream,
+      filterGrades: true,
+      grades: widget.grades,
+    ));
     children.add(_buildChart(context));
     DateTime time = DateTime.now();
     if (selectedHour != null) {

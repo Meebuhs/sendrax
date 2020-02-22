@@ -5,54 +5,133 @@ import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/util/constants.dart';
 
 class AttemptFilter extends StatefulWidget {
-  AttemptFilter({Key key, @required this.attempts, @required this.locationNamesToIds, @required this.filteredAttemptsStream})
+  AttemptFilter(
+      {Key key,
+      @required this.attempts,
+      @required this.locationNamesToIds,
+      @required this.filteredAttemptsStream,
+      this.filterGrades = false,
+      this.grades})
       : super(key: key);
   final List<Attempt> attempts;
   final Map<String, String> locationNamesToIds;
   final StreamController<List<Attempt>> filteredAttemptsStream;
+  final bool filterGrades;
+  final Map<String, List<String>> grades;
 
   @override
   _AttemptFilterState createState() => _AttemptFilterState();
 }
 
 class _AttemptFilterState extends State<AttemptFilter> {
+  String filterGradeset;
+  String filterGrade;
   String filterTimeframe;
   String filterLocation;
   String filterSendType;
   String filterCategory;
 
   Widget build(BuildContext context) {
+    List<Widget> children = <Widget>[];
+    children = [
+      Row(
+        children: <Widget>[
+          _showTimeFrameDropdown(context),
+          _showLocationDropdown(context),
+        ],
+      ),
+      Row(
+        children: <Widget>[
+          _showSendTypeDropdown(context),
+          _showCategoryDropdown(context),
+        ],
+      )
+    ];
+
+    if (widget.filterGrades) {
+      children.insert(
+        0,
+        Row(
+          children: <Widget>[
+            _showGradeSetDropdown(context),
+            _showGradeDropdown(context),
+          ],
+        ),
+      );
+    }
+
     return Container(
         child: Row(children: <Widget>[
-      Expanded(
-          child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              _showTimeFrameDropdown(context),
-              _showLocationDropdown(context),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              _showSendTypeDropdown(context),
-              _showCategoryDropdown(context),
-            ],
-          )
-        ],
-      )),
+      Expanded(child: Column(mainAxisSize: MainAxisSize.min, children: children)),
       _showClearDropdownsButton(context),
     ]));
   }
 
-  Widget _showTimeFrameDropdown(BuildContext context) {
+  Widget _showGradeSetDropdown(BuildContext context) {
     return Expanded(
         child: Padding(
             padding: EdgeInsets.fromLTRB(
                 0.0, 0.0, UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2),
             child: Container(
-                padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
+                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
+                child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                        style: Theme.of(context).accentTextTheme.subtitle2,
+                        items: _createDropdownItems(widget.grades.keys.toList()),
+                        value: filterGradeset,
+                        hint: Text("Grade set"),
+                        isExpanded: true,
+                        isDense: true,
+                        onChanged: (value) {
+                          setState(() {
+                            filterGradeset = value;
+                          });
+                          widget.filteredAttemptsStream.add(_filterAttempts());
+                        })))));
+  }
+
+  Widget _showGradeDropdown(BuildContext context) {
+    return Expanded(
+        child: Padding(
+            padding: EdgeInsets.fromLTRB(
+                0.0, UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, 0.0),
+            child: Container(
+                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
+                child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                        style: Theme.of(context).accentTextTheme.subtitle2,
+                        items: _createDropdownItems(widget.grades[filterGradeset]),
+                        value: filterGrade,
+                        hint: Text("Grade"),
+                        isExpanded: true,
+                        isDense: true,
+                        disabledHint: Text(
+                          "Grade",
+                          style: TextStyle(color: Theme.of(context).dialogBackgroundColor),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            filterGrade = value;
+                          });
+                          widget.filteredAttemptsStream.add(_filterAttempts());
+                        })))));
+  }
+
+  Widget _showTimeFrameDropdown(BuildContext context) {
+    return Expanded(
+        child: Padding(
+            padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING / 2, 0.0,
+                UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2),
+            child: Container(
+                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
                 decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     borderRadius:
@@ -62,7 +141,7 @@ class _AttemptFilterState extends State<AttemptFilter> {
                         style: Theme.of(context).accentTextTheme.subtitle2,
                         items: _createDropdownItems(TimeFrames.TIME_FRAMES.values.toList()),
                         value: filterTimeframe,
-                        hint: Text("Time frame"),
+                        hint: Text("Time"),
                         isExpanded: true,
                         isDense: true,
                         onChanged: (value) {
@@ -76,10 +155,10 @@ class _AttemptFilterState extends State<AttemptFilter> {
   Widget _showLocationDropdown(BuildContext context) {
     return Expanded(
         child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                UIConstants.SMALLER_PADDING / 2, 0.0, 0.0, UIConstants.SMALLER_PADDING / 2),
+            padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING / 2,
+                0.0, 0.0, UIConstants.SMALLER_PADDING / 2),
             child: Container(
-                padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
+                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
                 decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     borderRadius:
@@ -103,10 +182,9 @@ class _AttemptFilterState extends State<AttemptFilter> {
   Widget _showSendTypeDropdown(BuildContext context) {
     return Expanded(
         child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                0.0, UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, 0.0),
+            padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, 0.0),
             child: Container(
-                padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
+                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
                 decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     borderRadius:
@@ -130,35 +208,35 @@ class _AttemptFilterState extends State<AttemptFilter> {
   Widget _showCategoryDropdown(BuildContext context) {
     return Expanded(
         child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, 0.0, 0.0),
-            child: Container(
-                padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
-                child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                        style: Theme.of(context).accentTextTheme.subtitle2,
-                        items: _createDropdownItems(ClimbCategories.CATEGORIES),
-                        value: filterCategory,
-                        hint: Text("Category"),
-                        isExpanded: true,
-                        isDense: true,
-                        onChanged: (value) {
-                          setState(() {
-                            filterCategory = value;
-                          });
-                          widget.filteredAttemptsStream.add(_filterAttempts());
-                        })))));
+        padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, 0.0, 0.0),
+    child: Container(
+            padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
+            decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                    style: Theme.of(context).accentTextTheme.subtitle2,
+                    items: _createDropdownItems(ClimbCategories.CATEGORIES),
+                    value: filterCategory,
+                    hint: Text("Category"),
+                    isExpanded: true,
+                    isDense: true,
+                    onChanged: (value) {
+                      setState(() {
+                        filterCategory = value;
+                      });
+                      widget.filteredAttemptsStream.add(_filterAttempts());
+                    })))));
   }
 
   Widget _showClearDropdownsButton(BuildContext context) {
     return Container(
         child: IconButton(
             icon: Icon(Icons.cancel,
-                color: (filterTimeframe == null &&
+                color: (filterGradeset == null &&
+                        filterGrade == null &&
+                        filterTimeframe == null &&
                         filterLocation == null &&
                         filterSendType == null &&
                         filterCategory == null)
@@ -166,6 +244,8 @@ class _AttemptFilterState extends State<AttemptFilter> {
                     : Theme.of(context).accentColor),
             onPressed: () {
               setState(() {
+                filterGradeset = null;
+                filterGrade = null;
                 filterTimeframe = null;
                 filterLocation = null;
                 filterSendType = null;
@@ -176,7 +256,7 @@ class _AttemptFilterState extends State<AttemptFilter> {
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
-    if (items.isNotEmpty) {
+    if (items?.isNotEmpty ?? false) {
       return items.map((String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -191,6 +271,17 @@ class _AttemptFilterState extends State<AttemptFilter> {
 
   List<Attempt> _filterAttempts() {
     List<Attempt> filteredAttempts = widget.attempts;
+
+    if (filterGradeset != null) {
+      if (filterGrade != null) {
+        filteredAttempts =
+            filteredAttempts.where((attempt) => attempt.climbGrade == filterGrade).toList();
+      } else {
+        filteredAttempts = filteredAttempts
+            .where((attempt) => widget.grades[filterGradeset].contains(attempt.climbGrade))
+            .toList();
+      }
+    }
 
     if (filterTimeframe != null) {
       if (filterTimeframe == TimeFrames.TIME_FRAMES["lastWeek"]) {

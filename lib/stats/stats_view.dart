@@ -64,10 +64,12 @@ class StatsScreen extends StatelessWidget {
         AttemptsByDateChart(
           attempts: attempts,
           locationNamesToIds: locationNamesToIds,
+          grades: grades,
         ),
         AttemptsByTimeChart(
           attempts: attempts,
           locationNamesToIds: locationNamesToIds,
+          grades: grades,
         ),
       ],
     );
