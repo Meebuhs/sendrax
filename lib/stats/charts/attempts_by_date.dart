@@ -62,73 +62,59 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
 
   Widget _buildChart(BuildContext context) {
     return Expanded(
-        child: Padding(
-            padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-            child: Container(
-                padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
-                child: StreamBuilder(
-                    stream: filteredAttemptsStream.stream,
-                    initialData: widget.attempts,
-                    builder: (BuildContext context, snapshot) {
-                      List<charts.Series> chartSeries = _buildChartSeries(context, snapshot.data);
-                      return (chartSeries != null)
-                          ? charts.TimeSeriesChart(
-                              chartSeries,
-                              dateTimeFactory: charts.LocalDateTimeFactory(),
-                              selectionModels: [
-                                charts.SelectionModelConfig(
-                                  type: charts.SelectionModelType.info,
-                                  changedListener: _onSelectionChanged,
-                                )
-                              ],
-                              primaryMeasureAxis: charts.NumericAxisSpec(
-                                  renderSpec: charts.GridlineRendererSpec(
-                                labelStyle: charts.TextStyleSpec(
-                                  fontSize:
-                                      Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                                  fontWeight: Theme.of(context)
-                                      .accentTextTheme
-                                      .caption
-                                      .fontWeight
-                                      .toString(),
-                                  color:
-                                      charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-                                ),
-                                lineStyle: charts.LineStyleSpec(
-                                  color: charts.ColorUtil.fromDartColor(
-                                      Theme.of(context).dialogBackgroundColor),
-                                ),
-                              )),
-                              domainAxis: charts.DateTimeAxisSpec(
-                                  renderSpec: charts.SmallTickRendererSpec(
-                                lineStyle: charts.LineStyleSpec(
-                                  color:
-                                      charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-                                ),
-                                labelStyle: charts.TextStyleSpec(
-                                  fontSize:
-                                      Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                                  fontWeight: Theme.of(context)
-                                      .accentTextTheme
-                                      .caption
-                                      .fontWeight
-                                      .toString(),
-                                  color:
-                                      charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-                                ),
-                              )),
+        child: Container(
+            padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+            decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+            child: StreamBuilder(
+                stream: filteredAttemptsStream.stream,
+                initialData: widget.attempts,
+                builder: (BuildContext context, snapshot) {
+                  List<charts.Series> chartSeries = _buildChartSeries(context, snapshot.data);
+                  return (chartSeries != null)
+                      ? charts.TimeSeriesChart(
+                          chartSeries,
+                          dateTimeFactory: charts.LocalDateTimeFactory(),
+                          selectionModels: [
+                            charts.SelectionModelConfig(
+                              type: charts.SelectionModelType.info,
+                              changedListener: _onSelectionChanged,
                             )
-                          : Center(
-                              child: Text(
-                              "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
-                              style: Theme.of(context).accentTextTheme.subtitle2,
-                              textAlign: TextAlign.center,
-                            ));
-                    }))));
+                          ],
+                          primaryMeasureAxis: charts.NumericAxisSpec(
+                              renderSpec: charts.GridlineRendererSpec(
+                            labelStyle: charts.TextStyleSpec(
+                              fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                              fontWeight:
+                                  Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                            ),
+                            lineStyle: charts.LineStyleSpec(
+                              color: charts.ColorUtil.fromDartColor(
+                                  Theme.of(context).dialogBackgroundColor),
+                            ),
+                          )),
+                          domainAxis: charts.DateTimeAxisSpec(
+                              renderSpec: charts.SmallTickRendererSpec(
+                            lineStyle: charts.LineStyleSpec(
+                              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                            ),
+                            labelStyle: charts.TextStyleSpec(
+                              fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                              fontWeight:
+                                  Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                            ),
+                          )),
+                        )
+                      : Center(
+                          child: Text(
+                          "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
+                          style: Theme.of(context).accentTextTheme.subtitle2,
+                          textAlign: TextAlign.center,
+                        ));
+                })));
   }
 
   List<charts.Series<AttemptsByDateSeries, DateTime>> _buildChartSeries(

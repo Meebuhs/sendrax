@@ -24,12 +24,14 @@ class AttemptFilter extends StatefulWidget {
 }
 
 class _AttemptFilterState extends State<AttemptFilter> {
-  String filterGradeset;
-  String filterGrade;
-  String filterTimeframe;
-  String filterLocation;
-  String filterSendType;
-  String filterCategory;
+  Map<FilterTypes, String> filters = <FilterTypes, String>{
+    FilterTypes.gradeSet: null,
+    FilterTypes.grade: null,
+    FilterTypes.timeframe: null,
+    FilterTypes.location: null,
+    FilterTypes.sendType: null,
+    FilterTypes.category: null,
+  };
 
   Widget build(BuildContext context) {
     List<Widget> children = <Widget>[];
@@ -68,121 +70,38 @@ class _AttemptFilterState extends State<AttemptFilter> {
   }
 
   Widget _showGradeSetDropdown(BuildContext context) {
-    return Expanded(
-        child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                0.0, 0.0, UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2),
-            child: Container(
-                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
-                child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                        style: Theme.of(context).accentTextTheme.subtitle2,
-                        items: _createDropdownItems(widget.grades.keys.toList()),
-                        value: filterGradeset,
-                        hint: Text("Grade set"),
-                        isExpanded: true,
-                        isDense: true,
-                        onChanged: (value) {
-                          setState(() {
-                            filterGradeset = value;
-                          });
-                          widget.filteredAttemptsStream.add(_filterAttempts());
-                        })))));
+    return _createDropdown(context, widget.grades.keys.toList(), "Grade set", FilterTypes.gradeSet);
   }
 
   Widget _showGradeDropdown(BuildContext context) {
-    return Expanded(
-        child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                0.0, UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, 0.0),
-            child: Container(
-                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
-                child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                        style: Theme.of(context).accentTextTheme.subtitle2,
-                        items: _createDropdownItems(widget.grades[filterGradeset]),
-                        value: filterGrade,
-                        hint: Text("Grade"),
-                        isExpanded: true,
-                        isDense: true,
-                        disabledHint: Text(
-                          "Grade",
-                          style: TextStyle(color: Theme.of(context).dialogBackgroundColor),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            filterGrade = value;
-                          });
-                          widget.filteredAttemptsStream.add(_filterAttempts());
-                        })))));
+    return _createDropdown(
+        context, widget.grades[filters[FilterTypes.gradeSet]], "Grade", FilterTypes.grade);
   }
 
   Widget _showTimeFrameDropdown(BuildContext context) {
-    return Expanded(
-        child: Padding(
-            padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING / 2, 0.0,
-                UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2),
-            child: Container(
-                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
-                child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                        style: Theme.of(context).accentTextTheme.subtitle2,
-                        items: _createDropdownItems(TimeFrames.TIME_FRAMES.values.toList()),
-                        value: filterTimeframe,
-                        hint: Text("Time"),
-                        isExpanded: true,
-                        isDense: true,
-                        onChanged: (value) {
-                          setState(() {
-                            filterTimeframe = value;
-                          });
-                          widget.filteredAttemptsStream.add(_filterAttempts());
-                        })))));
+    return _createDropdown(
+        context, TimeFrames.TIME_FRAMES.values.toList(), "Timeframe", FilterTypes.timeframe);
   }
 
   Widget _showLocationDropdown(BuildContext context) {
-    return Expanded(
-        child: Padding(
-            padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING / 2,
-                0.0, 0.0, UIConstants.SMALLER_PADDING / 2),
-            child: Container(
-                padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
-                child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                        style: Theme.of(context).accentTextTheme.subtitle2,
-                        items: _createDropdownItems(widget.locationNamesToIds.keys.toList()),
-                        value: filterLocation,
-                        hint: Text("Location"),
-                        isExpanded: true,
-                        isDense: true,
-                        onChanged: (value) {
-                          setState(() {
-                            filterLocation = value;
-                          });
-                          widget.filteredAttemptsStream.add(_filterAttempts());
-                        })))));
+    return _createDropdown(
+        context, widget.locationNamesToIds.keys.toList(), "Location", FilterTypes.location);
   }
 
   Widget _showSendTypeDropdown(BuildContext context) {
+    return _createDropdown(context, SendTypes.SEND_TYPES, "Send type", FilterTypes.sendType);
+  }
+
+  Widget _showCategoryDropdown(BuildContext context) {
+    return _createDropdown(context, ClimbCategories.CATEGORIES, "Category", FilterTypes.category);
+  }
+
+  Widget _createDropdown(BuildContext context, List<String> dropdownItems, String hintString,
+      FilterTypes filterValue) {
     return Expanded(
         child: Padding(
-            padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, 0.0),
+            padding:
+                EdgeInsets.fromLTRB(0, 0, UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING),
             child: Container(
                 padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
                 decoration: BoxDecoration(
@@ -192,64 +111,31 @@ class _AttemptFilterState extends State<AttemptFilter> {
                 child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                         style: Theme.of(context).accentTextTheme.subtitle2,
-                        items: _createDropdownItems(SendTypes.SEND_TYPES),
-                        value: filterSendType,
-                        hint: Text("Send type"),
+                        items: _createDropdownItems(dropdownItems),
+                        value: filters[filterValue],
+                        hint: Text(hintString),
                         isExpanded: true,
                         isDense: true,
                         onChanged: (value) {
                           setState(() {
-                            filterSendType = value;
+                            filters[filterValue] = value;
                           });
                           widget.filteredAttemptsStream.add(_filterAttempts());
                         })))));
-  }
-
-  Widget _showCategoryDropdown(BuildContext context) {
-    return Expanded(
-        child: Padding(
-        padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING / 2, UIConstants.SMALLER_PADDING / 2, 0.0, 0.0),
-    child: Container(
-            padding: EdgeInsets.all(UIConstants.SMALL_PADDING),
-            decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.all(Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
-            child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                    style: Theme.of(context).accentTextTheme.subtitle2,
-                    items: _createDropdownItems(ClimbCategories.CATEGORIES),
-                    value: filterCategory,
-                    hint: Text("Category"),
-                    isExpanded: true,
-                    isDense: true,
-                    onChanged: (value) {
-                      setState(() {
-                        filterCategory = value;
-                      });
-                      widget.filteredAttemptsStream.add(_filterAttempts());
-                    })))));
   }
 
   Widget _showClearDropdownsButton(BuildContext context) {
     return Container(
         child: IconButton(
             icon: Icon(Icons.cancel,
-                color: (filterGradeset == null &&
-                        filterGrade == null &&
-                        filterTimeframe == null &&
-                        filterLocation == null &&
-                        filterSendType == null &&
-                        filterCategory == null)
+                color: (filters.values.every((value) => value == null))
                     ? Colors.grey
                     : Theme.of(context).accentColor),
             onPressed: () {
               setState(() {
-                filterGradeset = null;
-                filterGrade = null;
-                filterTimeframe = null;
-                filterLocation = null;
-                filterSendType = null;
-                filterCategory = null;
+                filters.keys.forEach((key) {
+                  filters.update(key, (value) => null);
+                });
               });
               widget.filteredAttemptsStream.add(_filterAttempts());
             }));
@@ -272,50 +158,66 @@ class _AttemptFilterState extends State<AttemptFilter> {
   List<Attempt> _filterAttempts() {
     List<Attempt> filteredAttempts = widget.attempts;
 
-    if (filterGradeset != null) {
-      if (filterGrade != null) {
-        filteredAttempts =
-            filteredAttempts.where((attempt) => attempt.climbGrade == filterGrade).toList();
+    if (filters[FilterTypes.gradeSet] != null) {
+      if (filters[FilterTypes.grade] != null) {
+        filteredAttempts = filteredAttempts
+            .where((attempt) => attempt.climbGrade == filters[FilterTypes.grade])
+            .toList();
       } else {
         filteredAttempts = filteredAttempts
-            .where((attempt) => widget.grades[filterGradeset].contains(attempt.climbGrade))
+            .where((attempt) =>
+                widget.grades[filters[FilterTypes.gradeSet]].contains(attempt.climbGrade))
             .toList();
       }
     }
 
-    if (filterTimeframe != null) {
-      if (filterTimeframe == TimeFrames.TIME_FRAMES["lastWeek"]) {
+    if (filters[FilterTypes.timeframe] != null) {
+      if (filters[FilterTypes.timeframe] == TimeFrames.TIME_FRAMES["lastWeek"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 7))
             .toList();
-      } else if (filterTimeframe == TimeFrames.TIME_FRAMES["lastMonth"]) {
+      } else if (filters[FilterTypes.timeframe] == TimeFrames.TIME_FRAMES["lastMonth"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 30))
             .toList();
-      } else if (filterTimeframe == TimeFrames.TIME_FRAMES["lastYear"]) {
+      } else if (filters[FilterTypes.timeframe] == TimeFrames.TIME_FRAMES["lastYear"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 365))
             .toList();
       }
     }
-    if (filterLocation != null) {
+
+    if (filters[FilterTypes.location] != null) {
       filteredAttempts = filteredAttempts
-          .where((attempt) => attempt.locationId == widget.locationNamesToIds[filterLocation])
+          .where((attempt) =>
+              attempt.locationId == widget.locationNamesToIds[filters[FilterTypes.location]])
           .toList();
     }
-    if (filterSendType != null) {
-      filteredAttempts =
-          filteredAttempts.where((attempt) => attempt.sendType == filterSendType).toList();
-    }
-    if (filterCategory != null) {
+
+    if (filters[FilterTypes.sendType] != null) {
       filteredAttempts = filteredAttempts
-          .where((attempt) => attempt.climbCategories.contains(filterCategory))
+          .where((attempt) => attempt.sendType == filters[FilterTypes.sendType])
+          .toList();
+    }
+
+    if (filters[FilterTypes.category] != null) {
+      filteredAttempts = filteredAttempts
+          .where((attempt) => attempt.climbCategories.contains(filters[FilterTypes.category]))
           .toList();
     }
 
     return filteredAttempts;
   }
+}
+
+enum FilterTypes {
+  gradeSet,
+  grade,
+  timeframe,
+  location,
+  sendType,
+  category,
 }
