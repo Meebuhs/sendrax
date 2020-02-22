@@ -98,6 +98,10 @@ class _AttemptFilterState extends State<AttemptFilter> {
 
   Widget _createDropdown(BuildContext context, List<String> dropdownItems, String hintString,
       FilterTypes filterValue) {
+    if (dropdownItems?.length == 1 ?? false) {
+      filters.update(filterValue, (value) => dropdownItems.first);
+    }
+
     return Expanded(
         child: Padding(
             padding:
