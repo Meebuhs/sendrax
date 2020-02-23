@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Charts
         - Number of attempts by date
         - Number of attempts by time of day
+        - Highest and average grade by send type
     - Ability to filter attempts shown in the charts
         - Filter by grade, time, location, send type and category
 

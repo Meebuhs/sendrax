@@ -132,7 +132,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
     }
 
     List<AttemptsByDateSeries> chartData = <AttemptsByDateSeries>[];
-    DateTime firstDate = filteredAttempts[0].timestamp.toDate();
+    DateTime firstDate = filteredAttempts.first.timestamp.toDate();
     DateTime currentDate = DateTime(firstDate.year, firstDate.month, firstDate.day);
     int currentCount = 1;
 

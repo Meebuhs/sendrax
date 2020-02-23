@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/stats/charts/attempts_by_time.dart';
+import 'package:sendrax/stats/charts/grade_by_sendtype.dart';
 
 import 'charts/attempts_by_date.dart';
 
@@ -23,7 +24,7 @@ class StatsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(length: 2, child: _buildBody(context));
+    return DefaultTabController(length: 4, child: _buildBody(context));
   }
 
   Widget _buildBody(BuildContext context) {
@@ -52,6 +53,8 @@ class StatsScreen extends StatelessWidget {
                 tabs: [
                   Tab(child: Text('ATTEMPTS BY DATE')),
                   Tab(child: Text('ATTEMPTS BY TIME')),
+                  Tab(child: Text('HIGHEST GRADE BY SEND TYPE')),
+                  Tab(child: Text('AVERAGE GRADE BY SEND TYPE'))
                 ])));
   }
 
@@ -74,6 +77,20 @@ class StatsScreen extends StatelessWidget {
           categories: categories,
           grades: grades,
           locationNamesToIds: locationNamesToIds,
+        ),
+        GradeBySendTypeChart(
+          attempts: attempts,
+          categories: categories,
+          grades: grades,
+          locationNamesToIds: locationNamesToIds,
+          average: false,
+        ),
+        GradeBySendTypeChart(
+          attempts: attempts,
+          categories: categories,
+          grades: grades,
+          locationNamesToIds: locationNamesToIds,
+          average: true,
         ),
       ],
     );

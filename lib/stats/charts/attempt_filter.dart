@@ -12,6 +12,7 @@ class AttemptFilter extends StatefulWidget {
       @required this.locationNamesToIds,
       @required this.filteredAttemptsStream,
       this.filterGrades = false,
+      this.gradeSetFilterStream,
       this.grades})
       : super(key: key);
   final List<Attempt> attempts;
@@ -19,6 +20,7 @@ class AttemptFilter extends StatefulWidget {
   final Map<String, String> locationNamesToIds;
   final StreamController<List<Attempt>> filteredAttemptsStream;
   final bool filterGrades;
+  final StreamController<String> gradeSetFilterStream;
   final Map<String, List<String>> grades;
 
   @override
@@ -102,6 +104,11 @@ class _AttemptFilterState extends State<AttemptFilter> {
       FilterTypes filterValue) {
     if (dropdownItems?.length == 1 ?? false) {
       filters.update(filterValue, (value) => dropdownItems.first);
+      if (filterValue == FilterTypes.gradeSet) {
+        if (widget.gradeSetFilterStream != null) {
+          widget.gradeSetFilterStream.add(dropdownItems.first);
+        }
+      }
     }
 
     return Expanded(
@@ -126,6 +133,11 @@ class _AttemptFilterState extends State<AttemptFilter> {
                           setState(() {
                             filters[filterValue] = value;
                           });
+                          if (filterValue == FilterTypes.gradeSet) {
+                            if (widget.gradeSetFilterStream != null) {
+                              widget.gradeSetFilterStream.add(value);
+                            }
+                          }
                           widget.filteredAttemptsStream.add(_filterAttempts());
                         })))));
   }
@@ -143,6 +155,9 @@ class _AttemptFilterState extends State<AttemptFilter> {
                   filters.update(key, (value) => null);
                 });
               });
+              if (widget.gradeSetFilterStream != null && widget.grades.keys.length > 1) {
+                widget.gradeSetFilterStream.add(null);
+              }
               widget.filteredAttemptsStream.add(_filterAttempts());
             }));
   }
