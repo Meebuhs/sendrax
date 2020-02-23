@@ -47,13 +47,11 @@ class TimeFrames {
   };
 }
 
-// @formatter:off
 class SendTypes {
-  static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt",
-    "Red Point", "Hang Dog", "Second", "Top Rope Onsight", "Top Rope Flash", "Top Rope",
-    "Top Rope Solo Onsight", "Top Rope Solo Flash", "Top Sope Solo", "First Ascent"];
+  static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt"];
 }
 
+// @formatter:off
 class ClimbCategories {
   static const List<String> CATEGORIES = const ["Crimps", "Edges", "Slopers", "Pinches", "Pockets",
     "Slopey Crimps", "Jugs", "Volumes", "Bad Feet", "Roof", "Overhung", "Slab", "Mantle", "Powerful",

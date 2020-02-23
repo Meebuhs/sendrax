@@ -10,12 +10,14 @@ class StatsScreen extends StatelessWidget {
       {Key key,
       @required this.attempts,
       @required this.locations,
+      @required this.categories,
       @required this.locationNamesToIds,
       @required this.grades})
       : super(key: key);
 
   final List<Attempt> attempts;
   final List<Location> locations;
+  final List<String> categories;
   final Map<String, String> locationNamesToIds;
   final Map<String, List<String>> grades;
 
@@ -63,13 +65,15 @@ class StatsScreen extends StatelessWidget {
       children: [
         AttemptsByDateChart(
           attempts: attempts,
-          locationNamesToIds: locationNamesToIds,
+          categories: categories,
           grades: grades,
+          locationNamesToIds: locationNamesToIds,
         ),
         AttemptsByTimeChart(
           attempts: attempts,
-          locationNamesToIds: locationNamesToIds,
+          categories: categories,
           grades: grades,
+          locationNamesToIds: locationNamesToIds,
         ),
       ],
     );

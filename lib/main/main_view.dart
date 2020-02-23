@@ -93,6 +93,7 @@ class MainWidget extends StatelessWidget {
                 StatsScreen(
                   attempts: state.attempts,
                   locations: state.locations,
+                  categories: state.categories,
                   locationNamesToIds: locationNamesToIds,
                   grades: grades,
                 ),

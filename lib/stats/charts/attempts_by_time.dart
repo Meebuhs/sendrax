@@ -10,11 +10,16 @@ import 'attempt_filter.dart';
 
 class AttemptsByTimeChart extends StatefulWidget {
   AttemptsByTimeChart(
-      {Key key, @required this.attempts, @required this.locationNamesToIds, @required this.grades})
+      {Key key,
+      @required this.attempts,
+      @required this.categories,
+      @required this.grades,
+      @required this.locationNamesToIds})
       : super(key: key);
   final List<Attempt> attempts;
-  final Map<String, String> locationNamesToIds;
+  final List<String> categories;
   final Map<String, List<String>> grades;
+  final Map<String, String> locationNamesToIds;
 
   @override
   _AttemptsByTimeChartState createState() => _AttemptsByTimeChartState();
@@ -46,6 +51,7 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
     List<Widget> children = <Widget>[];
     children.add(AttemptFilter(
       attempts: widget.attempts,
+      categories: widget.categories,
       locationNamesToIds: widget.locationNamesToIds,
       filteredAttemptsStream: filteredAttemptsStream,
       filterGrades: true,

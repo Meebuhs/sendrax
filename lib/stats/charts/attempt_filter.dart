@@ -8,12 +8,14 @@ class AttemptFilter extends StatefulWidget {
   AttemptFilter(
       {Key key,
       @required this.attempts,
+      @required this.categories,
       @required this.locationNamesToIds,
       @required this.filteredAttemptsStream,
       this.filterGrades = false,
       this.grades})
       : super(key: key);
   final List<Attempt> attempts;
+  final List<String> categories;
   final Map<String, String> locationNamesToIds;
   final StreamController<List<Attempt>> filteredAttemptsStream;
   final bool filterGrades;
@@ -93,7 +95,7 @@ class _AttemptFilterState extends State<AttemptFilter> {
   }
 
   Widget _showCategoryDropdown(BuildContext context) {
-    return _createDropdown(context, ClimbCategories.CATEGORIES, "Category", FilterTypes.category);
+    return _createDropdown(context, widget.categories, "Category", FilterTypes.category);
   }
 
   Widget _createDropdown(BuildContext context, List<String> dropdownItems, String hintString,
