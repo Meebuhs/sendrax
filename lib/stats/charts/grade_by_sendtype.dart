@@ -180,20 +180,21 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
 
     Map<String, List<int>> sendTypeToGradesAttempted =
         Map.fromIterable(SendTypes.SEND_TYPES, key: (item) => item, value: (item) => <int>[]);
+    sendTypeToGradesAttempted.update(filteredAttempts.first.sendType,
+        (value) => value..add(gradeToValueMap[filteredAttempts.first.climbGrade]));
 
     for (Attempt attempt in filteredAttempts.skip(1)) {
       DateTime attemptDate = attempt.timestamp.toDate();
       DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
+
       if (currentDate != startOfDay) {
         chartDataMap = _updateChartData(currentDate, sendTypeToGradesAttempted, chartDataMap);
-
         currentDate = startOfDay;
         sendTypeToGradesAttempted =
             Map.fromIterable(SendTypes.SEND_TYPES, key: (item) => item, value: (item) => <int>[]);
-      } else {
-        sendTypeToGradesAttempted.update(
-            attempt.sendType, (value) => value..add(gradeToValueMap[attempt.climbGrade]));
       }
+      sendTypeToGradesAttempted.update(
+          attempt.sendType, (value) => value..add(gradeToValueMap[attempt.climbGrade]));
     }
     chartDataMap = _updateChartData(currentDate, sendTypeToGradesAttempted, chartDataMap);
 
@@ -296,6 +297,11 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
 class AttemptsByDateSeries {
   final DateTime date;
   final double gradeValue;
+
+  @override
+  String toString() {
+    return "Series(${DateFormat('MMM d, y').format(date)}, $gradeValue)";
+  }
 
   AttemptsByDateSeries(this.date, this.gradeValue);
 }

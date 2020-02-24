@@ -28,7 +28,7 @@ class AttemptFilter extends StatefulWidget {
 }
 
 class _AttemptFilterState extends State<AttemptFilter> {
-  Map<FilterType, String> filters = <FilterType, String>{};
+  Map<FilterType, String> filters;
 
   Map<FilterType, Function(BuildContext)> filterDropdowns;
 
@@ -43,6 +43,7 @@ class _AttemptFilterState extends State<AttemptFilter> {
       FilterType.category: _showCategoryDropdown,
     };
 
+    filters = <FilterType, String>{};
     for (FilterType filterType in filterDropdowns.keys) {
       if (!widget.disableFilters.contains(filterType)) {
         filters.putIfAbsent(filterType, () => null);
