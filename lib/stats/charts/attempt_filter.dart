@@ -11,7 +11,14 @@ class AttemptFilter extends StatefulWidget {
       @required this.categories,
       @required this.locationNamesToIds,
       @required this.filteredAttemptsStream,
-      this.disableFilters = const <FilterType>[],
+      this.enableFilters = const <FilterType>[
+        FilterType.gradeSet,
+        FilterType.grade,
+        FilterType.timeframe,
+        FilterType.location,
+        FilterType.sendType,
+        FilterType.category
+      ],
       this.gradeSetFilterStream,
       this.grades})
       : super(key: key);
@@ -21,7 +28,7 @@ class AttemptFilter extends StatefulWidget {
   final StreamController<List<Attempt>> filteredAttemptsStream;
   final StreamController<String> gradeSetFilterStream;
   final Map<String, List<String>> grades;
-  final List<FilterType> disableFilters;
+  final List<FilterType> enableFilters;
 
   @override
   _AttemptFilterState createState() => _AttemptFilterState();
@@ -45,7 +52,7 @@ class _AttemptFilterState extends State<AttemptFilter> {
 
     filters = <FilterType, String>{};
     for (FilterType filterType in filterDropdowns.keys) {
-      if (!widget.disableFilters.contains(filterType)) {
+      if (widget.enableFilters.contains(filterType)) {
         filters.putIfAbsent(filterType, () => null);
       }
     }

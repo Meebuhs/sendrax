@@ -74,7 +74,7 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
             categories: widget.categories,
             locationNamesToIds: widget.locationNamesToIds,
             filteredAttemptsStream: filteredAttemptsStream,
-            disableFilters: [FilterType.grade, FilterType.sendType, FilterType.category],
+            enableFilters: [FilterType.gradeSet, FilterType.timeframe, FilterType.location],
             gradeSetFilterStream: gradeSetFilterStream,
             grades: widget.grades,
           ),
