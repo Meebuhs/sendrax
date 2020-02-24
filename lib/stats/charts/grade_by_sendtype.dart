@@ -41,9 +41,6 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
     Color(0xff898cff)
   ];
 
-  DateTime selectedDate;
-  int selectedCount;
-
   @override
   void initState() {
     filteredAttemptsStream = StreamController<List<Attempt>>.broadcast();
@@ -69,34 +66,20 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = <Widget>[];
-    children.add(AttemptFilter(
-      attempts: widget.attempts,
-      categories: widget.categories,
-      locationNamesToIds: widget.locationNamesToIds,
-      filteredAttemptsStream: filteredAttemptsStream,
-      disableFilters: [FilterType.grade, FilterType.sendType, FilterType.category],
-      gradeSetFilterStream: gradeSetFilterStream,
-      grades: widget.grades,
-    ));
-    children.add(_buildChart(context));
-    if (selectedDate != null) {
-      children.add(Padding(
-          padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-          child: Text(
-            "${DateFormat('MMM d, y').format(selectedDate)}: $selectedCount",
-            style: Theme.of(context).accentTextTheme.subtitle2,
-          )));
-    } else {
-      children.add(Padding(
-          padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-          child: Text(
-            " ",
-            style: Theme.of(context).accentTextTheme.subtitle2,
-          )));
-    }
     return Padding(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: Column(children: children));
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: Column(children: <Widget>[
+          AttemptFilter(
+            attempts: widget.attempts,
+            categories: widget.categories,
+            locationNamesToIds: widget.locationNamesToIds,
+            filteredAttemptsStream: filteredAttemptsStream,
+            disableFilters: [FilterType.grade, FilterType.sendType, FilterType.category],
+            gradeSetFilterStream: gradeSetFilterStream,
+            grades: widget.grades,
+          ),
+          _buildChart(context),
+        ]));
   }
 
   Widget _buildChart(BuildContext context) {
@@ -106,12 +89,6 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
         content = charts.TimeSeriesChart(
           chartSeries,
           dateTimeFactory: charts.LocalDateTimeFactory(),
-          selectionModels: [
-            charts.SelectionModelConfig(
-              type: charts.SelectionModelType.info,
-              changedListener: _onSelectionChanged,
-            )
-          ],
           primaryMeasureAxis: charts.NumericAxisSpec(
             renderSpec: charts.GridlineRendererSpec(
                 labelStyle: charts.TextStyleSpec(
@@ -136,13 +113,13 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
             ),
           )),
           behaviors: [
-            new charts.SeriesLegend(
+            charts.SeriesLegend(
               entryTextStyle: charts.TextStyleSpec(
                 fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
                 fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
                 color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
               ),
-            )
+            ),
           ],
         );
       } else {
@@ -173,8 +150,6 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
 
   List<charts.Series<AttemptsByDateSeries, DateTime>> _buildChartSeries(
       BuildContext context, List<Attempt> filteredAttempts) {
-    _resetChartSelection();
-
     if (filteredAttempts.isEmpty) {
       return null;
     }
@@ -229,15 +204,6 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
     return chartSeries;
   }
 
-  void _resetChartSelection() {
-    if (selectedDate != null) {
-      setState(() {
-        selectedDate = null;
-        selectedCount = null;
-      });
-    }
-  }
-
   Map<String, List<AttemptsByDateSeries>> _updateChartData(
       DateTime currentDate,
       Map<String, List<int>> sendTypeToGradesAttempted,
@@ -277,23 +243,6 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
       ));
     }
     return ticks;
-  }
-
-  _onSelectionChanged(charts.SelectionModel model) {
-    final selectedDatum = model.selectedDatum;
-    DateTime date;
-    int count;
-
-    if (selectedDatum.isNotEmpty) {
-      date = selectedDatum.first.datum.date;
-      count = selectedDatum.first.datum.count;
-    }
-
-    // Request a build.
-    setState(() {
-      selectedDate = date;
-      selectedCount = count;
-    });
   }
 
   @override
