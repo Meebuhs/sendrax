@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
-import 'package:sendrax/stats/charts/attempts_by_time.dart';
-import 'package:sendrax/stats/charts/grade_by_sendtype.dart';
 
 import 'charts/attempts_by_date.dart';
+import 'charts/attempts_by_day.dart';
+import 'charts/attempts_by_time.dart';
+import 'charts/grade_by_sendtype.dart';
 
-class StatsScreen extends StatelessWidget {
+class StatsScreen extends StatefulWidget {
   const StatsScreen(
       {Key key,
       @required this.attempts,
@@ -23,22 +24,71 @@ class StatsScreen extends StatelessWidget {
   final Map<String, List<String>> grades;
 
   @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(length: 4, child: _buildBody(context));
+  _StatsScreenState createState() => _StatsScreenState();
+}
+
+class _StatsScreenState extends State<StatsScreen> {
+  Map<String, Widget> tabs;
+
+  @override
+  void initState() {
+    tabs = {
+      "ATTEMPTS BY DATE": AttemptsByDateChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+      ),
+      "ATTEMPTS BY DAY": AttemptsByDayChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+      ),
+      "ATTEMPTS BY TIME": AttemptsByTimeChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+      ),
+      "HIGHEST GRADE BY SEND TYPE": GradeBySendTypeChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+        average: false,
+      ),
+      "AVERAGE GRADE BY SEND TYPE": GradeBySendTypeChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+        average: true,
+      )
+    };
+    super.initState();
   }
 
-  Widget _buildBody(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(length: tabs.keys.length, child: _buildBody(context, tabs));
+  }
+
+  Widget _buildBody(BuildContext context, Map<String, Widget> tabs) {
     return Column(
       children: <Widget>[
-        _buildTabBar(context),
+        _buildTabBar(context, tabs),
         Expanded(
-          child: _buildTabBarView(),
+          child: _buildTabBarView(tabs),
         )
       ],
     );
   }
 
-  Widget _buildTabBar(BuildContext context) {
+  Widget _buildTabBar(BuildContext context, Map<String, Widget> tabs) {
+    List<Widget> tabWidgets = <Widget>[];
+    tabs.forEach((key, value) => tabWidgets.add(Tab(child: Text(key))));
+
     return SizedBox(
         height: 50.0,
         width: double.infinity,
@@ -50,49 +100,20 @@ class StatsScreen extends StatelessWidget {
                 indicatorColor: Theme.of(context).accentColor,
                 labelColor: Theme.of(context).accentColor,
                 labelStyle: Theme.of(context).accentTextTheme.overline,
-                tabs: [
-                  Tab(child: Text('ATTEMPTS BY DATE')),
-                  Tab(child: Text('ATTEMPTS BY TIME')),
-                  Tab(child: Text('HIGHEST GRADE BY SEND TYPE')),
-                  Tab(child: Text('AVERAGE GRADE BY SEND TYPE'))
-                ])));
+                tabs: tabWidgets)));
   }
 
-  Widget _buildTabBarView() {
+  Widget _buildTabBarView(Map<String, Widget> tabs) {
     Map<String, String> locationNamesToIds = <String, String>{};
-    for (Location location in locations) {
+    for (Location location in widget.locations) {
       locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
     }
 
+    List<Widget> tabViews = <Widget>[];
+    tabs.forEach((key, value) => tabViews.add(value));
+
     return TabBarView(
-      children: [
-        AttemptsByDateChart(
-          attempts: attempts,
-          categories: categories,
-          grades: grades,
-          locationNamesToIds: locationNamesToIds,
-        ),
-        AttemptsByTimeChart(
-          attempts: attempts,
-          categories: categories,
-          grades: grades,
-          locationNamesToIds: locationNamesToIds,
-        ),
-        GradeBySendTypeChart(
-          attempts: attempts,
-          categories: categories,
-          grades: grades,
-          locationNamesToIds: locationNamesToIds,
-          average: false,
-        ),
-        GradeBySendTypeChart(
-          attempts: attempts,
-          categories: categories,
-          grades: grades,
-          locationNamesToIds: locationNamesToIds,
-          average: true,
-        ),
-      ],
+      children: tabViews,
     );
   }
 }
