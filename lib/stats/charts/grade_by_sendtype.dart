@@ -75,7 +75,7 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
       categories: widget.categories,
       locationNamesToIds: widget.locationNamesToIds,
       filteredAttemptsStream: filteredAttemptsStream,
-      disableFilters: [FilterType.grade, FilterType.category],
+      disableFilters: [FilterType.grade, FilterType.sendType, FilterType.category],
       gradeSetFilterStream: gradeSetFilterStream,
       grades: widget.grades,
     ));
@@ -135,6 +135,15 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
               color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
             ),
           )),
+          behaviors: [
+            new charts.SeriesLegend(
+              entryTextStyle: charts.TextStyleSpec(
+                fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+              ),
+            )
+          ],
         );
       } else {
         content = Center(
