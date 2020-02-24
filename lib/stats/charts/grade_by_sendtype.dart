@@ -42,7 +42,9 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
     filteredAttemptsStream = StreamController<List<Attempt>>.broadcast();
     filteredAttemptsListener = filteredAttemptsStream.stream.listen((filteredAttempts) {
       setState(() {
-        chartSeries = _buildChartSeries(context, filteredAttempts);
+        if (filterGradeSet != null) {
+          chartSeries = _buildChartSeries(context, filteredAttempts);
+        }
       });
     });
     gradeSetFilterStream = StreamController<String>.broadcast();
@@ -224,26 +226,21 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
       Map<String, List<int>> sendTypeToGradesAttempted,
       Map<String, List<AttemptsByDateSeries>> chartDataMap) {
     for (String sendType in SendTypes.SEND_TYPES) {
-      chartDataMap.update(sendType, (value) {
-        if (widget.average) {
-          return value
-            ..add(AttemptsByDateSeries(
-                currentDate,
-                (sendTypeToGradesAttempted[sendType].isEmpty)
-                    ? 0.0
-                    : sendTypeToGradesAttempted[sendType].reduce((a, b) => a + b) /
-                        sendTypeToGradesAttempted[sendType].length));
-        } else {
-          return value
-            ..add(AttemptsByDateSeries(
-                currentDate,
-                (sendTypeToGradesAttempted[sendType].isEmpty)
-                    ? 0.0
-                    : sendTypeToGradesAttempted[sendType]
-                        .reduce((a, b) => a > b ? a : b)
-                        .toDouble()));
-        }
-      });
+      if (sendTypeToGradesAttempted[sendType].isNotEmpty) {
+        chartDataMap.update(sendType, (value) {
+          if (widget.average) {
+            return value
+              ..add(AttemptsByDateSeries(
+                  currentDate,
+                  sendTypeToGradesAttempted[sendType].reduce((a, b) => a + b) /
+                      sendTypeToGradesAttempted[sendType].length));
+          } else {
+            return value
+              ..add(AttemptsByDateSeries(currentDate,
+                  sendTypeToGradesAttempted[sendType].reduce((a, b) => a > b ? a : b).toDouble()));
+          }
+        });
+      }
     }
     return chartDataMap;
   }
