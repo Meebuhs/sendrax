@@ -11,7 +11,7 @@ class AttemptFilter extends StatefulWidget {
       @required this.categories,
       @required this.locationNamesToIds,
       @required this.filteredAttemptsStream,
-      this.filterGrades = false,
+      this.disableFilters = const <FilterType>[],
       this.gradeSetFilterStream,
       this.grades})
       : super(key: key);
@@ -19,92 +19,96 @@ class AttemptFilter extends StatefulWidget {
   final List<String> categories;
   final Map<String, String> locationNamesToIds;
   final StreamController<List<Attempt>> filteredAttemptsStream;
-  final bool filterGrades;
   final StreamController<String> gradeSetFilterStream;
   final Map<String, List<String>> grades;
+  final List<FilterType> disableFilters;
 
   @override
   _AttemptFilterState createState() => _AttemptFilterState();
 }
 
 class _AttemptFilterState extends State<AttemptFilter> {
-  Map<FilterTypes, String> filters = <FilterTypes, String>{
-    FilterTypes.gradeSet: null,
-    FilterTypes.grade: null,
-    FilterTypes.timeframe: null,
-    FilterTypes.location: null,
-    FilterTypes.sendType: null,
-    FilterTypes.category: null,
-  };
+  Map<FilterType, String> filters = <FilterType, String>{};
+
+  Map<FilterType, Function(BuildContext)> filterDropdowns;
+
+  @override
+  void initState() {
+    filterDropdowns = <FilterType, Function(BuildContext)>{
+      FilterType.gradeSet: _showGradeSetDropdown,
+      FilterType.grade: _showGradeDropdown,
+      FilterType.timeframe: _showTimeFrameDropdown,
+      FilterType.location: _showLocationDropdown,
+      FilterType.sendType: _showSendTypeDropdown,
+      FilterType.category: _showCategoryDropdown,
+    };
+
+    for (FilterType filterType in filterDropdowns.keys) {
+      if (!widget.disableFilters.contains(filterType)) {
+        filters.putIfAbsent(filterType, () => null);
+      }
+    }
+    super.initState();
+  }
 
   Widget build(BuildContext context) {
-    List<Widget> children = <Widget>[];
-    children = [
-      Row(
-        children: <Widget>[
-          _showTimeFrameDropdown(context),
-          _showLocationDropdown(context),
-        ],
-      ),
-      Row(
-        children: <Widget>[
-          _showSendTypeDropdown(context),
-          _showCategoryDropdown(context),
-        ],
-      )
-    ];
+    List<Widget> columnChildren = <Widget>[];
+    List<Widget> rowChildren = <Widget>[];
+    bool firstInRow = true;
 
-    if (widget.filterGrades) {
-      children.insert(
-        0,
-        Row(
-          children: <Widget>[
-            _showGradeSetDropdown(context),
-            _showGradeDropdown(context),
-          ],
-        ),
-      );
+    for (FilterType filterType in filters.keys) {
+      rowChildren.add(filterDropdowns[filterType](context));
+      if (firstInRow) {
+        firstInRow = false;
+      } else {
+        columnChildren.add(Row(children: rowChildren));
+        rowChildren = <Widget>[];
+        firstInRow = true;
+      }
+    }
+    if (rowChildren.isNotEmpty) {
+      columnChildren.add(Row(children: rowChildren));
     }
 
     return Container(
         child: Row(children: <Widget>[
-      Expanded(child: Column(mainAxisSize: MainAxisSize.min, children: children)),
+      Expanded(child: Column(mainAxisSize: MainAxisSize.min, children: columnChildren)),
       _showClearDropdownsButton(context),
     ]));
   }
 
   Widget _showGradeSetDropdown(BuildContext context) {
-    return _createDropdown(context, widget.grades.keys.toList(), "Grade set", FilterTypes.gradeSet);
+    return _createDropdown(context, widget.grades.keys.toList(), "Grade set", FilterType.gradeSet);
   }
 
   Widget _showGradeDropdown(BuildContext context) {
     return _createDropdown(
-        context, widget.grades[filters[FilterTypes.gradeSet]], "Grade", FilterTypes.grade);
+        context, widget.grades[filters[FilterType.gradeSet]], "Grade", FilterType.grade);
   }
 
   Widget _showTimeFrameDropdown(BuildContext context) {
     return _createDropdown(
-        context, TimeFrames.TIME_FRAMES.values.toList(), "Timeframe", FilterTypes.timeframe);
+        context, TimeFrames.TIME_FRAMES.values.toList(), "Timeframe", FilterType.timeframe);
   }
 
   Widget _showLocationDropdown(BuildContext context) {
     return _createDropdown(
-        context, widget.locationNamesToIds.keys.toList(), "Location", FilterTypes.location);
+        context, widget.locationNamesToIds.keys.toList(), "Location", FilterType.location);
   }
 
   Widget _showSendTypeDropdown(BuildContext context) {
-    return _createDropdown(context, SendTypes.SEND_TYPES, "Send type", FilterTypes.sendType);
+    return _createDropdown(context, SendTypes.SEND_TYPES, "Send type", FilterType.sendType);
   }
 
   Widget _showCategoryDropdown(BuildContext context) {
-    return _createDropdown(context, widget.categories, "Category", FilterTypes.category);
+    return _createDropdown(context, widget.categories, "Category", FilterType.category);
   }
 
-  Widget _createDropdown(BuildContext context, List<String> dropdownItems, String hintString,
-      FilterTypes filterValue) {
+  Widget _createDropdown(
+      BuildContext context, List<String> dropdownItems, String hintString, FilterType filterValue) {
     if (dropdownItems?.length == 1 ?? false) {
       filters.update(filterValue, (value) => dropdownItems.first);
-      if (filterValue == FilterTypes.gradeSet) {
+      if (filterValue == FilterType.gradeSet) {
         if (widget.gradeSetFilterStream != null) {
           widget.gradeSetFilterStream.add(dropdownItems.first);
         }
@@ -133,7 +137,7 @@ class _AttemptFilterState extends State<AttemptFilter> {
                           setState(() {
                             filters[filterValue] = value;
                           });
-                          if (filterValue == FilterTypes.gradeSet) {
+                          if (filterValue == FilterType.gradeSet) {
                             if (widget.gradeSetFilterStream != null) {
                               widget.gradeSetFilterStream.add(value);
                             }
@@ -179,31 +183,31 @@ class _AttemptFilterState extends State<AttemptFilter> {
   List<Attempt> _filterAttempts() {
     List<Attempt> filteredAttempts = widget.attempts;
 
-    if (filters[FilterTypes.gradeSet] != null) {
-      if (filters[FilterTypes.grade] != null) {
+    if (filters[FilterType.gradeSet] != null) {
+      if (filters[FilterType.grade] != null) {
         filteredAttempts = filteredAttempts
-            .where((attempt) => attempt.climbGrade == filters[FilterTypes.grade])
+            .where((attempt) => attempt.climbGrade == filters[FilterType.grade])
             .toList();
       } else {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
-                widget.grades[filters[FilterTypes.gradeSet]].contains(attempt.climbGrade))
+                widget.grades[filters[FilterType.gradeSet]].contains(attempt.climbGrade))
             .toList();
       }
     }
 
-    if (filters[FilterTypes.timeframe] != null) {
-      if (filters[FilterTypes.timeframe] == TimeFrames.TIME_FRAMES["lastWeek"]) {
+    if (filters[FilterType.timeframe] != null) {
+      if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["lastWeek"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 7))
             .toList();
-      } else if (filters[FilterTypes.timeframe] == TimeFrames.TIME_FRAMES["lastMonth"]) {
+      } else if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["lastMonth"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 30))
             .toList();
-      } else if (filters[FilterTypes.timeframe] == TimeFrames.TIME_FRAMES["lastYear"]) {
+      } else if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["lastYear"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 365))
@@ -211,22 +215,22 @@ class _AttemptFilterState extends State<AttemptFilter> {
       }
     }
 
-    if (filters[FilterTypes.location] != null) {
+    if (filters[FilterType.location] != null) {
       filteredAttempts = filteredAttempts
           .where((attempt) =>
-              attempt.locationId == widget.locationNamesToIds[filters[FilterTypes.location]])
+              attempt.locationId == widget.locationNamesToIds[filters[FilterType.location]])
           .toList();
     }
 
-    if (filters[FilterTypes.sendType] != null) {
+    if (filters[FilterType.sendType] != null) {
       filteredAttempts = filteredAttempts
-          .where((attempt) => attempt.sendType == filters[FilterTypes.sendType])
+          .where((attempt) => attempt.sendType == filters[FilterType.sendType])
           .toList();
     }
 
-    if (filters[FilterTypes.category] != null) {
+    if (filters[FilterType.category] != null) {
       filteredAttempts = filteredAttempts
-          .where((attempt) => attempt.climbCategories.contains(filters[FilterTypes.category]))
+          .where((attempt) => attempt.climbCategories.contains(filters[FilterType.category]))
           .toList();
     }
 
@@ -234,7 +238,7 @@ class _AttemptFilterState extends State<AttemptFilter> {
   }
 }
 
-enum FilterTypes {
+enum FilterType {
   gradeSet,
   grade,
   timeframe,

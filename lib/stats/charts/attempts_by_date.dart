@@ -51,7 +51,6 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
       categories: widget.categories,
       locationNamesToIds: widget.locationNamesToIds,
       filteredAttemptsStream: filteredAttemptsStream,
-      filterGrades: true,
       grades: widget.grades,
     ));
     children.add(_buildChart(context));
