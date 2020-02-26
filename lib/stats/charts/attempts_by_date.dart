@@ -93,16 +93,19 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                     ],
                     primaryMeasureAxis: charts.NumericAxisSpec(
                         renderSpec: charts.GridlineRendererSpec(
-                      labelStyle: charts.TextStyleSpec(
-                        fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                        fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                        color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-                      ),
-                      lineStyle: charts.LineStyleSpec(
-                        color:
-                            charts.ColorUtil.fromDartColor(Theme.of(context).dialogBackgroundColor),
-                      ),
-                    )),
+                          labelStyle: charts.TextStyleSpec(
+                            fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                            fontWeight:
+                                Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                            color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                          ),
+                          lineStyle: charts.LineStyleSpec(
+                            color: charts.ColorUtil.fromDartColor(
+                                Theme.of(context).dialogBackgroundColor),
+                          ),
+                        ),
+                        tickProviderSpec:
+                        charts.BasicNumericTickProviderSpec(desiredTickCount: 6)),
                     domainAxis: charts.DateTimeAxisSpec(
                         renderSpec: charts.SmallTickRendererSpec(
                       lineStyle: charts.LineStyleSpec(

@@ -96,6 +96,7 @@ class _DownclimbedByGradeChartState extends State<DownclimbedByGradeChart> {
                   color: charts.ColorUtil.fromDartColor(Theme.of(context).dialogBackgroundColor),
                 ),
               ),
+              tickProviderSpec: charts.StaticNumericTickProviderSpec(_buildMeasureTicks()),
               tickFormatterSpec: charts.BasicNumericTickFormatterSpec.fromNumberFormat(
                   NumberFormat.percentPattern())),
           domainAxis: charts.OrdinalAxisSpec(
@@ -109,7 +110,7 @@ class _DownclimbedByGradeChartState extends State<DownclimbedByGradeChart> {
                 color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
               ),
             ),
-            tickProviderSpec: charts.StaticOrdinalTickProviderSpec(_buildTicks()),
+            tickProviderSpec: charts.StaticOrdinalTickProviderSpec(_buildDomainTicks()),
           ),
           barGroupingType: charts.BarGroupingType.grouped,
           defaultInteractions: false,
@@ -203,7 +204,16 @@ class _DownclimbedByGradeChartState extends State<DownclimbedByGradeChart> {
     return chartSeries;
   }
 
-  List<charts.TickSpec<String>> _buildTicks() {
+  List<charts.TickSpec<num>> _buildMeasureTicks() {
+    List<charts.TickSpec<num>> ticks = [];
+    for (int value in List.generate(6, (index) => index)) {
+      ticks.add(charts.TickSpec<num>(value * 0.2,
+          label: NumberFormat.percentPattern().format(value * 0.2)));
+    }
+    return ticks;
+  }
+
+  List<charts.TickSpec<String>> _buildDomainTicks() {
     return widget.grades[filterGradeSet].map((grade) => charts.TickSpec(grade)).toList();
   }
 
