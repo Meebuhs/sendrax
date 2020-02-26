@@ -5,13 +5,13 @@ import 'package:sendrax/util/constants.dart';
 
 import 'attempts_by_value.dart';
 
-class AttemptsByDayChart extends StatelessWidget {
-  AttemptsByDayChart(
-      {Key key,
-      @required this.attempts,
-      @required this.categories,
-      @required this.grades,
-      @required this.locationNamesToIds})
+
+class AttemptsByCategoryChart extends StatelessWidget {
+  AttemptsByCategoryChart({Key key,
+    @required this.attempts,
+    @required this.categories,
+    @required this.grades,
+    @required this.locationNamesToIds})
       : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
@@ -32,37 +32,22 @@ class AttemptsByDayChart extends StatelessWidget {
         FilterType.gradeSet,
         FilterType.grade,
         FilterType.timeframe,
-        FilterType.location,
-        FilterType.category
+        FilterType.location
       ],
+      rotateLabels: true,
     );
   }
 
   List<charts.TickSpec<String>> buildTicks() {
-    Map<int, String> weekdays = {
-      0: "Mon",
-      1: "Tue",
-      2: "Wed",
-      3: "Thu",
-      4: "Fri",
-      5: "Sat",
-      6: "Sun"
-    };
-
-    List<charts.TickSpec<String>> ticks = [];
-
-    for (int day in Iterable.generate(7)) {
-      ticks.add(charts.TickSpec(day.toString(), label: weekdays[day]));
-    }
-    return ticks;
+    return categories.map((category) => charts.TickSpec(category)).toList();
   }
 
-  String processAttempt(Attempt attempt) {
-    return ((attempt.timestamp.toDate().weekday + 6) % 7).toString();
+  List<String> processAttempt(Attempt attempt) {
+    return attempt.climbCategories;
   }
 
   Map<String, int> createEmptyMap() {
-    return Map.fromIterable(List<int>.generate(7, (i) => i),
-        key: (item) => item.toString(), value: (item) => 0);
+    return Map.fromIterable(categories,
+        key: (item) => item, value: (item) => 0);
   }
 }

@@ -3,22 +3,23 @@ import 'dart:async';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
+import 'package:sendrax/stats/charts/attempt_filter.dart';
 import 'package:sendrax/util/constants.dart';
 
-import 'attempt_filter.dart';
 
 class AttemptsByValueChart extends StatefulWidget {
-  AttemptsByValueChart({
-    Key key,
-    @required this.attempts,
-    @required this.categories,
-    @required this.grades,
-    @required this.locationNamesToIds,
-    @required this.buildTicks,
-    @required this.processAttempt,
-    @required this.createEmptyMap,
-    @required this.enableFilters,
-  }) : super(key: key);
+  AttemptsByValueChart(
+      {Key key,
+      @required this.attempts,
+      @required this.categories,
+      @required this.grades,
+      @required this.locationNamesToIds,
+      @required this.buildTicks,
+      @required this.processAttempt,
+      @required this.createEmptyMap,
+      @required this.enableFilters,
+      this.rotateLabels})
+      : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
   final Map<String, List<String>> grades;
@@ -27,6 +28,7 @@ class AttemptsByValueChart extends StatefulWidget {
   final Function(Attempt) processAttempt;
   final Function() createEmptyMap;
   final List<FilterType> enableFilters;
+  bool rotateLabels = false;
 
   @override
   _AttemptsByValueChartState createState() => _AttemptsByValueChartState();
@@ -101,6 +103,7 @@ class _AttemptsByValueChartState extends State<AttemptsByValueChart> {
                               Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
                           color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
                         ),
+                        labelRotation: widget.rotateLabels ?? false ? 45 : 0,
                       ),
                       tickProviderSpec: charts.StaticOrdinalTickProviderSpec(ticks),
                     ),
@@ -137,8 +140,10 @@ class _AttemptsByValueChartState extends State<AttemptsByValueChart> {
     }
 
     for (Attempt attempt in filteredAttempts) {
-      String value = widget.processAttempt(attempt);
-      valuesBySendType[attempt.sendType].update(value, (count) => count + 1);
+      List<String> values = widget.processAttempt(attempt);
+      for (String value in values) {
+        valuesBySendType[attempt.sendType].update(value, (count) => count + 1);
+      }
     }
 
     Map<String, List<AttemptsByValueSeries>> chartDataMap = <String, List<AttemptsByValueSeries>>{};

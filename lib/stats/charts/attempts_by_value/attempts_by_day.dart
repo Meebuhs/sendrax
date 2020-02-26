@@ -1,13 +1,12 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/util/constants.dart';
 
 import 'attempts_by_value.dart';
 
-class AttemptsByTimeChart extends StatelessWidget {
-  AttemptsByTimeChart(
+class AttemptsByDayChart extends StatelessWidget {
+  AttemptsByDayChart(
       {Key key,
       @required this.attempts,
       @required this.categories,
@@ -40,33 +39,30 @@ class AttemptsByTimeChart extends StatelessWidget {
   }
 
   List<charts.TickSpec<String>> buildTicks() {
-    DateTime time = DateTime.now();
+    Map<int, String> weekdays = {
+      0: "Mon",
+      1: "Tue",
+      2: "Wed",
+      3: "Thu",
+      4: "Fri",
+      5: "Sat",
+      6: "Sun"
+    };
 
     List<charts.TickSpec<String>> ticks = [];
 
-    for (int hour in Iterable.generate(24)) {
-      if (hour % 6 == 0) {
-        ticks.add(charts.TickSpec(
-          hour.toString(),
-          label:
-              "${DateFormat('h a').format(DateTime(time.year, time.month, time.day, hour, time.minute, time.second, time.millisecond, time.microsecond))}",
-        ));
-      } else {
-        ticks.add(charts.TickSpec(
-          hour.toString(),
-          label: "",
-        ));
-      }
+    for (int day in Iterable.generate(7)) {
+      ticks.add(charts.TickSpec(day.toString(), label: weekdays[day]));
     }
     return ticks;
   }
 
-  String processAttempt(Attempt attempt) {
-    return (attempt.timestamp.toDate().hour).toString();
+  List<String> processAttempt(Attempt attempt) {
+    return [((attempt.timestamp.toDate().weekday + 6) % 7).toString()];
   }
 
   Map<String, int> createEmptyMap() {
-    return Map.fromIterable(List<int>.generate(24, (i) => i + 1),
-        key: (item) => (item - 1).toString(), value: (item) => 0);
+    return Map.fromIterable(List<int>.generate(7, (i) => i),
+        key: (item) => item.toString(), value: (item) => 0);
   }
 }

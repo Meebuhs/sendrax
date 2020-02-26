@@ -40,9 +40,9 @@ class AttemptsByLocationChart extends StatelessWidget {
     return locationNamesToIds.keys.toList().map((location) => charts.TickSpec(location)).toList();
   }
 
-  String processAttempt(Attempt attempt) {
-    return locationNamesToIds.keys.firstWhere((key) =>
-    locationNamesToIds[key] == attempt.locationId);
+  List<String> processAttempt(Attempt attempt) {
+    return [locationNamesToIds.keys.firstWhere((key) =>
+    locationNamesToIds[key] == attempt.locationId)];
   }
 
   Map<String, int> createEmptyMap() {
