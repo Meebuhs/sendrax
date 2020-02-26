@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         - Number of attempts by date
         - Number of attempts by day of week
         - Number of attempts by time of day
+        - Number of attempts by grade
+        - Proportion of climbs downclimbed by grade
+        - Number of attempts by location
+        - Number of attempts by category
         - Highest and average grade by send type
     - Ability to filter attempts shown in the charts
         - Filter by grade, time, location, send type and category

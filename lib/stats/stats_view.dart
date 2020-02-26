@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
+import 'package:sendrax/stats/charts/downclimbed_by_grade.dart';
 
 import 'charts/attempts_by_date.dart';
 import 'charts/attempts_by_grade.dart';
@@ -36,12 +37,6 @@ class _StatsScreenState extends State<StatsScreen> {
   @override
   void initState() {
     tabs = {
-      "ATTEMPTS BY GRADE": AttemptsByGradeChart(
-        attempts: widget.attempts,
-        categories: widget.categories,
-        grades: widget.grades,
-        locationNamesToIds: widget.locationNamesToIds,
-      ),
       "ATTEMPTS BY DATE": AttemptsByDateChart(
         attempts: widget.attempts,
         categories: widget.categories,
@@ -55,6 +50,18 @@ class _StatsScreenState extends State<StatsScreen> {
         locationNamesToIds: widget.locationNamesToIds,
       ),
       "ATTEMPTS BY TIME": AttemptsByTimeChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+      ),
+      "ATTEMPTS BY GRADE": AttemptsByGradeChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+      ),
+      "DOWNCLIMBED BY GRADE": DownclimbedByGradeChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
