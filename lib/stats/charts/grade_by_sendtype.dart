@@ -33,13 +33,6 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
   StreamSubscription<String> gradeSetFilterListener;
   String filterGradeSet;
   List<charts.Series> chartSeries;
-  List<Color> seriesColours = [
-    Color(0xffff89b5),
-    Color(0xffffdc89),
-    Color(0xffcff381),
-    Color(0xff90d4f7),
-    Color(0xff898cff)
-  ];
 
   @override
   void initState() {
@@ -194,7 +187,7 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
     SendTypes.SEND_TYPES.asMap().forEach((index, sendType) {
       chartSeries.add(charts.Series<AttemptsByDateSeries, DateTime>(
         id: sendType,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(seriesColours[index]),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(SeriesConstants.COLOURS[index]),
         domainFn: (AttemptsByDateSeries attempts, _) => attempts.date,
         measureFn: (AttemptsByDateSeries attempts, _) => attempts.gradeValue,
         data: chartDataMap[sendType],

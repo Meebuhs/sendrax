@@ -29,18 +29,6 @@ class _AttemptsByDayChartState extends State<AttemptsByDayChart> {
   StreamController<List<Attempt>> filteredAttemptsStream;
   StreamSubscription<List<Attempt>> filteredAttemptsListener;
   List<charts.Series> chartSeries;
-  Map<int, String> weekdays = {
-    0: "Mon",
-    1: "Tue",
-    2: "Wed",
-    3: "Thu",
-    4: "Fri",
-    5: "Sat",
-    6: "Sun"
-  };
-
-  int selectedDay;
-  int selectedCount;
 
   @override
   void initState() {
@@ -57,33 +45,25 @@ class _AttemptsByDayChartState extends State<AttemptsByDayChart> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = <Widget>[];
-    children.add(AttemptFilter(
-      attempts: widget.attempts,
-      categories: widget.categories,
-      locationNamesToIds: widget.locationNamesToIds,
-      filteredAttemptsStream: filteredAttemptsStream,
-      grades: widget.grades,
-    ));
-    children.add(_buildChart(context));
-    if (selectedDay != null) {
-      children.add(Padding(
-        padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-        child: Text(
-          "${weekdays[selectedDay]}: $selectedCount",
-          style: Theme.of(context).accentTextTheme.subtitle2,
-        ),
-      ));
-    } else {
-      children.add(Padding(
-          padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-          child: Text(
-            " ",
-            style: Theme.of(context).accentTextTheme.subtitle2,
-          )));
-    }
     return Padding(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: Column(children: children));
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: Column(children: [
+          AttemptFilter(
+            attempts: widget.attempts,
+            categories: widget.categories,
+            locationNamesToIds: widget.locationNamesToIds,
+            filteredAttemptsStream: filteredAttemptsStream,
+            enableFilters: [
+              FilterType.gradeSet,
+              FilterType.grade,
+              FilterType.timeframe,
+              FilterType.location,
+              FilterType.category
+            ],
+            grades: widget.grades,
+          ),
+          _buildChart(context)
+        ]));
   }
 
   Widget _buildChart(BuildContext context) {
@@ -94,13 +74,8 @@ class _AttemptsByDayChartState extends State<AttemptsByDayChart> {
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
             child: (chartSeries != null)
-                ? charts.BarChart(chartSeries,
-                    selectionModels: [
-                      charts.SelectionModelConfig(
-                        type: charts.SelectionModelType.info,
-                        changedListener: _onSelectionChanged,
-                      )
-                    ],
+                ? charts.BarChart(
+                    chartSeries,
                     primaryMeasureAxis: charts.NumericAxisSpec(
                         renderSpec: charts.GridlineRendererSpec(
                       labelStyle: charts.TextStyleSpec(
@@ -126,7 +101,20 @@ class _AttemptsByDayChartState extends State<AttemptsByDayChart> {
                         ),
                       ),
                       tickProviderSpec: charts.StaticOrdinalTickProviderSpec(ticks),
-                    ))
+                    ),
+                    barGroupingType: charts.BarGroupingType.stacked,
+                    defaultInteractions: false,
+                    behaviors: [
+                      charts.SeriesLegend(
+                        entryTextStyle: charts.TextStyleSpec(
+                          fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                          fontWeight:
+                              Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                          color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                        ),
+                      ),
+                    ],
+                  )
                 : Center(
                     child: Text(
                     "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
@@ -135,70 +123,66 @@ class _AttemptsByDayChartState extends State<AttemptsByDayChart> {
                   ))));
   }
 
-  List<charts.Series<AttemptsByTimeSeries, String>> _buildChartSeries(
+  List<charts.Series<AttemptsByDaySeries, String>> _buildChartSeries(
       BuildContext context, List<Attempt> filteredAttempts) {
-    _resetChartSelection();
-
     if (filteredAttempts.isEmpty) {
       return null;
     }
 
-    List<AttemptsByTimeSeries> chartData = <AttemptsByTimeSeries>[];
-    Map<int, int> dayCounts =
-        Map.fromIterable(List<int>.generate(7, (i) => i), key: (item) => item, value: (item) => 0);
+    Map<String, Map<int, int>> dayCountsBySendType = <String, Map<int, int>>{};
+    for (String sendType in SendTypes.SEND_TYPES) {
+      dayCountsBySendType.putIfAbsent(
+          sendType,
+          () => Map.fromIterable(List<int>.generate(7, (i) => i),
+              key: (item) => item, value: (item) => 0));
+    }
 
     for (Attempt attempt in filteredAttempts) {
       int day = (attempt.timestamp.toDate().weekday + 6) % 7;
-      dayCounts.update(day, (value) => dayCounts[day] + 1);
-    }
-    for (int hour in dayCounts.keys) {
-      chartData.add(AttemptsByTimeSeries(hour, dayCounts[hour]));
+      dayCountsBySendType[attempt.sendType].update(day, (value) => value + 1);
     }
 
-    return [
-      charts.Series<AttemptsByTimeSeries, String>(
-        id: 'attemptsByTime',
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-        domainFn: (AttemptsByTimeSeries attempts, _) => attempts.day.toString(),
-        measureFn: (AttemptsByTimeSeries attempts, _) => attempts.count,
-        data: chartData,
-      )
-    ];
+    Map<String, List<AttemptsByDaySeries>> chartDataMap = <String, List<AttemptsByDaySeries>>{};
+
+    for (String sendType in SendTypes.SEND_TYPES) {
+      chartDataMap.putIfAbsent(sendType, () => <AttemptsByDaySeries>[]);
+      for (int day in dayCountsBySendType[sendType].keys) {
+        chartDataMap[sendType].add(AttemptsByDaySeries(day, dayCountsBySendType[sendType][day]));
+      }
+    }
+
+    List<charts.Series<AttemptsByDaySeries, String>> chartSeries =
+        <charts.Series<AttemptsByDaySeries, String>>[];
+    SendTypes.SEND_TYPES.asMap().forEach((index, sendType) {
+      chartSeries.add(charts.Series<AttemptsByDaySeries, String>(
+        id: sendType,
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(SeriesConstants.COLOURS[index]),
+        domainFn: (AttemptsByDaySeries attempts, _) => attempts.day.toString(),
+        measureFn: (AttemptsByDaySeries attempts, _) => attempts.count,
+        data: chartDataMap[sendType],
+      ));
+    });
+
+    return chartSeries;
   }
 
   List<charts.TickSpec<String>> _buildTicks() {
+    Map<int, String> weekdays = {
+      0: "Mon",
+      1: "Tue",
+      2: "Wed",
+      3: "Thu",
+      4: "Fri",
+      5: "Sat",
+      6: "Sun"
+    };
+
     List<charts.TickSpec<String>> ticks = [];
 
     for (int day in Iterable.generate(7)) {
       ticks.add(charts.TickSpec(day.toString(), label: weekdays[day]));
     }
     return ticks;
-  }
-
-  void _resetChartSelection() {
-    if (selectedDay != null) {
-      setState(() {
-        selectedDay = null;
-        selectedCount = null;
-      });
-    }
-  }
-
-  _onSelectionChanged(charts.SelectionModel model) {
-    final selectedDatum = model.selectedDatum;
-    int hour;
-    int count;
-
-    if (selectedDatum.isNotEmpty) {
-      hour = selectedDatum.first.datum.day;
-      count = selectedDatum.first.datum.count;
-    }
-
-    // Request a build.
-    setState(() {
-      selectedDay = hour;
-      selectedCount = count;
-    });
   }
 
   @override
@@ -211,9 +195,9 @@ class _AttemptsByDayChartState extends State<AttemptsByDayChart> {
   }
 }
 
-class AttemptsByTimeSeries {
+class AttemptsByDaySeries {
   final int day;
   final int count;
 
-  AttemptsByTimeSeries(this.day, this.count);
+  AttemptsByDaySeries(this.day, this.count);
 }

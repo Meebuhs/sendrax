@@ -30,8 +30,6 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
   StreamController<List<Attempt>> filteredAttemptsStream;
   StreamSubscription<List<Attempt>> filteredAttemptsListener;
   List<charts.Series> chartSeries;
-  int selectedHour;
-  int selectedCount;
 
   @override
   void initState() {
@@ -48,44 +46,25 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = <Widget>[];
-    children.add(AttemptFilter(
-      attempts: widget.attempts,
-      categories: widget.categories,
-      locationNamesToIds: widget.locationNamesToIds,
-      filteredAttemptsStream: filteredAttemptsStream,
-      grades: widget.grades,
-    ));
-    children.add(_buildChart(context));
-    DateTime time = DateTime.now();
-    if (selectedHour != null) {
-      children.add(Padding(
-        padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-        child: _buildSelectedText(time),
-      ));
-    } else {
-      children.add(Padding(
-          padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
-          child: Text(
-            " ",
-            style: Theme.of(context).accentTextTheme.subtitle2,
-          )));
-    }
     return Padding(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: Column(children: children));
-  }
-
-  Widget _buildSelectedText(DateTime time) {
-    String firstTime = DateFormat('h a').format(DateTime(time.year, time.month, time.day,
-        selectedHour, time.minute, time.second, time.millisecond, time.microsecond));
-    String secondTime = DateFormat('h a').format(DateTime(time.year, time.month, time.day,
-        selectedHour + 1, time.minute, time.second, time.millisecond, time.microsecond));
-    String rangeText = "$firstTime - $secondTime: $selectedCount";
-
-    return Text(
-      rangeText,
-      style: Theme.of(context).accentTextTheme.subtitle2,
-    );
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: Column(children: [
+          AttemptFilter(
+            attempts: widget.attempts,
+            categories: widget.categories,
+            locationNamesToIds: widget.locationNamesToIds,
+            filteredAttemptsStream: filteredAttemptsStream,
+            enableFilters: [
+              FilterType.gradeSet,
+              FilterType.grade,
+              FilterType.timeframe,
+              FilterType.location,
+              FilterType.category
+            ],
+            grades: widget.grades,
+          ),
+          _buildChart(context)
+        ]));
   }
 
   Widget _buildChart(BuildContext context) {
@@ -96,13 +75,8 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
             child: (chartSeries != null)
-                ? charts.BarChart(chartSeries,
-                    selectionModels: [
-                      charts.SelectionModelConfig(
-                        type: charts.SelectionModelType.info,
-                        changedListener: _onSelectionChanged,
-                      )
-                    ],
+                ? charts.BarChart(
+                    chartSeries,
                     primaryMeasureAxis: charts.NumericAxisSpec(
                         renderSpec: charts.GridlineRendererSpec(
                       labelStyle: charts.TextStyleSpec(
@@ -128,7 +102,20 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
                         ),
                       ),
                       tickProviderSpec: charts.StaticOrdinalTickProviderSpec(ticks),
-                    ))
+                    ),
+                    barGroupingType: charts.BarGroupingType.stacked,
+                    defaultInteractions: false,
+                    behaviors: [
+                      charts.SeriesLegend(
+                        entryTextStyle: charts.TextStyleSpec(
+                          fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                          fontWeight:
+                              Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
+                          color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                        ),
+                      ),
+                    ],
+                  )
                 : Center(
                     child: Text(
                     "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
@@ -139,33 +126,46 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
 
   List<charts.Series<AttemptsByTimeSeries, String>> _buildChartSeries(
       BuildContext context, List<Attempt> filteredAttempts) {
-    _resetChartSelection();
-
     if (filteredAttempts.isEmpty) {
       return null;
     }
 
-    List<AttemptsByTimeSeries> chartData = <AttemptsByTimeSeries>[];
-    Map<int, int> hourCounts = Map.fromIterable(List<int>.generate(24, (i) => i + 1),
-        key: (item) => item - 1, value: (item) => 0);
+    Map<String, Map<int, int>> hourCountsBySendType = <String, Map<int, int>>{};
+    for (String sendType in SendTypes.SEND_TYPES) {
+      hourCountsBySendType.putIfAbsent(
+          sendType,
+          () => Map.fromIterable(List<int>.generate(24, (i) => i + 1),
+              key: (item) => item - 1, value: (item) => 0));
+    }
 
     for (Attempt attempt in filteredAttempts) {
       int attemptHour = attempt.timestamp.toDate().hour;
-      hourCounts.update(attemptHour, (value) => hourCounts[attemptHour] + 1);
-    }
-    for (int hour in hourCounts.keys) {
-      chartData.add(AttemptsByTimeSeries(hour, hourCounts[hour]));
+      hourCountsBySendType[attempt.sendType].update(attemptHour, (value) => value + 1);
     }
 
-    return [
-      charts.Series<AttemptsByTimeSeries, String>(
-        id: 'attemptsByTime',
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+    Map<String, List<AttemptsByTimeSeries>> chartDataMap = <String, List<AttemptsByTimeSeries>>{};
+
+    for (String sendType in SendTypes.SEND_TYPES) {
+      chartDataMap.putIfAbsent(sendType, () => <AttemptsByTimeSeries>[]);
+      for (int hour in hourCountsBySendType[sendType].keys) {
+        chartDataMap[sendType]
+            .add(AttemptsByTimeSeries(hour, hourCountsBySendType[sendType][hour]));
+      }
+    }
+
+    List<charts.Series<AttemptsByTimeSeries, String>> chartSeries =
+        <charts.Series<AttemptsByTimeSeries, String>>[];
+    SendTypes.SEND_TYPES.asMap().forEach((index, sendType) {
+      chartSeries.add(charts.Series<AttemptsByTimeSeries, String>(
+        id: sendType,
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(SeriesConstants.COLOURS[index]),
         domainFn: (AttemptsByTimeSeries attempts, _) => attempts.hour.toString(),
         measureFn: (AttemptsByTimeSeries attempts, _) => attempts.count,
-        data: chartData,
-      )
-    ];
+        data: chartDataMap[sendType],
+      ));
+    });
+
+    return chartSeries;
   }
 
   List<charts.TickSpec<String>> _buildTicks() {
@@ -188,32 +188,6 @@ class _AttemptsByTimeChartState extends State<AttemptsByTimeChart> {
       }
     }
     return ticks;
-  }
-
-  void _resetChartSelection() {
-    if (selectedHour != null) {
-      setState(() {
-        selectedHour = null;
-        selectedCount = null;
-      });
-    }
-  }
-
-  _onSelectionChanged(charts.SelectionModel model) {
-    final selectedDatum = model.selectedDatum;
-    int hour;
-    int count;
-
-    if (selectedDatum.isNotEmpty) {
-      hour = selectedDatum.first.datum.hour;
-      count = selectedDatum.first.datum.count;
-    }
-
-    // Request a build.
-    setState(() {
-      selectedHour = hour;
-      selectedCount = count;
-    });
   }
 
   @override

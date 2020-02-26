@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class ErrorMessages {
   static const String NO_USER_FOUND = "Login failed because there is no user in the database";
   static const String USER_TAKEN = "Signup failed because this user already exists";
@@ -36,6 +38,17 @@ class LazyLoadConstants {
   static const int DEBOUNCE_DURATION = 500;
   static const int SCROLL_OFFSET = 300;
   static const int BATCH_SIZE = 200;
+}
+
+class SeriesConstants {
+  static const List<Color> COLOURS = const [
+  Color(0xffff89b5),
+  Color(0xffffdc89),
+  Color(0xffcff381),
+  Color(0xff90d4f7),
+  Color(0xff898cff)
+  ];
+
 }
 
 class TimeFrames {
