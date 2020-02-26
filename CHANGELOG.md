@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         - Number of attempts by day of week
         - Number of attempts by time of day
         - Number of attempts by grade
+        - Average attempts needed to send a grade
         - Proportion of climbs downclimbed by grade
         - Number of attempts by location
         - Number of attempts by category
