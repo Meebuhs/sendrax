@@ -3,6 +3,7 @@ import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/stats/charts/attempts_to_send.dart';
 import 'package:sendrax/stats/charts/downclimbed_by_grade.dart';
+import 'package:sendrax/stats/charts/repeats_by_grade.dart';
 
 import 'charts/attempts_by_date.dart';
 import 'charts/attempts_by_grade.dart';
@@ -56,13 +57,19 @@ class _StatsScreenState extends State<StatsScreen> {
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
       ),
+      "ATTEMPTS BY GRADE": AttemptsByGradeChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+      ),
       "ATTEMPTS TO SEND": AttemptsToSendChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
       ),
-      "ATTEMPTS BY GRADE": AttemptsByGradeChart(
+      "REPEATS BY GRADE": RepeatsByGradeChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
