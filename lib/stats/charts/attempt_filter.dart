@@ -245,12 +245,3 @@ class _AttemptFilterState extends State<AttemptFilter> {
     return filteredAttempts;
   }
 }
-
-enum FilterType {
-  gradeSet,
-  grade,
-  timeframe,
-  location,
-  sendType,
-  category,
-}

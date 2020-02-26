@@ -51,6 +51,15 @@ class SeriesConstants {
 
 }
 
+enum FilterType {
+  gradeSet,
+  grade,
+  timeframe,
+  location,
+  sendType,
+  category,
+}
+
 class TimeFrames {
   static const Map<String, String> TIME_FRAMES = const {
     "lastWeek": "Last Week",

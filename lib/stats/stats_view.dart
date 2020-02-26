@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
+import 'package:sendrax/stats/charts/attempts_by_location.dart';
 
 import 'charts/attempts_by_date.dart';
 import 'charts/attempts_by_day.dart';
@@ -46,6 +47,12 @@ class _StatsScreenState extends State<StatsScreen> {
         locationNamesToIds: widget.locationNamesToIds,
       ),
       "ATTEMPTS BY TIME": AttemptsByTimeChart(
+        attempts: widget.attempts,
+        categories: widget.categories,
+        grades: widget.grades,
+        locationNamesToIds: widget.locationNamesToIds,
+      ),
+      "ATTEMPTS BY LOCATION": AttemptsByLocationChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,

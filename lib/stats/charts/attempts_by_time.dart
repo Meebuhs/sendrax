@@ -2,6 +2,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sendrax/models/attempt.dart';
+import 'package:sendrax/util/constants.dart';
 
 import 'attempts_by_value.dart';
 
@@ -28,6 +29,13 @@ class AttemptsByTimeChart extends StatelessWidget {
       buildTicks: buildTicks,
       processAttempt: processAttempt,
       createEmptyMap: createEmptyMap,
+      enableFilters: [
+        FilterType.gradeSet,
+        FilterType.grade,
+        FilterType.timeframe,
+        FilterType.location,
+        FilterType.category
+      ],
     );
   }
 

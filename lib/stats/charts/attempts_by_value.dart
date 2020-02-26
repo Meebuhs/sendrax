@@ -17,6 +17,7 @@ class AttemptsByValueChart extends StatefulWidget {
     @required this.buildTicks,
     @required this.processAttempt,
     @required this.createEmptyMap,
+    @required this.enableFilters,
   }) : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
@@ -25,6 +26,7 @@ class AttemptsByValueChart extends StatefulWidget {
   final Function() buildTicks;
   final Function(Attempt) processAttempt;
   final Function() createEmptyMap;
+  final List<FilterType> enableFilters;
 
   @override
   _AttemptsByValueChartState createState() => _AttemptsByValueChartState();
@@ -59,13 +61,7 @@ class _AttemptsByValueChartState extends State<AttemptsByValueChart> {
             categories: widget.categories,
             locationNamesToIds: widget.locationNamesToIds,
             filteredAttemptsStream: filteredAttemptsStream,
-            enableFilters: [
-              FilterType.gradeSet,
-              FilterType.grade,
-              FilterType.timeframe,
-              FilterType.location,
-              FilterType.category
-            ],
+            enableFilters: widget.enableFilters,
             grades: widget.grades,
           ),
           _buildChart(context)
