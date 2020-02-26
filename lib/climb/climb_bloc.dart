@@ -58,6 +58,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
           climb.id,
           climb.displayName,
           climb.grade,
+          climb.gradeSet,
           climb.categories,
           climb.locationId,
           Timestamp.now(),

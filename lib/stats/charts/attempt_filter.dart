@@ -198,8 +198,7 @@ class _AttemptFilterState extends State<AttemptFilter> {
             .toList();
       } else {
         filteredAttempts = filteredAttempts
-            .where((attempt) =>
-                widget.grades[filters[FilterType.gradeSet]].contains(attempt.climbGrade))
+            .where((attempt) => attempt.climbGradeSet == filters[FilterType.gradeSet])
             .toList();
       }
     }

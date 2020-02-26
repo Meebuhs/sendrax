@@ -30,6 +30,7 @@ class EditAttemptBloc extends Bloc<EditAttemptEvent, EditAttemptState> {
         attempt.climbId,
         attempt.climbName,
         attempt.climbGrade,
+        attempt.climbGradeSet,
         attempt.climbCategories,
         attempt.locationId,
         attempt.timestamp,

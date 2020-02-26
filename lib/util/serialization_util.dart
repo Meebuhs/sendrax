@@ -74,6 +74,7 @@ class Deserializer {
         attempt['climbId'],
         attempt['climbName'],
         attempt['climbGrade'],
+        attempt['climbGradeSet'],
         List.from(attempt['climbCategories']),
         attempt['locationId'],
         attempt['timestamp'],
