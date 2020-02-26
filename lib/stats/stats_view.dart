@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/location.dart';
 
-import 'charts/attempt_by_grade.dart';
 import 'charts/attempts_by_date.dart';
+import 'charts/attempts_by_grade.dart';
 import 'charts/attempts_by_value/attempt_by_category.dart';
 import 'charts/attempts_by_value/attempts_by_day.dart';
 import 'charts/attempts_by_value/attempts_by_location.dart';
