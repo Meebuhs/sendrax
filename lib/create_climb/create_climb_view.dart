@@ -346,7 +346,7 @@ class CreateClimbWidget extends StatelessWidget {
                   color: Theme.of(context).accentColor,
                   child: Text('SUBMIT', style: Theme.of(context).primaryTextTheme.button),
                   onPressed: () => BlocProvider.of<CreateClimbBloc>(context)
-                      .validateAndSubmit(state, context, this),
+                      .validateAndSubmit(widget.isEdit, state, context, this),
                 ))));
   }
 
