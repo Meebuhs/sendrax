@@ -79,6 +79,23 @@ class ClimbRepo {
       if (docCounter > 498) {
         // batches can delete 500 refs at a time
         await batch.commit();
+        docCounter = 0;
+      }
+    });
+
+    // Delete attempts associated with this climb
+    attempts = await _firestore
+        .collection(
+            "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
+        .where("climbId", isEqualTo: climbId)
+        .getDocuments();
+    attempts.documents.forEach((attempt) async {
+      docCounter++;
+      batch.delete(attempt.reference);
+      if (docCounter > 498) {
+        // batches can delete 500 refs at a time
+        await batch.commit();
+        docCounter = 0;
       }
     });
     await batch.commit();

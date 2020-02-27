@@ -123,12 +123,7 @@ class LocationWidget extends StatelessWidget {
             style: Theme.of(context).accentTextTheme.subtitle2,
             items: _createDropdownItems(widget.location.grades),
             value: state.filterGrade,
-            hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(right: UIConstants.STANDARD_PADDING),
-                  child: Icon(Icons.filter_list, color: Colors.grey)),
-              Text("Grade"),
-            ]),
+            hint: Text("Grade"),
             isExpanded: true,
             onChanged: (value) => BlocProvider.of<LocationBloc>(context).setGradeFilter(value),
           ))),
@@ -152,12 +147,7 @@ class LocationWidget extends StatelessWidget {
             iconDisabledColor: Theme.of(context).cardColor,
             items: _createDropdownItems(widget.location.sections),
             value: state.filterSection,
-            hint: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(right: UIConstants.STANDARD_PADDING),
-                  child: Icon(Icons.filter_list, color: Colors.grey)),
-              Text("Section"),
-            ]),
+            hint: Text("Section"),
             isExpanded: true,
             onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
           ))),

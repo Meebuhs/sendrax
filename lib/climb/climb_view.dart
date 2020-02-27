@@ -13,11 +13,7 @@ import 'climb_bloc.dart';
 import 'climb_state.dart';
 
 class ClimbScreen extends StatefulWidget {
-  ClimbScreen(
-      {Key key,
-      @required this.climb,
-      @required this.location,
-      @required this.categories})
+  ClimbScreen({Key key, @required this.climb, @required this.location, @required this.categories})
       : super(key: key);
 
   final Climb climb;
@@ -53,7 +49,12 @@ class ClimbWidget extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () => _editClimb(),
-          )
+          ),
+          IconButton(
+              icon: Icon(Icons.archive), onPressed: () => _showArchiveClimbDialog(context, this)),
+          IconButton(
+              icon: Icon(Icons.delete_forever),
+              onPressed: () => _showDeleteClimbDialog(context, this)),
         ],
       ),
       body: _buildBody(context),
@@ -268,7 +269,7 @@ class ClimbWidget extends StatelessWidget {
       style: Theme.of(context).accentTextTheme.subtitle2,
       items: _createDropdownItems(SendTypes.SEND_TYPES),
       value: state.sendType,
-      hint: Text("Send"),
+      hint: Text("Send type"),
       isExpanded: true,
       decoration: InputDecoration(filled: true, fillColor: Theme.of(context).cardColor),
       validator: (String value) {
@@ -349,6 +350,55 @@ class ClimbWidget extends StatelessWidget {
     NavigationHelper.navigateToCreateClimb(
         widgetState.context, widget.climb, widget.location, widget.categories, true,
         addToBackStack: true);
+  }
+
+  void _showArchiveClimbDialog(BuildContext upperContext, ClimbWidget view) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              title: Text("Are you sure you want to archive this climb?",
+                  style: Theme.of(context).accentTextTheme.headline5),
+              content: Text(
+                  "It will still appear in your log but will no longer appear for this location",
+                  style: Theme.of(context).accentTextTheme.bodyText2),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: navigateToLocation,
+                ),
+                FlatButton(
+                  child: Text("ARCHIVE", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () => BlocProvider.of<ClimbBloc>(upperContext)
+                      .archiveClimb(upperContext, view, widget.location, widget.categories),
+                )
+              ]);
+        });
+  }
+
+  void _showDeleteClimbDialog(BuildContext upperContext, ClimbWidget view) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              title: Text("Are you sure you want to delete this climb?",
+                  style: Theme.of(context).accentTextTheme.headline5),
+              content: Text("There is no way to get it back",
+                  style: Theme.of(context).accentTextTheme.bodyText2),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: navigateToLocation,
+                ),
+                FlatButton(
+                  child: Text("DELETE", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () => BlocProvider.of<ClimbBloc>(upperContext)
+                      .deleteClimb(upperContext, view, widget.location, widget.categories),
+                )
+              ]);
+        });
   }
 
   void navigateToLocation() {

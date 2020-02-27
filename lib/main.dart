@@ -97,6 +97,11 @@ class _sendraxState extends State<sendrax> {
                   color: accentColour,
                   fontWeight: FontWeight.w300,
                   letterSpacing: 0.4),
+              overline: TextStyle(
+                  fontSize: 10.0,
+                  color: accentColour,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 1.5),
             ),
             inputDecorationTheme: InputDecorationTheme(
               focusedBorder: OutlineInputBorder(

@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendrax/history/history_view.dart';
 import 'package:sendrax/log/log_view.dart';
 import 'package:sendrax/main/main_state.dart';
+import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/login_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
+import 'package:sendrax/stats/stats_view.dart';
 
 import 'main_bloc.dart';
 
@@ -32,7 +34,7 @@ class MainWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: _buildAppBar(context),
         body: _buildBody(context),
@@ -45,15 +47,16 @@ class MainWidget extends StatelessWidget {
     return AppBar(
       title: Text('sendrax'),
       actions: <Widget>[IconButton(icon: Icon(Icons.lock_open), onPressed: () => logout(context))],
-      bottom: _buildTabBar(context),
+      bottom: _buildTabBar(),
     );
   }
 
-  Widget _buildTabBar(BuildContext context) {
+  Widget _buildTabBar() {
     return TabBar(
       tabs: <Widget>[
         Tab(icon: Icon(Icons.assignment)),
         Tab(icon: Icon(Icons.history)),
+        Tab(icon: Icon(Icons.assessment)),
       ],
       indicatorColor: Colors.black,
     );
@@ -70,13 +73,32 @@ class MainWidget extends StatelessWidget {
               ),
             );
           } else {
+            Map<String, List<String>> grades = <String, List<String>>{};
+            Map<String, String> locationNamesToIds = <String, String>{};
+            Map<String, String> locationNamesToGradeSet = <String, String>{};
+
+            for (Location location in state.locations) {
+              grades.putIfAbsent(location.gradeSet, () => location.grades);
+              locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
+              locationNamesToGradeSet.putIfAbsent(location.displayName, () => location.gradeSet);
+            }
             return TabBarView(
               children: [
                 LogScreen(locations: state.locations, categories: state.categories),
                 HistoryScreen(
-                    attempts: state.attempts,
-                    locations: state.locations,
-                    categories: state.categories),
+                  attempts: state.attempts,
+                  locations: state.locations,
+                  categories: state.categories,
+                  locationNamesToIds: locationNamesToIds,
+                  grades: grades,
+                ),
+                StatsScreen(
+                  attempts: state.attempts.reversed.toList(),
+                  categories: state.categories,
+                  locationNamesToIds: locationNamesToIds,
+                  locationNamesToGradeSet: locationNamesToGradeSet,
+                  grades: grades,
+                ),
               ],
             );
           }

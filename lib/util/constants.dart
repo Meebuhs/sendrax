@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class ErrorMessages {
   static const String NO_USER_FOUND = "Login failed because there is no user in the database";
   static const String USER_TAKEN = "Signup failed because this user already exists";
@@ -11,6 +13,7 @@ class StorageKeys {
 class UIConstants {
   // PADDING
   static const double SMALLER_PADDING = 8.0;
+  static const double SMALL_PADDING = 12.0;
   static const double STANDARD_PADDING = 16.0;
   static const double BIGGER_PADDING = 24.0;
 
@@ -37,13 +40,41 @@ class LazyLoadConstants {
   static const int BATCH_SIZE = 200;
 }
 
-// @formatter:off
-class SendTypes {
-  static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt",
-    "Red Point", "Hang Dog", "Second", "Top Rope Onsight", "Top Rope Flash", "Top Rope",
-    "Top Rope Solo Onsight", "Top Rope Solo Flash", "Top Sope Solo", "First Ascent"];
+class SeriesConstants {
+  static const List<Color> COLOURS = const [
+  Color(0xffff89b5),
+  Color(0xffffdc89),
+  Color(0xffcff381),
+  Color(0xff90d4f7),
+  Color(0xff898cff)
+  ];
+
 }
 
+enum FilterType {
+  gradeSet,
+  grade,
+  timeframe,
+  location,
+  sendType,
+  category,
+}
+
+class TimeFrames {
+  static const Map<String, String> TIME_FRAMES = const {
+    "pastDay": "Past Day",
+    "pastWeek": "Past Week",
+    "pastMonth": "Past Month",
+    "pastYear": "Past Year",
+    "allTime": "All Time"
+  };
+}
+
+class SendTypes {
+  static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt"];
+}
+
+// @formatter:off
 class ClimbCategories {
   static const List<String> CATEGORIES = const ["Crimps", "Edges", "Slopers", "Pinches", "Pockets",
     "Slopey Crimps", "Jugs", "Volumes", "Bad Feet", "Roof", "Overhung", "Slab", "Mantle", "Powerful",

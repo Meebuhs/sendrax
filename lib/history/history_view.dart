@@ -12,31 +12,27 @@ import 'history_state.dart';
 
 class HistoryScreen extends StatefulWidget {
   HistoryScreen(
-      {Key key, @required this.attempts, @required this.locations, @required this.categories})
+      {Key key,
+      @required this.attempts,
+      @required this.locations,
+      @required this.categories,
+      @required this.locationNamesToIds,
+      @required this.grades})
       : super(key: key);
 
   final List<Attempt> attempts;
   final List<Location> locations;
   final List<String> categories;
+  final Map<String, String> locationNamesToIds;
+  final Map<String, List<String>> grades;
 
   @override
   State<StatefulWidget> createState() => _HistoryState();
 }
 
 class _HistoryState extends State<HistoryScreen> {
-  List<String> grades = <String>[];
-  Map<String, String> locationNamesToIds = <String, String>{};
-
   @override
   void initState() {
-    List<String> gradeSets = <String>[];
-    for (Location location in widget.locations) {
-      if (!gradeSets.contains(location.gradeSet)) {
-        gradeSets.add(location.gradeSet);
-        grades.addAll(location.grades);
-      }
-      locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
-    }
     super.initState();
   }
 
@@ -78,7 +74,10 @@ class HistoryWidget extends StatelessWidget {
             ]);
           } else {
             return Column(children: <Widget>[
-              _showFilterDropdownRow(state, context),
+              Container(
+                color: Theme.of(context).cardColor,
+                child: _showFilterDropdownRow(state, context),
+              ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
@@ -94,15 +93,26 @@ class HistoryWidget extends StatelessWidget {
     return Column(children: <Widget>[
       Row(children: <Widget>[
         Expanded(
-          child: _showGradeDropdown(state, context),
+          child: Column(children: <Widget>[
+            Row(children: <Widget>[
+              Expanded(
+                child: _showGradeSetDropdown(state, context),
+              ),
+              Expanded(
+                child: _showGradeDropdown(state, context),
+              ),
+            ]),
+            Row(children: <Widget>[
+              Expanded(
+                child: _showLocationDropdown(state, context),
+              ),
+              Expanded(
+                child: _showCategoryDropdown(state, context),
+              ),
+            ]),
+          ]),
         ),
-        Expanded(
-          child: _showLocationDropdown(state, context),
-        ),
-        Expanded(
-          child: _showCategoryDropdown(state, context),
-        ),
-        _showClearDropdownsButton(state, context),
+        _showClearDropdownsButton(state, context)
       ]),
       Divider(
         color: Theme.of(context).accentColor,
@@ -112,6 +122,21 @@ class HistoryWidget extends StatelessWidget {
     ]);
   }
 
+  Widget _showGradeSetDropdown(HistoryState state, BuildContext context) {
+    return Container(
+        color: Theme.of(context).cardColor,
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          style: Theme.of(context).accentTextTheme.subtitle2,
+          items: _createDropdownItems(widget.grades.keys.toList()),
+          value: state.filterGradeSet,
+          hint: Text("Grade Set"),
+          isExpanded: true,
+          onChanged: (value) => BlocProvider.of<HistoryBloc>(context).setGradeSetFilter(value),
+        )));
+  }
+
   Widget _showGradeDropdown(HistoryState state, BuildContext context) {
     return Container(
         color: Theme.of(context).cardColor,
@@ -119,7 +144,7 @@ class HistoryWidget extends StatelessWidget {
         child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
           style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widgetState.grades),
+          items: _createDropdownItems(widget.grades[state.filterGradeSet]),
           value: state.filterGrade,
           hint: Text("Grade"),
           isExpanded: true,
@@ -134,7 +159,7 @@ class HistoryWidget extends StatelessWidget {
         child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
           style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widgetState.locationNamesToIds.keys.toList()),
+          items: _createDropdownItems(widget.locationNamesToIds.keys.toList()),
           value: state.filterLocation,
           hint: Text("Location"),
           isExpanded: true,
@@ -162,7 +187,8 @@ class HistoryWidget extends StatelessWidget {
         color: Theme.of(context).cardColor,
         child: IconButton(
             icon: Icon(Icons.cancel,
-                color: (state.filterGrade == null &&
+                color: (state.filterGradeSet == null &&
+                        state.filterGrade == null &&
                         state.filterLocation == null &&
                         state.filterCategory == null)
                     ? Colors.grey
@@ -171,7 +197,7 @@ class HistoryWidget extends StatelessWidget {
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
-    if (items.isNotEmpty) {
+    if (items?.isNotEmpty ?? false) {
       return items.map((String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -204,17 +230,24 @@ class HistoryWidget extends StatelessWidget {
 
   List<Attempt> _filterAttempts(HistoryState state) {
     List<Attempt> filteredAttempts = List.from(widget.attempts);
+    if (state.filterGradeSet != null) {
+      filteredAttempts.retainWhere((attempt) => attempt.climbGradeSet == state.filterGradeSet);
+    }
+
     if (state.filterGrade != null) {
       filteredAttempts.retainWhere((attempt) => attempt.climbGrade == state.filterGrade);
     }
+
     if (state.filterLocation != null) {
       filteredAttempts.retainWhere(
-          (attempt) => attempt.locationId == widgetState.locationNamesToIds[state.filterLocation]);
+          (attempt) => attempt.locationId == widget.locationNamesToIds[state.filterLocation]);
     }
+
     if (state.filterCategory != null) {
       filteredAttempts
           .retainWhere((attempt) => attempt.climbCategories.contains(state.filterCategory));
     }
+
     return filteredAttempts;
   }
 

@@ -1,5 +1,11 @@
 abstract class HistoryEvent {}
 
+class GradeSetFilteredEvent extends HistoryEvent {
+  GradeSetFilteredEvent(this.filterGradeSet);
+
+  final String filterGradeSet;
+}
+
 class GradeFilteredEvent extends HistoryEvent {
   GradeFilteredEvent(this.filterGrade);
 

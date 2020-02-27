@@ -1,13 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Attempt {
-  Attempt(this.id, this.climbId, this.climbName, this.climbGrade, this.climbCategories,
-      this.locationId, this.timestamp, this.sendType, this.downclimbed, this.notes);
+  Attempt(
+      this.id,
+      this.climbId,
+      this.climbName,
+      this.climbGrade,
+      this.climbGradeSet,
+      this.climbCategories,
+      this.locationId,
+      this.timestamp,
+      this.sendType,
+      this.downclimbed,
+      this.notes);
 
   final String id;
   final String climbId;
   final String climbName;
   final String climbGrade;
+  final String climbGradeSet;
   final List<String> climbCategories;
   final String locationId;
   final Timestamp timestamp;
@@ -21,6 +32,7 @@ class Attempt {
       "climbId": climbId,
       "climbName": climbName,
       "climbGrade": climbGrade,
+      "climbGradeSet": climbGradeSet,
       "climbCategories": climbCategories,
       "locationId": locationId,
       "timestamp": timestamp,

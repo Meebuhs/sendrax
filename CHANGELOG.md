@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.0 - 2020-02-27
+
+### Added
+
+- Added stats view
+    - Charts
+        - Number of attempts by date
+        - Number of attempts by day of week
+        - Number of attempts by time of day
+        - Number of attempts by grade
+        - Average attempts needed to send a grade
+        - Average repeats by grade
+        - Proportion of climbs downclimbed by grade
+        - Number of attempts by location
+        - Number of attempts by category
+        - Highest and average grade by send type
+    - Ability to filter attempts shown in the charts
+        - Filter by grade, time, location, send type and category
+
+### Fixed
+
+- Fixed bug where attempts were only being deleted from log view
+
 ## 0.2.0 - 2020-02-12
 
 ### Added

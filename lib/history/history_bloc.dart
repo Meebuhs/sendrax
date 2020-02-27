@@ -11,6 +11,10 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     return HistoryState.initial();
   }
 
+  void setGradeSetFilter(String grade) {
+    add(GradeSetFilteredEvent(grade));
+  }
+
   void setGradeFilter(String grade) {
     add(GradeFilteredEvent(grade));
   }
@@ -31,6 +35,8 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   Stream<HistoryState> mapEventToState(HistoryEvent event) async* {
     if (event is FiltersClearedEvent) {
       yield HistoryState.clearFilters(state);
+    } else if (event is GradeSetFilteredEvent) {
+      yield HistoryState.setFilterGradeSet(event.filterGradeSet, state);
     } else if (event is GradeFilteredEvent) {
       yield HistoryState.setFilterGrade(event.filterGrade, state);
     } else if (event is LocationFilteredEvent) {
