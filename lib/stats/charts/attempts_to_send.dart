@@ -162,9 +162,9 @@ class _AttemptsToSendChartState extends State<AttemptsToSendChart> {
       attemptsByGrade.putIfAbsent(grade, () => <int>[]);
     }
 
-    for (String climbId in climbs.keys) {
+    for (List<Attempt> attempts in climbs.values) {
       int attemptCount = 1;
-      for (Attempt attempt in climbs[climbId]) {
+      for (Attempt attempt in attempts) {
         if (["Onsight", "Flash", "Send"].contains(attempt.sendType)) {
           attemptsByGrade.update(attempt.climbGrade, (value) => value..add(attemptCount));
           break;

@@ -10,11 +10,11 @@ import 'attempt_filter.dart';
 class RepeatsByGradeChart extends StatefulWidget {
   RepeatsByGradeChart(
       {Key key,
-        @required this.attempts,
-        @required this.categories,
-        @required this.grades,
-        @required this.locationNamesToIds,
-        @required this.locationNamesToGradeSet})
+      @required this.attempts,
+      @required this.categories,
+      @required this.grades,
+      @required this.locationNamesToIds,
+      @required this.locationNamesToGradeSet})
       : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
@@ -165,13 +165,12 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
       attemptsByGrade.putIfAbsent(grade, () => <int>[]);
     }
 
-    for (String climbId in climbs.keys) {
-      if (climbs[climbId]
-          .any((attempt) => ["Onsight", "Flash", "Send"].contains(attempt.sendType))) {
+    for (List<Attempt> attempts in climbs.values) {
+      if (attempts.any((attempt) => ["Onsight", "Flash", "Send"].contains(attempt.sendType))) {
         attemptsByGrade.update(
-            climbs[climbId].first.climbGrade,
-            (value) => value
-              ..add(climbs[climbId].where((attempt) => attempt.sendType == "Repeat").length));
+            attempts.first.climbGrade,
+            (value) =>
+                value..add(attempts.where((attempt) => attempt.sendType == "Repeat").length));
       }
     }
 
