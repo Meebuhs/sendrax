@@ -255,10 +255,7 @@ class CreateClimbWidget extends StatelessWidget {
       decoration:
           InputDecoration(isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
       style: Theme.of(context).accentTextTheme.subtitle2,
-      disabledHint: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-        Icon(Icons.cancel, color: Colors.grey),
-        Text("No sections"),
-      ]),
+      disabledHint: Text("No sections"),
       iconDisabledColor: Colors.grey,
       items: _createDropdownItems(widget.location.sections),
       value: state.section,
