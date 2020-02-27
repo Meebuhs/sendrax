@@ -91,7 +91,7 @@ class MainWidget extends StatelessWidget {
                   grades: grades,
                 ),
                 StatsScreen(
-                  attempts: state.attempts,
+                  attempts: state.attempts.reversed.toList(),
                   locations: state.locations,
                   categories: state.categories,
                   locationNamesToIds: locationNamesToIds,
