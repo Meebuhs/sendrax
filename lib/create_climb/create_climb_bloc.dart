@@ -7,10 +7,8 @@ import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/attempt_repo.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
-import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
-import 'package:sendrax/navigation_helper.dart';
 
 import 'create_climb_event.dart';
 import 'create_climb_state.dart';
@@ -84,7 +82,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
         state.loading = false;
         add(CreateClimbErrorEvent());
       }
-      view.navigateToClimbAfterEdit(state);
+      view.navigateToClimb(state);
     }
     state.loading = false;
   }
@@ -122,18 +120,6 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
 
   void deleteImage() {
     add(ImageFileUpdatedEvent(true, null));
-  }
-
-  void archiveClimb(
-      BuildContext context, CreateClimbWidget view, Location location, List<String> categories) {
-    ClimbRepo.getInstance().setClimbArchived(this.climb.id, true);
-    NavigationHelper.resetToLocation(context, location, categories);
-  }
-
-  void deleteClimb(
-      BuildContext context, CreateClimbWidget view, Location location, List<String> categories) {
-    ClimbRepo.getInstance().deleteClimb(this.climb.id, this.climb.imageUri);
-    NavigationHelper.resetToLocation(context, location, categories);
   }
 
   @override

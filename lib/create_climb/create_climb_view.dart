@@ -55,25 +55,11 @@ class CreateClimbWidget extends StatelessWidget {
         (widget.climb.displayName == "") ? "Edit climb" : "Edit ${widget.climb.displayName}";
     return Scaffold(
       appBar: AppBar(
-          title: Text((widget.isEdit) ? editTitleText : "Create a climb"),
-          actions: _buildActions(context)),
+        title: Text((widget.isEdit) ? editTitleText : "Create a climb"),
+      ),
       body: _buildBody(context),
       backgroundColor: Theme.of(context).backgroundColor,
     );
-  }
-
-  List<Widget> _buildActions(BuildContext context) {
-    return <Widget>[
-      (widget.isEdit)
-          ? IconButton(
-              icon: Icon(Icons.archive), onPressed: () => _showArchiveClimbDialog(context, this))
-          : Container(),
-      (widget.isEdit)
-          ? IconButton(
-              icon: Icon(Icons.delete_forever),
-              onPressed: () => _showDeleteClimbDialog(context, this))
-          : Container()
-    ];
   }
 
   Widget _buildBody(BuildContext context) {
@@ -350,63 +336,11 @@ class CreateClimbWidget extends StatelessWidget {
                 ))));
   }
 
-  void _showDeleteClimbDialog(
-    BuildContext upperContext,
-    CreateClimbWidget view,
-  ) {
-    showDialog(
-        context: upperContext,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              backgroundColor: Theme.of(context).cardColor,
-              title: Text("Are you sure you want to delete this climb?",
-                  style: Theme.of(context).accentTextTheme.headline5),
-              content: Text("There is no way to get it back",
-                  style: Theme.of(context).accentTextTheme.bodyText2),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
-                  onPressed: navigateToLocation,
-                ),
-                FlatButton(
-                  child: Text("DELETE", style: Theme.of(context).accentTextTheme.button),
-                  onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext)
-                      .deleteClimb(upperContext, view, widget.location, widget.categories),
-                )
-              ]);
-        });
-  }
-
-  void _showArchiveClimbDialog(BuildContext upperContext, CreateClimbWidget view) {
-    showDialog(
-        context: upperContext,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              backgroundColor: Theme.of(context).cardColor,
-              title: Text("Are you sure you want to archive this climb?",
-                  style: Theme.of(context).accentTextTheme.headline5),
-              content: Text(
-                  "It will still appear in your log but will no longer appear for this location",
-                  style: Theme.of(context).accentTextTheme.bodyText2),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
-                  onPressed: navigateToLocation,
-                ),
-                FlatButton(
-                  child: Text("ARCHIVE", style: Theme.of(context).accentTextTheme.button),
-                  onPressed: () => BlocProvider.of<CreateClimbBloc>(upperContext)
-                      .archiveClimb(upperContext, view, widget.location, widget.categories),
-                )
-              ]);
-        });
-  }
-
   void navigateToLocation() {
     NavigationHelper.navigateBackOne(widgetState.context);
   }
 
-  void navigateToClimbAfterEdit(CreateClimbState state) {
+  void navigateToClimb(CreateClimbState state) {
     NavigationHelper.navigateBackOne(widgetState.context);
     // when editing, pop back to location then reload climb
     if (widget.isEdit) {

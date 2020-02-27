@@ -1,7 +1,7 @@
 name: sendrax
 description: Easily log climbs and track progress indoors and out.
 
-version: 0.2.8+9
+version: 0.2.8+10
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

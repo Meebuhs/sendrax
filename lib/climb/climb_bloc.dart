@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sendrax/climb/climb_view.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/attempt_repo.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
+import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/user_repo.dart';
+import 'package:sendrax/navigation_helper.dart';
 import 'package:uuid/uuid.dart';
 
 import 'climb_event.dart';
@@ -88,6 +91,18 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
   void resetNotesInput() {
     WidgetsBinding.instance.addPostFrameCallback((_) => state.notesInputController.clear());
+  }
+
+  void archiveClimb(
+      BuildContext context, ClimbWidget view, Location location, List<String> categories) {
+    ClimbRepo.getInstance().setClimbArchived(this.climb.id, true);
+    NavigationHelper.resetToLocation(context, location, categories);
+  }
+
+  void deleteClimb(
+      BuildContext context, ClimbWidget view, Location location, List<String> categories) {
+    ClimbRepo.getInstance().deleteClimb(this.climb.id, this.climb.imageUri);
+    NavigationHelper.resetToLocation(context, location, categories);
   }
 
   @override
