@@ -109,6 +109,7 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
             tickProviderSpec: charts.StaticOrdinalTickProviderSpec(_buildTicks()),
           ),
           barGroupingType: charts.BarGroupingType.stacked,
+          defaultInteractions: false,
         );
       } else {
         content = Center(

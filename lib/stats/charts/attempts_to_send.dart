@@ -109,6 +109,7 @@ class _AttemptsToSendChartState extends State<AttemptsToSendChart> {
             tickProviderSpec: charts.StaticOrdinalTickProviderSpec(_buildTicks()),
           ),
           barGroupingType: charts.BarGroupingType.stacked,
+          defaultInteractions: false,
         );
       } else {
         content = Center(
