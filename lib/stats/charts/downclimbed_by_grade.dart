@@ -11,16 +11,17 @@ import 'attempt_filter.dart';
 class DownclimbedByGradeChart extends StatefulWidget {
   DownclimbedByGradeChart(
       {Key key,
-      @required this.attempts,
-      @required this.categories,
-      @required this.grades,
-      @required this.locationNamesToIds})
+        @required this.attempts,
+        @required this.categories,
+        @required this.grades,
+        @required this.locationNamesToIds,
+        @required this.locationNamesToGradeSet})
       : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
   final Map<String, List<String>> grades;
   final Map<String, String> locationNamesToIds;
-
+  final Map<String, String> locationNamesToGradeSet;
   @override
   _DownclimbedByGradeChartState createState() => _DownclimbedByGradeChartState();
 }
@@ -65,6 +66,7 @@ class _DownclimbedByGradeChartState extends State<DownclimbedByGradeChart> {
             attempts: widget.attempts,
             categories: widget.categories,
             locationNamesToIds: widget.locationNamesToIds,
+            locationNamesToGradeSet: widget.locationNamesToGradeSet,
             filteredAttemptsStream: filteredAttemptsStream,
             enableFilters: [
               FilterType.gradeSet,

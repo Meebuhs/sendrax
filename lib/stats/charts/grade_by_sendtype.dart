@@ -14,6 +14,7 @@ class GradeBySendTypeChart extends StatefulWidget {
       @required this.attempts,
       @required this.categories,
       @required this.grades,
+      @required this.locationNamesToGradeSet,
       @required this.locationNamesToIds,
       @required this.average})
       : super(key: key);
@@ -21,6 +22,7 @@ class GradeBySendTypeChart extends StatefulWidget {
   final List<String> categories;
   final Map<String, List<String>> grades;
   final Map<String, String> locationNamesToIds;
+  final Map<String, String> locationNamesToGradeSet;
   final bool average;
 
   @override
@@ -67,6 +69,7 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
             attempts: widget.attempts,
             categories: widget.categories,
             locationNamesToIds: widget.locationNamesToIds,
+            locationNamesToGradeSet: widget.locationNamesToGradeSet,
             filteredAttemptsStream: filteredAttemptsStream,
             enableFilters: [FilterType.gradeSet, FilterType.timeframe, FilterType.location],
             gradeSetFilterStream: gradeSetFilterStream,

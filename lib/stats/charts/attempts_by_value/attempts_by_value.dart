@@ -6,7 +6,6 @@ import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/stats/charts/attempt_filter.dart';
 import 'package:sendrax/util/constants.dart';
 
-
 class AttemptsByValueChart extends StatefulWidget {
   AttemptsByValueChart(
       {Key key,
@@ -14,6 +13,7 @@ class AttemptsByValueChart extends StatefulWidget {
       @required this.categories,
       @required this.grades,
       @required this.locationNamesToIds,
+      @required this.locationNamesToGradeSet,
       @required this.buildTicks,
       @required this.processAttempt,
       @required this.createEmptyMap,
@@ -24,6 +24,7 @@ class AttemptsByValueChart extends StatefulWidget {
   final List<String> categories;
   final Map<String, List<String>> grades;
   final Map<String, String> locationNamesToIds;
+  final Map<String, String> locationNamesToGradeSet;
   final Function() buildTicks;
   final Function(Attempt) processAttempt;
   final Function() createEmptyMap;
@@ -62,6 +63,7 @@ class _AttemptsByValueChartState extends State<AttemptsByValueChart> {
             attempts: widget.attempts,
             categories: widget.categories,
             locationNamesToIds: widget.locationNamesToIds,
+            locationNamesToGradeSet: widget.locationNamesToGradeSet,
             filteredAttemptsStream: filteredAttemptsStream,
             enableFilters: widget.enableFilters,
             grades: widget.grades,

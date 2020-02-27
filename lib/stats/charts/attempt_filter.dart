@@ -10,6 +10,7 @@ class AttemptFilter extends StatefulWidget {
       @required this.attempts,
       @required this.categories,
       @required this.locationNamesToIds,
+      @required this.locationNamesToGradeSet,
       @required this.filteredAttemptsStream,
       this.enableFilters = const <FilterType>[
         FilterType.gradeSet,
@@ -25,6 +26,7 @@ class AttemptFilter extends StatefulWidget {
   final List<Attempt> attempts;
   final List<String> categories;
   final Map<String, String> locationNamesToIds;
+  final Map<String, String> locationNamesToGradeSet;
   final StreamController<List<Attempt>> filteredAttemptsStream;
   final StreamController<String> gradeSetFilterStream;
   final Map<String, List<String>> grades;
@@ -100,8 +102,16 @@ class _AttemptFilterState extends State<AttemptFilter> {
   }
 
   Widget _showLocationDropdown(BuildContext context) {
-    return _createDropdown(
-        context, widget.locationNamesToIds.keys.toList(), "Location", FilterType.location);
+    List<String> dropdownItems;
+    if (filters[FilterType.gradeSet] != null) {
+      dropdownItems = widget.locationNamesToGradeSet.keys
+          .where((location) =>
+              widget.locationNamesToGradeSet[location] == filters[FilterType.gradeSet])
+          .toList();
+    } else {
+      dropdownItems = widget.locationNamesToIds.keys.toList();
+    }
+    return _createDropdown(context, dropdownItems, "Location", FilterType.location);
   }
 
   Widget _showSendTypeDropdown(BuildContext context) {
@@ -144,6 +154,9 @@ class _AttemptFilterState extends State<AttemptFilter> {
                         onChanged: (value) {
                           setState(() {
                             filters[filterValue] = value;
+                            if (filterValue == FilterType.gradeSet) {
+                              filters[FilterType.location] = null;
+                            }
                           });
                           if (filterValue == FilterType.gradeSet) {
                             if (widget.gradeSetFilterStream != null) {

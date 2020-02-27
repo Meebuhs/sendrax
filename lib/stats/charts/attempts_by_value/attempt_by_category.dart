@@ -5,18 +5,20 @@ import 'package:sendrax/util/constants.dart';
 
 import 'attempts_by_value.dart';
 
-
 class AttemptsByCategoryChart extends StatelessWidget {
-  AttemptsByCategoryChart({Key key,
-    @required this.attempts,
-    @required this.categories,
-    @required this.grades,
-    @required this.locationNamesToIds})
+  AttemptsByCategoryChart(
+      {Key key,
+      @required this.attempts,
+      @required this.categories,
+      @required this.grades,
+      @required this.locationNamesToIds,
+      @required this.locationNamesToGradeSet})
       : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
   final Map<String, List<String>> grades;
   final Map<String, String> locationNamesToIds;
+  final Map<String, String> locationNamesToGradeSet;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class AttemptsByCategoryChart extends StatelessWidget {
       categories: categories,
       grades: grades,
       locationNamesToIds: locationNamesToIds,
+      locationNamesToGradeSet: locationNamesToGradeSet,
       buildTicks: buildTicks,
       processAttempt: processAttempt,
       createEmptyMap: createEmptyMap,
@@ -47,7 +50,6 @@ class AttemptsByCategoryChart extends StatelessWidget {
   }
 
   Map<String, int> createEmptyMap() {
-    return Map.fromIterable(categories,
-        key: (item) => item, value: (item) => 0);
+    return Map.fromIterable(categories, key: (item) => item, value: (item) => 0);
   }
 }

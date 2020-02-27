@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sendrax/models/attempt.dart';
-import 'package:sendrax/models/location.dart';
 import 'package:sendrax/stats/charts/attempts_to_send.dart';
 import 'package:sendrax/stats/charts/downclimbed_by_grade.dart';
 import 'package:sendrax/stats/charts/repeats_by_grade.dart';
@@ -17,16 +16,16 @@ class StatsScreen extends StatefulWidget {
   const StatsScreen(
       {Key key,
       @required this.attempts,
-      @required this.locations,
       @required this.categories,
       @required this.locationNamesToIds,
+      @required this.locationNamesToGradeSet,
       @required this.grades})
       : super(key: key);
 
   final List<Attempt> attempts;
-  final List<Location> locations;
   final List<String> categories;
   final Map<String, String> locationNamesToIds;
+  final Map<String, String> locationNamesToGradeSet;
   final Map<String, List<String>> grades;
 
   @override
@@ -44,60 +43,70 @@ class _StatsScreenState extends State<StatsScreen> {
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "ATTEMPTS BY DAY": AttemptsByDayChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "ATTEMPTS BY TIME": AttemptsByTimeChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "ATTEMPTS BY GRADE": AttemptsByGradeChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "ATTEMPTS TO SEND": AttemptsToSendChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "REPEATS BY GRADE": RepeatsByGradeChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "DOWNCLIMBED BY GRADE": DownclimbedByGradeChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "ATTEMPTS BY LOCATION": AttemptsByLocationChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "ATTEMPTS BY CATEGORY": AttemptsByCategoryChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
       ),
       "HIGHEST GRADE BY SEND TYPE": GradeBySendTypeChart(
         attempts: widget.attempts,
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
         average: false,
       ),
       "AVERAGE GRADE BY SEND TYPE": GradeBySendTypeChart(
@@ -105,6 +114,7 @@ class _StatsScreenState extends State<StatsScreen> {
         categories: widget.categories,
         grades: widget.grades,
         locationNamesToIds: widget.locationNamesToIds,
+        locationNamesToGradeSet: widget.locationNamesToGradeSet,
         average: true,
       )
     };
@@ -146,11 +156,6 @@ class _StatsScreenState extends State<StatsScreen> {
   }
 
   Widget _buildTabBarView(Map<String, Widget> tabs) {
-    Map<String, String> locationNamesToIds = <String, String>{};
-    for (Location location in widget.locations) {
-      locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
-    }
-
     List<Widget> tabViews = <Widget>[];
     tabs.forEach((key, value) => tabViews.add(value));
 

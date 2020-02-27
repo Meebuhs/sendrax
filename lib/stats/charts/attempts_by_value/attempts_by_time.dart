@@ -12,12 +12,14 @@ class AttemptsByTimeChart extends StatelessWidget {
       @required this.attempts,
       @required this.categories,
       @required this.grades,
-      @required this.locationNamesToIds})
+      @required this.locationNamesToIds,
+      @required this.locationNamesToGradeSet})
       : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
   final Map<String, List<String>> grades;
   final Map<String, String> locationNamesToIds;
+  final Map<String, String> locationNamesToGradeSet;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class AttemptsByTimeChart extends StatelessWidget {
       categories: categories,
       grades: grades,
       locationNamesToIds: locationNamesToIds,
+      locationNamesToGradeSet: locationNamesToGradeSet,
       buildTicks: buildTicks,
       processAttempt: processAttempt,
       createEmptyMap: createEmptyMap,

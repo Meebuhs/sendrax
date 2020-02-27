@@ -10,15 +10,17 @@ import 'attempt_filter.dart';
 class RepeatsByGradeChart extends StatefulWidget {
   RepeatsByGradeChart(
       {Key key,
-      @required this.attempts,
-      @required this.categories,
-      @required this.grades,
-      @required this.locationNamesToIds})
+        @required this.attempts,
+        @required this.categories,
+        @required this.grades,
+        @required this.locationNamesToIds,
+        @required this.locationNamesToGradeSet})
       : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
   final Map<String, List<String>> grades;
   final Map<String, String> locationNamesToIds;
+  final Map<String, String> locationNamesToGradeSet;
 
   @override
   _RepeatsByGradeChartState createState() => _RepeatsByGradeChartState();
@@ -64,6 +66,7 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
             attempts: widget.attempts,
             categories: widget.categories,
             locationNamesToIds: widget.locationNamesToIds,
+            locationNamesToGradeSet: widget.locationNamesToGradeSet,
             filteredAttemptsStream: filteredAttemptsStream,
             enableFilters: [
               FilterType.gradeSet,

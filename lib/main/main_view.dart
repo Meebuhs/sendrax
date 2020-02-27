@@ -75,10 +75,12 @@ class MainWidget extends StatelessWidget {
           } else {
             Map<String, List<String>> grades = <String, List<String>>{};
             Map<String, String> locationNamesToIds = <String, String>{};
+            Map<String, String> locationNamesToGradeSet = <String, String>{};
 
             for (Location location in state.locations) {
               grades.putIfAbsent(location.gradeSet, () => location.grades);
               locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
+              locationNamesToGradeSet.putIfAbsent(location.displayName, () => location.gradeSet);
             }
             return TabBarView(
               children: [
@@ -92,9 +94,9 @@ class MainWidget extends StatelessWidget {
                 ),
                 StatsScreen(
                   attempts: state.attempts.reversed.toList(),
-                  locations: state.locations,
                   categories: state.categories,
                   locationNamesToIds: locationNamesToIds,
+                  locationNamesToGradeSet: locationNamesToGradeSet,
                   grades: grades,
                 ),
               ],

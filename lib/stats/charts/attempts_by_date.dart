@@ -14,12 +14,14 @@ class AttemptsByDateChart extends StatefulWidget {
       @required this.attempts,
       @required this.categories,
       @required this.grades,
-      @required this.locationNamesToIds})
+      @required this.locationNamesToIds,
+      @required this.locationNamesToGradeSet})
       : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
   final Map<String, List<String>> grades;
   final Map<String, String> locationNamesToIds;
+  final Map<String, String> locationNamesToGradeSet;
 
   @override
   _AttemptsByDateChartState createState() => _AttemptsByDateChartState();
@@ -51,6 +53,7 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
       attempts: widget.attempts,
       categories: widget.categories,
       locationNamesToIds: widget.locationNamesToIds,
+      locationNamesToGradeSet: widget.locationNamesToGradeSet,
       filteredAttemptsStream: filteredAttemptsStream,
       grades: widget.grades,
     ));
