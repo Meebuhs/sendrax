@@ -204,17 +204,22 @@ class _AttemptFilterState extends State<AttemptFilter> {
     }
 
     if (filters[FilterType.timeframe] != null) {
-      if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["lastWeek"]) {
+      if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["pastDay"]) {
+        filteredAttempts = filteredAttempts
+            .where((attempt) =>
+                DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 1))
+            .toList();
+      } else if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["pastWeek"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 7))
             .toList();
-      } else if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["lastMonth"]) {
+      } else if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["pastMonth"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 30))
             .toList();
-      } else if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["lastYear"]) {
+      } else if (filters[FilterType.timeframe] == TimeFrames.TIME_FRAMES["pastYear"]) {
         filteredAttempts = filteredAttempts
             .where((attempt) =>
                 DateTime.now().difference(attempt.timestamp.toDate()) < Duration(days: 365))

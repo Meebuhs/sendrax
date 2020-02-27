@@ -62,9 +62,10 @@ enum FilterType {
 
 class TimeFrames {
   static const Map<String, String> TIME_FRAMES = const {
-    "lastWeek": "Last Week",
-    "lastMonth": "Last Month",
-    "lastYear": "Last Year",
+    "pastDay": "Past Day",
+    "pastWeek": "Past Week",
+    "pastMonth": "Past Month",
+    "pastYear": "Past Year",
     "allTime": "All Time"
   };
 }
