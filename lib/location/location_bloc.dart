@@ -58,12 +58,20 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     }
   }
 
+  void setSectionFilter(String section) {
+    add(SectionFilteredEvent(section));
+  }
+
   void setGradeFilter(String grade) {
     add(GradeFilteredEvent(grade));
   }
 
-  void setSectionFilter(String section) {
-    add(SectionFilteredEvent(section));
+  void setCategoryFilter(String grade) {
+    add(CategoryFilteredEvent(grade));
+  }
+
+  void clearFilters() {
+    add(FiltersClearedEvent());
   }
 
   @override
@@ -72,10 +80,14 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       yield LocationState.clearData(true, state);
     } else if (event is ClimbsUpdatedEvent) {
       yield LocationState.updateClimbs(false, event.climbs, state);
-    } else if (event is GradeFilteredEvent) {
-      yield LocationState.setFilterGrade(event.filterGrade, state);
     } else if (event is SectionFilteredEvent) {
       yield LocationState.setFilterSection(event.filterSection, state);
+    } else if (event is GradeFilteredEvent) {
+      yield LocationState.setFilterGrade(event.filterGrade, state);
+    } else if (event is CategoryFilteredEvent) {
+      yield LocationState.setFilterCategory(event.filterCategory, state);
+    } else if (event is FiltersClearedEvent) {
+      yield LocationState.clearFilters(state);
     } else if (event is LocationErrorEvent) {
       yield LocationState.loading(false, state);
     }
