@@ -1,14 +1,14 @@
 import 'attempt.dart';
 
 class Climb {
-  Climb(this.id, this.displayName, this.imagePath, this.imageUri, this.locationId, this.grade,
+  Climb(this.id, this.displayName, this.imageURL, this.imageURI, this.locationId, this.grade,
       this.gradeSet, this.section, this.archived, this.categories,
       [this.attempts]);
 
   final String id;
   final String displayName;
-  final String imagePath;
-  final String imageUri;
+  final String imageURL;
+  final String imageURI;
   final String locationId;
   final String grade;
   final String gradeSet;
@@ -21,7 +21,8 @@ class Climb {
     return {
       "id": id,
       "displayName": displayName,
-      "imageUri": imageUri,
+      "imageUrl": imageURL,
+      "imageUri": imageURI,
       "locationId": locationId,
       "grade": grade,
       "gradeSet": gradeSet,

@@ -52,18 +52,21 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
       if (state.deleteImage) {
         StorageRepo.getInstance().deleteFileByUri(state.imageUri);
         state.imageUri = "";
-        state.imagePath = "";
+        state.imageUrl = "";
       } else if (state.imageFile != null) {
         if (state.imageUri != "") {
           StorageRepo.getInstance().deleteFileByUri(state.imageUri);
         }
         state.imageUri = await StorageRepo.getInstance().uploadFile(state.imageFile);
-        state.imagePath = await StorageRepo.getInstance().decodeUri(state.imageUri);
+        state.imageUrl = await StorageRepo.getInstance().decodeUri(state.imageUri);
       }
       final user = await UserRepo.getInstance().getCurrentUser();
       List<String> grades =
           await GradeRepo.getInstance().getGradesForId(user, state.gradeSet).first;
-      Location location = Location(this.location.id, state.displayName, state.imagePath,
+      Location location = Location(
+          this.location.id,
+          state.displayName,
+          state.imageUrl,
           state.imageUri, state.gradeSet, grades, state.sections, <Climb>[]);
       try {
         LocationRepo.getInstance().setLocation(location);
@@ -106,14 +109,17 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
   }
 
   void deleteLocation(BuildContext context, CreateLocationWidget view) {
-    LocationRepo.getInstance().deleteLocation(location.id, location.imageUri);
+    LocationRepo.getInstance().deleteLocation(location.id, location.imageURI);
     NavigationHelper.resetToMain(context);
   }
 
   void _navigateToLocationAfterEdit(CreateLocationState state, BuildContext context) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     List<String> grades = await GradeRepo.getInstance().getGradesForId(user, state.gradeSet).first;
-    Location location = Location(this.location.id, state.displayName, state.imagePath,
+    Location location = Location(
+        this.location.id,
+        state.displayName,
+        state.imageUrl,
         state.imageUri, state.gradeSet, grades, state.sections, <Climb>[]);
     NavigationHelper.resetToLocation(context, location, this.categories);
   }
@@ -125,7 +131,7 @@ class CreateLocationBloc extends Bloc<CreateLocationEvent, CreateLocationState> 
     } else if (event is LocationClearedEvent) {
       yield CreateLocationState.updateLocation(
           true,
-          Location(this.location.id, state.displayName, state.imagePath, state.imageUri,
+          Location(this.location.id, state.displayName, state.imageUrl, state.imageUri,
               state.gradeSet, <String>[]),
           state);
     } else if (event is GradeSetsUpdatedEvent) {

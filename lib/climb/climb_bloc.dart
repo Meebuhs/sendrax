@@ -101,7 +101,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
 
   void deleteClimb(
       BuildContext context, ClimbWidget view, Location location, List<String> categories) {
-    ClimbRepo.getInstance().deleteClimb(this.climb.id, this.climb.imageUri);
+    ClimbRepo.getInstance().deleteClimb(this.climb.id, this.climb.imageURI);
     NavigationHelper.resetToLocation(context, location, categories);
   }
 

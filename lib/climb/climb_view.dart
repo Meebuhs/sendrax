@@ -86,7 +86,7 @@ class ClimbWidget extends StatelessWidget {
     List<DateTime> datesToBuild = _generateDates(state);
 
     int itemCount = 1;
-    if (widget.climb.imagePath != "") {
+    if (widget.climb.imageURL != null) {
       itemCount++;
     }
     if (state.attempts.isEmpty) {
@@ -98,9 +98,9 @@ class ClimbWidget extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        if (widget.climb.imagePath != "") {
+        if (widget.climb.imageURL != null) {
           if (index == 0) {
-            return _showImage();
+            return _showImage(context);
           } else if (index == 1) {
             return _showClimbInformation(context);
           } else if (state.attempts.isEmpty) {
@@ -147,18 +147,24 @@ class ClimbWidget extends StatelessWidget {
     );
   }
 
-  Widget _showImage() {
+  Widget _showImage(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       height: 200,
       child: CachedNetworkImage(
-        imageUrl: widget.climb.imagePath,
-        imageBuilder: (context, imageProvider) => Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: imageProvider,
-            fit: BoxFit.cover,
-          )),
+        imageUrl: widget.climb.imageURL,
+        imageBuilder: (context, imageProvider) =>
+            InkWell(
+              child: Material(child: Hero(
+                  tag: "climbImageHero",
+                  child: Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          )))),
+              ),
+              onTap: () => navigateToImageView(imageProvider),
         ),
         placeholder: (context, url) => SizedBox(
             width: 60,
@@ -403,5 +409,10 @@ class ClimbWidget extends StatelessWidget {
 
   void navigateToLocation() {
     NavigationHelper.navigateBackOne(widgetState.context);
+  }
+
+  void navigateToImageView(ImageProvider image) {
+    NavigationHelper.navigateToImageView(
+        widgetState.context, image, "climbImageHero", addToBackStack: true);
   }
 }

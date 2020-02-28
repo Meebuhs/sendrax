@@ -5,7 +5,6 @@ import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/attempt_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
-import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user.dart';
 import 'package:sendrax/models/user_repo.dart';
 
@@ -45,19 +44,8 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     add(ClearLocationsEvent());
     locationsSubscription =
         LocationRepo.getInstance().getLocationsForUser(user).listen((locations) async {
-      Stream<Location> processedLocationsStream =
-          Stream.fromIterable(locations).asyncMap((location) async {
-        if (location.imageUri != "") {
-          final String url = await StorageRepo.getInstance().decodeUri(location.imageUri);
-          return Location(location.id, location.displayName, url, location.imageUri,
-              location.gradeSet, location.grades, location.sections, location.climbs);
-        } else {
-          return location;
-        }
-      });
-      final List<Location> processedLocations = await processedLocationsStream.toList();
-      add(LocationsUpdatedEvent(
-          processedLocations..sort((a, b) => a.displayName.compareTo(b.displayName))));
+          add(LocationsUpdatedEvent(
+              locations..sort((a, b) => a.displayName.compareTo(b.displayName))));
     });
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sendrax/image/image_view.dart';
 import 'package:sendrax/view_only_climb/view_only_climb_view.dart';
 
 import 'climb/climb_view.dart';
@@ -130,6 +131,21 @@ class NavigationHelper {
           context,
           MaterialPageRoute(
               builder: (context) => ViewOnlyClimbScreen(climbId: climbId, climbName: climbName)));
+    }
+  }
+
+  static void navigateToImageView(BuildContext context, ImageProvider image, String heroTag,
+      {bool addToBackStack: false}) {
+    if (addToBackStack) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ImageScreen(image: image, heroTag: heroTag,)));
+    } else {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ImageScreen(image: image, heroTag: heroTag)));
     }
   }
 

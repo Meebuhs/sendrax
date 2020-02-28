@@ -81,7 +81,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
     List<DateTime> datesToBuild = _generateDates(state);
 
     int itemCount = 1;
-    if (state.climb.imagePath != "") {
+    if (state.climb.imageURL != null) {
       itemCount++;
     }
     if (state.climb.attempts.isEmpty) {
@@ -93,7 +93,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        if (state.climb.imagePath != "") {
+        if (state.climb.imageURL != null) {
           if (index == 0) {
             return _showImage(state);
           } else if (index == 1) {
@@ -147,14 +147,20 @@ class ViewOnlyClimbWidget extends StatelessWidget {
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       height: 200,
       child: CachedNetworkImage(
-        imageUrl: state.climb.imagePath,
-        imageBuilder: (context, imageProvider) => Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: imageProvider,
-            fit: BoxFit.cover,
-          )),
-        ),
+        imageUrl: state.climb.imageURL,
+        imageBuilder: (context, imageProvider) =>
+            InkWell(
+                child: Material(
+                  child: Hero(
+                      tag: "viewOnlyClimbImageHero",
+                      child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              )))),
+                ),
+                onTap: () => navigateToImageView(imageProvider)),
         placeholder: (context, url) => SizedBox(
             width: 60,
             height: 60,
@@ -275,5 +281,10 @@ class ViewOnlyClimbWidget extends StatelessWidget {
 
   void navigateBackOne() {
     NavigationHelper.navigateBackOne(widgetState.context);
+  }
+
+  void navigateToImageView(ImageProvider image) {
+    NavigationHelper.navigateToImageView(
+        widgetState.context, image, "viewOnlyClimbImageHero", addToBackStack: true);
   }
 }

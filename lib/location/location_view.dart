@@ -45,7 +45,14 @@ class LocationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.location.displayName),
+        title: Material(
+            color: Colors.transparent,
+            child: Hero(
+                tag: "${widget.location.displayName}-text",
+                child: Text(widget.location.displayName, style: Theme
+                    .of(context)
+                    .primaryTextTheme
+                    .headline6,))),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
@@ -98,11 +105,15 @@ class LocationWidget extends StatelessWidget {
     return Column(children: <Widget>[
       Row(children: <Widget>[
         Expanded(
+          child: _showSectionDropdown(state, context),
+        ),
+        Expanded(
           child: _showGradeDropdown(state, context),
         ),
         Expanded(
-          child: _showSectionDropdown(state, context),
-        )
+          child: _showCategoryDropdown(state, context),
+        ),
+        _showClearDropdownsButton(state, context)
       ]),
       Divider(
         color: Theme.of(context).accentColor,
@@ -112,51 +123,49 @@ class LocationWidget extends StatelessWidget {
     ]);
   }
 
-  Widget _showGradeDropdown(LocationState state, BuildContext context) {
-    return Container(
-        color: Theme.of(context).cardColor,
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        child: Row(children: <Widget>[
-          Expanded(
-              child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-            style: Theme.of(context).accentTextTheme.subtitle2,
-            items: _createDropdownItems(widget.location.grades),
-            value: state.filterGrade,
-            hint: Text("Grade"),
-            isExpanded: true,
-            onChanged: (value) => BlocProvider.of<LocationBloc>(context).setGradeFilter(value),
-          ))),
-          IconButton(
-              icon: Icon(Icons.cancel,
-                  color: (state.filterGrade == null) ? Colors.grey : Theme.of(context).accentColor),
-              onPressed: () => BlocProvider.of<LocationBloc>(context).setGradeFilter(null))
-        ]));
-  }
-
   Widget _showSectionDropdown(LocationState state, BuildContext context) {
     return Container(
         color: Theme.of(context).cardColor,
         padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        child: Row(children: <Widget>[
-          Expanded(
-              child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-            style: Theme.of(context).accentTextTheme.subtitle2,
-            disabledHint: Text("No sections"),
-            iconDisabledColor: Theme.of(context).cardColor,
-            items: _createDropdownItems(widget.location.sections),
-            value: state.filterSection,
-            hint: Text("Section"),
-            isExpanded: true,
-            onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
-          ))),
-          IconButton(
-              icon: Icon(Icons.cancel,
-                  color:
-                      (state.filterSection == null) ? Colors.grey : Theme.of(context).accentColor),
-              onPressed: () => BlocProvider.of<LocationBloc>(context).setSectionFilter(null))
-        ]));
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          style: Theme.of(context).accentTextTheme.subtitle2,
+          items: _createDropdownItems(widget.location.sections),
+          value: state.filterSection,
+          hint: Text("Section"),
+          isExpanded: true,
+          onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
+        )));
+  }
+
+  Widget _showGradeDropdown(LocationState state, BuildContext context) {
+    return Container(
+        color: Theme.of(context).cardColor,
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          style: Theme.of(context).accentTextTheme.subtitle2,
+          items: _createDropdownItems(widget.location.grades),
+          value: state.filterGrade,
+          hint: Text("Grade"),
+          isExpanded: true,
+          onChanged: (value) => BlocProvider.of<LocationBloc>(context).setGradeFilter(value),
+        )));
+  }
+
+  Widget _showCategoryDropdown(LocationState state, BuildContext context) {
+    return Container(
+        color: Theme.of(context).cardColor,
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+        child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+          style: Theme.of(context).accentTextTheme.subtitle2,
+          items: _createDropdownItems(widget.categories),
+          value: state.filterCategory,
+          hint: Text("Category"),
+          isExpanded: true,
+          onChanged: (value) => BlocProvider.of<LocationBloc>(context).setCategoryFilter(value),
+        )));
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
@@ -173,16 +182,34 @@ class LocationWidget extends StatelessWidget {
     }
   }
 
+  Widget _showClearDropdownsButton(LocationState state, BuildContext context) {
+    return Container(
+        color: Theme.of(context).cardColor,
+        child: IconButton(
+            icon: Icon(Icons.cancel,
+                color: (state.filterGrade == null &&
+                        state.filterSection == null &&
+                        state.filterCategory == null)
+                    ? Colors.grey
+                    : Theme.of(context).accentColor),
+            onPressed: () => BlocProvider.of<LocationBloc>(context).clearFilters()));
+  }
+
   Widget _buildFilteredList(LocationState state, BuildContext context) {
-    if (List.from(state.climbs.where((climb) =>
+    List<Climb> filteredClimbs = List.from(state.climbs.where((climb) =>
         (state.filterSection == null || climb.section == state.filterSection) &&
-        (state.filterGrade == null || climb.grade == state.filterGrade))).isEmpty) {
+        (state.filterGrade == null || climb.grade == state.filterGrade) &&
+        (state.filterCategory == null || climb.categories.contains(state.filterCategory))));
+    filteredClimbs.sort((a, b) =>
+        widget.location.grades.indexOf(a.grade).compareTo(widget.location.grades.indexOf(b.grade)));
+
+    if (filteredClimbs.isEmpty) {
       return _showEmptyFilteredList(state, context);
     }
     if (widget.location.sections.isNotEmpty) {
-      return _buildContentWithSections(state, context, state.filterSection, state.filterGrade);
+      return _buildContentWithSections(state, context, filteredClimbs);
     } else {
-      return _buildContentWithoutSections(state, context, state.filterGrade);
+      return _buildContentWithoutSections(state, context, filteredClimbs);
     }
   }
 
@@ -204,10 +231,10 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _buildContentWithSections(
-      LocationState state, BuildContext context, String filterSection, String filterGrade) {
+      LocationState state, BuildContext context, List<Climb> filteredClimbs) {
     int itemCount = 0;
     int indexOffset = 0;
-    if (widget.location.imagePath != "") {
+    if (widget.location.imageURL != "") {
       itemCount++;
       indexOffset = 1;
     }
@@ -219,14 +246,14 @@ class LocationWidget extends StatelessWidget {
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
-        if (index == 0 && widget.location.imagePath != "") {
+        if (index == 0 && widget.location.imageURL != "") {
           return _showImage();
         } else {
-          if (filterSection != null) {
-            return _buildSection(context, state, filterGrade, filterSection);
+          if (state.filterSection != null) {
+            return _buildSection(context, state, state.filterSection, filteredClimbs);
           } else {
             return _buildSection(
-                context, state, filterGrade, widget.location.sections[index - indexOffset]);
+                context, state, widget.location.sections[index - indexOffset], filteredClimbs);
           }
         }
       },
@@ -235,31 +262,46 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _buildSection(
-      BuildContext context, LocationState state, String filterGrade, String section) {
-    List<Climb> climbsToInclude = List.from(state.climbs.where(
-        (climb) => climb.section == section && (filterGrade == null || climb.grade == filterGrade)))
-      ..sort((a, b) => widget.location.grades
-          .indexOf(a.grade)
-          .compareTo(widget.location.grades.indexOf(b.grade)));
+      BuildContext context, LocationState state, String section, List<Climb> filteredClimbs) {
+    List<Widget> cardHeaderChildren = [
+      Expanded(
+        child: Text(section,
+            overflow: TextOverflow.ellipsis, style: Theme.of(context).primaryTextTheme.subtitle2),
+      )
+    ];
+    if ([state.filterSection, state.filterGrade, state.filterCategory]
+            ?.every((value) => value == null) ??
+        null) {
+      cardHeaderChildren.add(SizedBox(
+          height: 24,
+          width: 24,
+          child: IconButton(
+              padding: EdgeInsets.all(0),
+              icon: Icon(
+                Icons.archive,
+                color: Colors.black,
+              ),
+              onPressed: () => _showArchiveSectionDialog(context, section))));
+    }
+
+    List<Climb> climbsToInclude =
+        filteredClimbs.where((climb) => climb.section == section).toList();
     if (climbsToInclude.isNotEmpty) {
       return Card(
           child: Column(children: <Widget>[
         Row(children: <Widget>[
           Expanded(
               child: Padding(
-            padding: EdgeInsets.all(1.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                color: Theme.of(context).accentColor,
-              ),
-              padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              child: Text(section,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).primaryTextTheme.subtitle2),
-            ),
-          )),
+                  padding: EdgeInsets.all(1.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                      color: Theme.of(context).accentColor,
+                    ),
+                    padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                    child: Row(children: cardHeaderChildren),
+                  ))),
         ]),
         Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,22 +313,17 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _buildContentWithoutSections(
-      LocationState state, BuildContext context, String filterGrade) {
-    List<Climb> climbsToInclude = List.from(
-        state.climbs.where((climb) => (filterGrade == null || climb.grade == filterGrade)))
-      ..sort((a, b) => widget.location.grades
-          .indexOf(a.grade)
-          .compareTo(widget.location.grades.indexOf(b.grade)));
+      LocationState state, BuildContext context, List<Climb> filteredClimbs) {
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
-        if (index == 0 && widget.location.imagePath != "") {
+        if (index == 0 && widget.location.imageURL != "") {
           return _showImage();
         } else {
-          return _buildClimbs(context, state, climbsToInclude);
+          return _buildClimbs(context, state, filteredClimbs);
         }
       },
-      itemCount: widget.location.imagePath != "" ? 2 : 1,
+      itemCount: widget.location.imageURL != "" ? 2 : 1,
     );
   }
 
@@ -313,18 +350,25 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _showImage() {
-    if (widget.location.imagePath != "") {
+    if (widget.location.imageURL != "") {
       return Container(
         height: 200,
         padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
         child: CachedNetworkImage(
-          imageUrl: widget.location.imagePath,
-          imageBuilder: (context, imageProvider) => Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              image: imageProvider,
-              fit: BoxFit.cover,
-            )),
+          imageUrl: widget.location.imageURL,
+          imageBuilder: (context, imageProvider) =>
+              InkWell(
+                child: Material(
+                  child: Hero(
+                      tag: "${widget.location.displayName}-image",
+                      child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              )))),
+                ),
+                onTap: () => navigateToImageView(imageProvider),
           ),
           placeholder: (context, url) => SizedBox(
               width: 60,
@@ -357,6 +401,31 @@ class LocationWidget extends StatelessWidget {
     );
   }
 
+  void _showArchiveSectionDialog(BuildContext upperContext, String section) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              title: Text("Are you sure you want to archive this section's climbs?",
+                  style: Theme.of(context).accentTextTheme.headline5),
+              content: Text(
+                  "The climbs will still appear in your log but will no longer appear for this location",
+                  style: Theme.of(context).accentTextTheme.bodyText2),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () => NavigationHelper.navigateBackOne(upperContext),
+                ),
+                FlatButton(
+                  child: Text("ARCHIVE", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () => BlocProvider.of<LocationBloc>(upperContext)
+                      .archiveSection(section, upperContext),
+                )
+              ]);
+        });
+  }
+
   void _createClimb(LocationState state) {
     var uuid = Uuid();
     // the null values for grade and section here are required as they are used as the initial
@@ -376,6 +445,12 @@ class LocationWidget extends StatelessWidget {
 
   void navigateToClimb(Climb climb, LocationState state) {
     NavigationHelper.navigateToClimb(widgetState.context, climb, widget.location, widget.categories,
+        addToBackStack: true);
+  }
+
+  void navigateToImageView(ImageProvider image) {
+    NavigationHelper.navigateToImageView(
+        widgetState.context, image, "${widget.location.displayName}-image",
         addToBackStack: true);
   }
 }

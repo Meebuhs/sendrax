@@ -7,7 +7,7 @@ class CreateLocationState {
   bool loading;
   final GlobalKey<FormState> formKey;
   String displayName;
-  String imagePath;
+  String imageUrl;
   String imageUri;
   File imageFile;
   bool deleteImage;
@@ -18,40 +18,40 @@ class CreateLocationState {
 
   // @formatter:off
   CreateLocationState._internal(this.loading, this.formKey, this.displayName,
-      this.imagePath, this.imageUri, this.imageFile, this.deleteImage,
+      this.imageUrl, this.imageUri, this.imageFile, this.deleteImage,
       this.sections, this.gradeSet, this.gradeSets, this.errorMessage);
 
   factory CreateLocationState.initial(Location location, bool isEdit) =>
       CreateLocationState._internal(true, GlobalKey<FormState>(), location.displayName,
-          location.imagePath, location.imageUri, null, false, location.sections, location.gradeSet,
+          location.imageURL, location.imageURI, null, false, location.sections, location.gradeSet,
           <String>[], "");
 
     factory CreateLocationState.loading(bool loading, CreateLocationState state) =>
       CreateLocationState._internal(loading, state.formKey, state.displayName,
-          state.imagePath, state.imageUri, state.imageFile, state.deleteImage,
+          state.imageUrl, state.imageUri, state.imageFile, state.deleteImage,
           state.sections, state.gradeSet, state.gradeSets, state.errorMessage);
 
   factory CreateLocationState.updateGradeSets(
           bool loading, List<String> gradeSets, CreateLocationState state) =>
       CreateLocationState._internal(loading, state.formKey, state.displayName,
-          state.imagePath, state.imageUri, state.imageFile, state.deleteImage,
+          state.imageUrl, state.imageUri, state.imageFile, state.deleteImage,
           state.sections, state.gradeSet, gradeSets, state.errorMessage);
 
   factory CreateLocationState.selectGradeSet(String gradeSet, CreateLocationState state) =>
       CreateLocationState._internal(state.loading, state.formKey, state.displayName,
-          state.imagePath, state.imageUri, state.imageFile, state.deleteImage,
+          state.imageUrl, state.imageUri, state.imageFile, state.deleteImage,
           state.sections, gradeSet, state.gradeSets, state.errorMessage);
 
   factory CreateLocationState.updateLocation(
       bool loading, Location location, CreateLocationState state) =>
-  CreateLocationState._internal(loading, state.formKey, state.displayName, location.imagePath,
-      location.imageUri, state.imageFile, state.deleteImage,  location.sections,
+  CreateLocationState._internal(loading, state.formKey, state.displayName, location.imageURL,
+      location.imageURI, state.imageFile, state.deleteImage,  location.sections,
       location.gradeSet, state.gradeSets, state.errorMessage);
 
   factory CreateLocationState.updateImageFile(
       bool deleteImage, File imageFile, CreateLocationState state) =>
       CreateLocationState._internal(state.loading, state.formKey, state.displayName,
-          state.imagePath, state.imageUri, imageFile, deleteImage,
+          state.imageUrl, state.imageUri, imageFile, deleteImage,
           state.sections, state.gradeSet, state.gradeSets, state.errorMessage);
 }
 // @formatter:on
