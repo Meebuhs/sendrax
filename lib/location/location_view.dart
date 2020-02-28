@@ -349,12 +349,19 @@ class LocationWidget extends StatelessWidget {
         padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
         child: CachedNetworkImage(
           imageUrl: widget.location.imageURL,
-          imageBuilder: (context, imageProvider) => Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              image: imageProvider,
-              fit: BoxFit.cover,
-            )),
+          imageBuilder: (context, imageProvider) =>
+              InkWell(
+                child: Material(
+                  child: Hero(
+                      tag: "imageHero",
+                      child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              )))),
+                ),
+                onTap: () => navigateToImageView(imageProvider),
           ),
           placeholder: (context, url) => SizedBox(
               width: 60,
@@ -432,5 +439,9 @@ class LocationWidget extends StatelessWidget {
   void navigateToClimb(Climb climb, LocationState state) {
     NavigationHelper.navigateToClimb(widgetState.context, climb, widget.location, widget.categories,
         addToBackStack: true);
+  }
+
+  void navigateToImageView(ImageProvider image) {
+    NavigationHelper.navigateToImageView(widgetState.context, image, addToBackStack: true);
   }
 }
