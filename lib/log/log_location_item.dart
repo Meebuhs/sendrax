@@ -28,7 +28,7 @@ class LocationItem extends StatelessWidget {
   }
 
   Widget _buildContent(Location location, BuildContext context) {
-    if (location.imagePath != "") {
+    if (location.imageURL != "") {
       return _buildImageContent(location, context);
     } else {
       return _buildTextContent(location, context);
@@ -42,7 +42,7 @@ class LocationItem extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.all(1.0),
             child: CachedNetworkImage(
-              imageUrl: location.imagePath,
+              imageUrl: location.imageURL,
               imageBuilder: (context, imageProvider) => Container(
                 decoration: BoxDecoration(
                     borderRadius:

@@ -1,13 +1,13 @@
 import 'climb.dart';
 
 class Location {
-  Location(this.id, this.displayName, this.imagePath, this.imageUri, this.gradeSet,
+  Location(this.id, this.displayName, this.imageURL, this.imageURI, this.gradeSet,
       [this.grades, this.sections, this.climbs]);
 
   final String id;
   final String displayName;
-  final String imagePath;
-  final String imageUri;
+  final String imageURL;
+  final String imageURI;
   final String gradeSet;
   final List<String> grades;
   final List<String> sections;
@@ -17,7 +17,8 @@ class Location {
     return {
       "id": id,
       "displayName": displayName,
-      "imageUri": imageUri,
+      "imageUrl": imageURL,
+      "imageUri": imageURI,
       "gradeSet": gradeSet,
       "grades": grades,
       "sections": sections,

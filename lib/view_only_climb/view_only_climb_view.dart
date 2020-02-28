@@ -81,7 +81,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
     List<DateTime> datesToBuild = _generateDates(state);
 
     int itemCount = 1;
-    if (state.climb.imagePath != "") {
+    if (state.climb.imageURL != "") {
       itemCount++;
     }
     if (state.climb.attempts.isEmpty) {
@@ -93,7 +93,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        if (state.climb.imagePath != "") {
+        if (state.climb.imageURL != "") {
           if (index == 0) {
             return _showImage(state);
           } else if (index == 1) {
@@ -147,7 +147,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       height: 200,
       child: CachedNetworkImage(
-        imageUrl: state.climb.imagePath,
+        imageUrl: state.climb.imageURL,
         imageBuilder: (context, imageProvider) => Container(
           decoration: BoxDecoration(
               image: DecorationImage(

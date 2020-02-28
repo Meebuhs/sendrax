@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/climb_repo.dart';
-import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
 
@@ -29,25 +28,7 @@ class ViewOnlyClimbBloc extends Bloc<ViewOnlyClimbEvent, ViewOnlyClimbState> {
     if (user != null) {
       climbSubscription =
           ClimbRepo.getInstance().getClimbFromId(climbId, user).listen((climb) async {
-        Climb processedClimb;
-        if (climb.imageUri != "") {
-          final String url = await StorageRepo.getInstance().decodeUri(climb.imageUri);
-          processedClimb = Climb(
-              climb.id,
-              climb.displayName,
-              url,
-              climb.imageUri,
-              climb.locationId,
-              climb.grade,
-              climb.gradeSet,
-              climb.section,
-              climb.archived,
-              climb.categories,
-              climb.attempts);
-        } else {
-          processedClimb = climb;
-        }
-        ClimbRepo.getInstance().getAttemptsForClimb(processedClimb, user).listen((finalClimb) {
+            ClimbRepo.getInstance().getAttemptsForClimb(climb, user).listen((finalClimb) {
           add(ClimbUpdatedEvent(finalClimb));
         });
       });
@@ -62,7 +43,7 @@ class ViewOnlyClimbBloc extends Bloc<ViewOnlyClimbEvent, ViewOnlyClimbState> {
   }
 
   void deleteClimb(BuildContext context) {
-    ClimbRepo.getInstance().deleteClimb(climbId, state.climb.imageUri);
+    ClimbRepo.getInstance().deleteClimb(climbId, state.climb.imageURI);
     NavigationHelper.navigateBackTwo(context);
   }
 

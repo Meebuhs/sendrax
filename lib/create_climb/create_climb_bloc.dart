@@ -34,19 +34,19 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
       if (state.deleteImage) {
         StorageRepo.getInstance().deleteFileByUri(state.imageUri);
         state.imageUri = "";
-        state.imagePath = "";
+        state.imageUrl = "";
       } else if (state.imageFile != null) {
         if (state.imageUri != "") {
           StorageRepo.getInstance().deleteFileByUri(state.imageUri);
         }
         state.imageUri = await StorageRepo.getInstance().uploadFile(state.imageFile);
-        state.imagePath = await StorageRepo.getInstance().decodeUri(state.imageUri);
+        state.imageUrl = await StorageRepo.getInstance().decodeUri(state.imageUri);
       }
 
       Climb climb = Climb(
           this.climb.id,
           state.displayName,
-          state.imagePath,
+          state.imageUrl,
           state.imageUri,
           this.climb.locationId,
           state.grade,

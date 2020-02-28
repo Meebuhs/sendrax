@@ -9,12 +9,17 @@ class Deserializer {
     return locations.map((location) => _deserializeLocation(location)).toList();
   }
 
-  // @formatter:off
   static Location _deserializeLocation(DocumentSnapshot location) {
-    return Location(location['id'], location['displayName'], "", location['imageUri'],
-        location['gradeSet'], List.from(location['grades']), List.from(location['sections']), <Climb>[]);
+    return Location(
+        location['id'],
+        location['displayName'],
+        location['imageUrl'],
+        location['imageUri'],
+        location['gradeSet'],
+        List.from(location['grades']),
+        List.from(location['sections']),
+        <Climb>[]);
   }
-  // @formatter:on
 
   static List<String> deserializeUserCategories(DocumentSnapshot user) {
     if (user['categories'] != null) {
@@ -33,7 +38,7 @@ class Deserializer {
     return Climb(
         climb['id'],
         climb['displayName'],
-        "",
+        climb['imageUrl'],
         climb['imageUri'],
         climb['locationId'],
         climb['grade'],
@@ -85,7 +90,8 @@ class Deserializer {
 
   static Climb deserializeClimbAttempts(List<DocumentSnapshot> attempts, Climb climb) {
     climb.attempts
-        .addAll(deserializeAttempts(attempts)..sort((a, b) => b.timestamp.compareTo(a.timestamp)));
+        .addAll(deserializeAttempts(attempts)
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp)));
     return climb;
   }
 

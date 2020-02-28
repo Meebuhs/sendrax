@@ -140,7 +140,7 @@ class CreateLocationWidget extends StatelessWidget {
 
   Widget _showImage(CreateLocationState state, BuildContext context) {
     Widget content;
-    if (state.deleteImage || (state.imageFile == null && state.imagePath == "")) {
+    if (state.deleteImage || (state.imageFile == null && state.imageUrl == "")) {
       content = Container(
           decoration: BoxDecoration(
               borderRadius:
@@ -155,7 +155,7 @@ class CreateLocationWidget extends StatelessWidget {
     } else if (state.imageFile != null) {
       content = Image.file(state.imageFile);
     } else {
-      content = Image.network(state.imagePath);
+      content = Image.network(state.imageUrl);
     }
     return SizedBox(
       height: 200.0,

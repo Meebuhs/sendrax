@@ -227,7 +227,7 @@ class LocationWidget extends StatelessWidget {
       LocationState state, BuildContext context, List<Climb> filteredClimbs) {
     int itemCount = 0;
     int indexOffset = 0;
-    if (widget.location.imagePath != "") {
+    if (widget.location.imageURL != "") {
       itemCount++;
       indexOffset = 1;
     }
@@ -239,7 +239,7 @@ class LocationWidget extends StatelessWidget {
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
-        if (index == 0 && widget.location.imagePath != "") {
+        if (index == 0 && widget.location.imageURL != "") {
           return _showImage();
         } else {
           if (state.filterSection != null) {
@@ -310,13 +310,13 @@ class LocationWidget extends StatelessWidget {
     return ListView.builder(
       padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
       itemBuilder: (context, index) {
-        if (index == 0 && widget.location.imagePath != "") {
+        if (index == 0 && widget.location.imageURL != "") {
           return _showImage();
         } else {
           return _buildClimbs(context, state, filteredClimbs);
         }
       },
-      itemCount: widget.location.imagePath != "" ? 2 : 1,
+      itemCount: widget.location.imageURL != "" ? 2 : 1,
     );
   }
 
@@ -343,12 +343,12 @@ class LocationWidget extends StatelessWidget {
   }
 
   Widget _showImage() {
-    if (widget.location.imagePath != "") {
+    if (widget.location.imageURL != "") {
       return Container(
         height: 200,
         padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
         child: CachedNetworkImage(
-          imageUrl: widget.location.imagePath,
+          imageUrl: widget.location.imageURL,
           imageBuilder: (context, imageProvider) => Container(
             decoration: BoxDecoration(
                 image: DecorationImage(

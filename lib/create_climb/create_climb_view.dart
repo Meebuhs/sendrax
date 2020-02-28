@@ -128,7 +128,7 @@ class CreateClimbWidget extends StatelessWidget {
 
   Widget _showImage(CreateClimbState state, BuildContext context) {
     Widget content;
-    if (state.deleteImage || (state.imageFile == null && state.imagePath == "")) {
+    if (state.deleteImage || (state.imageFile == null && state.imageUrl == "")) {
       content = Container(
           decoration: BoxDecoration(
               borderRadius:
@@ -143,7 +143,7 @@ class CreateClimbWidget extends StatelessWidget {
     } else if (state.imageFile != null) {
       content = Image.file(state.imageFile);
     } else {
-      content = Image.network(state.imagePath);
+      content = Image.network(state.imageUrl);
     }
     return SizedBox(
       height: 200.0,
@@ -349,7 +349,7 @@ class CreateClimbWidget extends StatelessWidget {
     Climb climb = Climb(
         widget.climb.id,
         state.displayName,
-        state.imagePath,
+        state.imageUrl,
         state.imageUri,
         widget.climb.locationId,
         state.grade,
