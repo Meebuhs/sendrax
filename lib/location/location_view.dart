@@ -256,6 +256,27 @@ class LocationWidget extends StatelessWidget {
 
   Widget _buildSection(
       BuildContext context, LocationState state, String section, List<Climb> filteredClimbs) {
+    List<Widget> cardHeaderChildren = [
+      Expanded(
+        child: Text(section,
+            overflow: TextOverflow.ellipsis, style: Theme.of(context).primaryTextTheme.subtitle2),
+      )
+    ];
+    if ([state.filterSection, state.filterGrade, state.filterCategory]
+            ?.every((value) => value == null) ??
+        null) {
+      cardHeaderChildren.add(SizedBox(
+          height: 24,
+          width: 24,
+          child: IconButton(
+              padding: EdgeInsets.all(0),
+              icon: Icon(
+                Icons.archive,
+                color: Colors.black,
+              ),
+              onPressed: () => _showArchiveSectionDialog(context, section))));
+    }
+
     List<Climb> climbsToInclude =
         filteredClimbs.where((climb) => climb.section == section).toList();
     if (climbsToInclude.isNotEmpty) {
@@ -264,19 +285,16 @@ class LocationWidget extends StatelessWidget {
         Row(children: <Widget>[
           Expanded(
               child: Padding(
-            padding: EdgeInsets.all(1.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                color: Theme.of(context).accentColor,
-              ),
-              padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              child: Text(section,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).primaryTextTheme.subtitle2),
-            ),
-          )),
+                  padding: EdgeInsets.all(1.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                      color: Theme.of(context).accentColor,
+                    ),
+                    padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                    child: Row(children: cardHeaderChildren),
+                  ))),
         ]),
         Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,6 +385,31 @@ class LocationWidget extends StatelessWidget {
         )
       ],
     );
+  }
+
+  void _showArchiveSectionDialog(BuildContext upperContext, String section) {
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              title: Text("Are you sure you want to archive this section's climbs?",
+                  style: Theme.of(context).accentTextTheme.headline5),
+              content: Text(
+                  "The climbs will still appear in your log but will no longer appear for this location",
+                  style: Theme.of(context).accentTextTheme.bodyText2),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () => NavigationHelper.navigateBackOne(upperContext),
+                ),
+                FlatButton(
+                  child: Text("ARCHIVE", style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () => BlocProvider.of<LocationBloc>(upperContext)
+                      .archiveSection(section, upperContext),
+                )
+              ]);
+        });
   }
 
   void _createClimb(LocationState state) {

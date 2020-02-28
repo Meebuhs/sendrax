@@ -1,13 +1,16 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:sendrax/location/location_event.dart';
 import 'package:sendrax/location/location_state.dart';
 import 'package:sendrax/models/climb.dart';
+import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/location_repo.dart';
 import 'package:sendrax/models/storage_repo.dart';
 import 'package:sendrax/models/user_repo.dart';
+import 'package:sendrax/navigation_helper.dart';
 
 import 'location_event.dart';
 import 'location_state.dart';
@@ -72,6 +75,16 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   void clearFilters() {
     add(FiltersClearedEvent());
+  }
+
+  void archiveSection(String section, BuildContext context) {
+    for (Climb climb in location.climbs) {
+      if (climb.section == section) {
+        ClimbRepo.getInstance().setClimbArchived(climb.id, true);
+      }
+    }
+    NavigationHelper.navigateBackOne(context);
+    add(ClimbsUpdatedEvent(location.climbs..retainWhere((climb) => climb.section != section)));
   }
 
   @override

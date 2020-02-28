@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added category filter to location view
+- Added ability to archive an entire section of climbs
 
 ## 0.3.0 - 2020-02-27
 
