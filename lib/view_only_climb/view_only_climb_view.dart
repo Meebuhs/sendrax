@@ -152,7 +152,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
             InkWell(
                 child: Material(
                   child: Hero(
-                      tag: "imageHero",
+                      tag: "viewOnlyClimbImageHero",
                       child: Container(
                           decoration: BoxDecoration(
                               image: DecorationImage(
@@ -284,6 +284,7 @@ class ViewOnlyClimbWidget extends StatelessWidget {
   }
 
   void navigateToImageView(ImageProvider image) {
-    NavigationHelper.navigateToImageView(widgetState.context, image, addToBackStack: true);
+    NavigationHelper.navigateToImageView(
+        widgetState.context, image, "viewOnlyClimbImageHero", addToBackStack: true);
   }
 }

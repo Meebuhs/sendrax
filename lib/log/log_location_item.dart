@@ -37,20 +37,27 @@ class LocationItem extends StatelessWidget {
 
   Widget _buildImageContent(Location location, BuildContext context) {
     return Column(children: <Widget>[
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: UIConstants.SMALLER_PADDING),
+        child: _showText(location, context),
+      ),
       Expanded(
         child: Container(
           child: Padding(
             padding: EdgeInsets.all(1.0),
             child: CachedNetworkImage(
               imageUrl: location.imageURL,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    )),
+              imageBuilder: (context, imageProvider) =>
+                  Hero(
+                    tag: "${location.displayName}-image",
+                    child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ))),
               ),
               placeholder: (context, url) => Row(
                 children: <Widget>[
@@ -72,10 +79,6 @@ class LocationItem extends StatelessWidget {
           ),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: UIConstants.SMALLER_PADDING),
-        child: _showText(location, context),
-      )
     ]);
   }
 
@@ -84,10 +87,16 @@ class LocationItem extends StatelessWidget {
   }
 
   Widget _showText(Location location, BuildContext context) {
-    return Text(
-      location.displayName,
-      overflow: TextOverflow.ellipsis,
-      style: Theme.of(context).accentTextTheme.headline6,
-    );
+    return Material(
+        child: Hero(
+            tag: "${location.displayName}-text",
+            child: Text(
+              location.displayName,
+              overflow: TextOverflow.ellipsis,
+              style: Theme
+                  .of(context)
+                  .accentTextTheme
+                  .headline6,
+            )));
   }
 }

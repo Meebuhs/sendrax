@@ -134,18 +134,18 @@ class NavigationHelper {
     }
   }
 
-  static void navigateToImageView(BuildContext context, ImageProvider image,
+  static void navigateToImageView(BuildContext context, ImageProvider image, String heroTag,
       {bool addToBackStack: false}) {
     if (addToBackStack) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ImageScreen(image: image)));
+              builder: (context) => ImageScreen(image: image, heroTag: heroTag,)));
     } else {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => ImageScreen(image: image)));
+              builder: (context) => ImageScreen(image: image, heroTag: heroTag)));
     }
   }
 

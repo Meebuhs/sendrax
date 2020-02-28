@@ -45,7 +45,14 @@ class LocationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.location.displayName),
+        title: Material(
+            color: Colors.transparent,
+            child: Hero(
+                tag: "${widget.location.displayName}-text",
+                child: Text(widget.location.displayName, style: Theme
+                    .of(context)
+                    .primaryTextTheme
+                    .headline6,))),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
@@ -353,7 +360,7 @@ class LocationWidget extends StatelessWidget {
               InkWell(
                 child: Material(
                   child: Hero(
-                      tag: "imageHero",
+                      tag: "${widget.location.displayName}-image",
                       child: Container(
                           decoration: BoxDecoration(
                               image: DecorationImage(
@@ -442,6 +449,8 @@ class LocationWidget extends StatelessWidget {
   }
 
   void navigateToImageView(ImageProvider image) {
-    NavigationHelper.navigateToImageView(widgetState.context, image, addToBackStack: true);
+    NavigationHelper.navigateToImageView(
+        widgetState.context, image, "${widget.location.displayName}-image",
+        addToBackStack: true);
   }
 }

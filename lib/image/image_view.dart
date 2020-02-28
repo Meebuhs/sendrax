@@ -4,9 +4,10 @@ import 'package:photo_view/photo_view.dart';
 import 'package:sendrax/navigation_helper.dart';
 
 class ImageScreen extends StatelessWidget {
-  const ImageScreen({Key key, @required this.image}) : super(key: key);
+  const ImageScreen({Key key, @required this.image, @required this.heroTag}) : super(key: key);
 
   final ImageProvider image;
+  final String heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class ImageScreen extends StatelessWidget {
           child: PhotoView(
         imageProvider: image,
         minScale: PhotoViewComputedScale.contained,
-        heroAttributes: PhotoViewHeroAttributes(tag: "imageHero"),
+            heroAttributes: PhotoViewHeroAttributes(tag: heroTag),
       )),
       onTap: () => NavigationHelper.navigateBackOne(context),
     ));

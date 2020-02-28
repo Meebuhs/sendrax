@@ -156,7 +156,7 @@ class ClimbWidget extends StatelessWidget {
         imageBuilder: (context, imageProvider) =>
             InkWell(
               child: Material(child: Hero(
-                  tag: "imageHero",
+                  tag: "climbImageHero",
                   child: Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
@@ -412,6 +412,7 @@ class ClimbWidget extends StatelessWidget {
   }
 
   void navigateToImageView(ImageProvider image) {
-    NavigationHelper.navigateToImageView(widgetState.context, image, addToBackStack: true);
+    NavigationHelper.navigateToImageView(
+        widgetState.context, image, "climbImageHero", addToBackStack: true);
   }
 }
