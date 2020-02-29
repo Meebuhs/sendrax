@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -153,9 +154,46 @@ class CreateLocationWidget extends StatelessWidget {
             textAlign: TextAlign.center,
           )));
     } else if (state.imageFile != null) {
-      content = Image.file(state.imageFile);
+      content = Material(
+          child: Hero(
+              tag: "${widget.location.displayName}-image",
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                    image: DecorationImage(
+                      image: Image
+                          .file(state.imageFile)
+                          .image,
+                      fit: BoxFit.cover,
+                    )),
+              )));
     } else {
-      content = Image.network(state.imageUrl);
+      content = Material(
+          child: Hero(
+              tag: "${widget.location.displayName}-image",
+              child: CachedNetworkImage(
+                imageUrl: state.imageUrl,
+                imageBuilder: (context, imageProvider) =>
+                    Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          )),
+                    ),
+                placeholder: (context, url) =>
+                    SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 4.0,
+                            ))),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              )));
     }
     return SizedBox(
       height: 200.0,
