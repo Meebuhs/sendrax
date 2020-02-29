@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:sendrax/models/gradeset.dart';
 import 'package:sendrax/models/login_response.dart';
 import 'package:sendrax/models/user.dart';
@@ -25,20 +26,25 @@ class LoginRepo {
   }
 
   Future<LoginResponse> signIn(String username, String password) async {
-    AuthResult result = await _auth.signInWithEmailAndPassword(
-        email: "$username@sendrax-3dacb.com", password: password);
+    String email = await _firestore
+        .collection(FirestorePaths.USERNAMES_COLLECTION)
+        .document(username)
+        .get()
+        .then((value) => value.data['email']);
+    AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
     if (result != null && result.user != null) {
-      return User(result.user.uid, username);
+      return User(result.user.uid);
     } else {
       return LoginFailedResponse();
     }
   }
 
-  Future<LoginResponse> signUp(String username, String password) async {
-    AuthResult result = await _auth.createUserWithEmailAndPassword(
-        email: "$username@sendrax-3dacb.com", password: password);
+  Future<LoginResponse> signUp(String username, String email, String password) async {
+    AuthResult result =
+    await _auth.createUserWithEmailAndPassword(email: email, password: password);
     if (result != null && result.user != null) {
-      User user = User(result.user.uid, username);
+      User user = User(result.user.uid);
+      _claimUsername(username, result.user.email, result.user.uid);
       await _firestore
           .collection(FirestorePaths.USERS_COLLECTION)
           .document(result.user.uid)
@@ -49,6 +55,23 @@ class LoginRepo {
     } else {
       return LoginFailedResponse();
     }
+  }
+
+  Future<bool> checkUsernameAvailable(String username) async {
+    DocumentSnapshot user =
+    await _firestore.collection(FirestorePaths.USERNAMES_COLLECTION).document(username).get();
+    if (user.exists) {
+      throw PlatformException(
+          code: "ERROR_USERNAME_TAKEN", message: "A user with this username already exists");
+    }
+    return (!user.exists);
+  }
+
+  void _claimUsername(String username, String email, String uid) async {
+    await _firestore
+        .collection(FirestorePaths.USERNAMES_COLLECTION)
+        .document(username)
+        .setData({"username": username, "email": email, "uid": uid});
   }
 
   void _setDefaultGrades(String userId) async {
@@ -65,7 +88,7 @@ class LoginRepo {
         .collection(FirestorePaths.USERS_COLLECTION)
         .document(userId)
         .setData({"categories": ClimbCategories.CATEGORIES}, merge: true);
-    }
+  }
 
   Future<bool> signOut() async {
     return _auth.signOut().catchError((error) {

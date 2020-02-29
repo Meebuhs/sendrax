@@ -44,15 +44,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if (state.isLogin) {
           await LoginRepo.getInstance().signIn(state.username, state.password);
         } else {
-          await LoginRepo.getInstance().signUp(state.username, state.password);
+          await LoginRepo.getInstance().checkUsernameAvailable(state.username);
+          await LoginRepo.getInstance().signUp(state.username, state.email, state.password);
         }
         state.loading = false;
       } catch (e) {
-        state.formKey.currentState.reset();
-        state.passwordKey.currentState.reset();
+        print(e);
         state.loading = false;
-        String errorMessage = e.message.replaceAll('email address', 'username');
-        add(LoginErrorEvent(errorMessage));
+        add(LoginErrorEvent(e.message));
       }
     } else {
       add(LoginWithEmailEvent());
@@ -69,8 +68,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   void toggleFormMode(LoginState state) {
-    state.formKey.currentState.reset();
-    state.passwordKey.currentState.reset();
     add(FormToggledEvent());
   }
 

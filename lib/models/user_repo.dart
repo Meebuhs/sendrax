@@ -25,9 +25,8 @@ class UserRepo {
   Future<User> getCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userId = prefs.getString(StorageKeys.USER_ID_KEY);
-    String displayName = prefs.getString(StorageKeys.USER_DISPLAY_NAME_KEY);
     if (userId != null) {
-      return User(userId, displayName);
+      return User(userId);
     }
     return null;
   }
@@ -35,8 +34,7 @@ class UserRepo {
   void setCurrentUser(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs
-        .setString(StorageKeys.USER_ID_KEY, user.uid)
-        .then((value) => prefs.setString(StorageKeys.USER_DISPLAY_NAME_KEY, user.displayName));
+        .setString(StorageKeys.USER_ID_KEY, user.uid);
   }
 
   void clearCurrentUser() async {

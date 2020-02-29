@@ -106,6 +106,7 @@ class LoginWidget extends StatelessWidget {
             shrinkWrap: true,
             children: <Widget>[
               _showUsernameInput(state, context),
+              _showEmailInput(state, context),
               _showPasswordInputs(state, context),
               _showPrimaryButton(state, context),
               _showSecondaryButton(state, context),
@@ -139,6 +140,72 @@ class LoginWidget extends StatelessWidget {
       },
       onSaved: (value) => state.username = value.trim().toLowerCase(),
     );
+  }
+
+  Widget _showEmailInput(LoginState state, BuildContext context) {
+    Widget emailContent = Padding(
+      padding: EdgeInsets.only(top: UIConstants.STANDARD_PADDING),
+      child: TextFormField(
+        maxLines: 1,
+        autofocus: false,
+        style: Theme
+            .of(context)
+            .accentTextTheme
+            .subtitle2,
+        decoration: InputDecoration(
+            labelText: 'Email',
+            filled: true,
+            fillColor: Theme
+                .of(context)
+                .cardColor,
+            focusedBorder: Theme
+                .of(context)
+                .inputDecorationTheme
+                .focusedBorder,
+            enabledBorder: Theme
+                .of(context)
+                .inputDecorationTheme
+                .enabledBorder,
+            errorBorder: Theme
+                .of(context)
+                .inputDecorationTheme
+                .errorBorder,
+            focusedErrorBorder: Theme
+                .of(context)
+                .inputDecorationTheme
+                .focusedErrorBorder,
+            errorStyle: Theme
+                .of(context)
+                .inputDecorationTheme
+                .errorStyle,
+            prefixIcon: Icon(Icons.mail_outline)),
+        validator: (String value) {
+          if (value
+              .trim()
+              .isEmpty) {
+            return 'Email cannot be empty';
+          }
+          return null;
+        },
+        onSaved: (value) => state.email = value.trim(),
+      ),
+    );
+
+    return AnimatedBuilder(
+        animation: widgetState._animationController,
+        builder: (context, child) {
+          return Stack(children: <Widget>[
+            Opacity(
+                opacity: 0,
+                child: Container(
+                  height: widgetState._heightAnimation.value * 75,
+                )),
+            SlideTransition(
+              position: widgetState._slideAnimation,
+              child: widgetState._heightAnimation.value == 1 ? emailContent : null,
+            )
+          ]);
+        });
   }
 
   Widget _showPasswordInputs(LoginState state, BuildContext context) {

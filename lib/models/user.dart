@@ -4,14 +4,13 @@ import 'login_response.dart';
 
 class User extends LoginResponse {
   final String uid;
-  final String displayName;
 
-  User(this.uid, this.displayName);
+  User(this.uid);
 
   User.fromFirebaseUser(FirebaseUser firebaseUser)
-      : this(firebaseUser.uid, firebaseUser.displayName);
+      : this(firebaseUser.uid);
 
   Map<String, dynamic> get map {
-    return {"uid": uid, "displayName": displayName};
+    return {"uid": uid};
   }
 }
