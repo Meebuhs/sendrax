@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to archive an entire section of climbs
 - Added fullscreen view on image tap
 - Added email sign up 
+- Added ability to reset account password
 
 ## 0.3.0 - 2020-02-27
 

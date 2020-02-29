@@ -108,9 +108,10 @@ class LoginWidget extends StatelessWidget {
               _showUsernameInput(state, context),
               _showEmailInput(state, context),
               _showPasswordInputs(state, context),
-              _showPrimaryButton(state, context),
-              _showSecondaryButton(state, context),
+              _showSubmitButton(state, context),
+              _showFormToggleButton(state, context),
               _showErrorMessage(state, context),
+              _showPasswordResetButton(context),
             ],
           ),
         ));
@@ -294,7 +295,7 @@ class LoginWidget extends StatelessWidget {
         });
   }
 
-  Widget _showPrimaryButton(LoginState state, BuildContext context) {
+  Widget _showSubmitButton(LoginState state, BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(top: UIConstants.STANDARD_PADDING),
         child: SizedBox(
@@ -310,15 +311,126 @@ class LoginWidget extends StatelessWidget {
         ));
   }
 
-  Widget _showSecondaryButton(LoginState state, BuildContext context) {
-    return FlatButton(
-        child: Text(state.isLogin ? 'Create an account' : 'Have an account? Sign in',
-            style: Theme.of(context).accentTextTheme.subtitle2),
-        onPressed: () {
+  Widget _showFormToggleButton(LoginState state, BuildContext context) {
+    return InkWell(
+        child: SizedBox(
+            width: double.infinity,
+            height: 30,
+            child: Center(
+                child: Text(state.isLogin ? 'Create an account' : 'Have an account? Sign in',
+                    style: Theme
+                        .of(context)
+                        .accentTextTheme
+                        .subtitle2))),
+        onTap: () {
           BlocProvider.of<LoginBloc>(context).toggleFormMode(state);
           state.isLogin
               ? widgetState._animationController.forward()
               : widgetState._animationController.reverse();
+        });
+  }
+
+  Widget _showPasswordResetButton(BuildContext context) {
+    return InkWell(
+        child: SizedBox(
+          width: double.infinity,
+          height: 30,
+          child: Center(
+              child: Text('Forgot password', style: Theme
+                  .of(context)
+                  .accentTextTheme
+                  .subtitle2)),
+        ),
+        onTap: () {
+          _showPasswordResetDialog(context);
+        });
+  }
+
+  void _showPasswordResetDialog(BuildContext upperContext) {
+    final controller = TextEditingController();
+
+    showDialog(
+        context: upperContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Theme
+                  .of(context)
+                  .cardColor,
+              title:
+              Text("Reset your password", style: Theme
+                  .of(context)
+                  .accentTextTheme
+                  .headline5),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text("Enter your email below and we'll send you a link to reset your password.",
+                      style: Theme
+                          .of(context)
+                          .accentTextTheme
+                          .bodyText2),
+                  Padding(
+                      padding: EdgeInsets.only(
+                        top: UIConstants.STANDARD_PADDING,
+                      ),
+                      child: TextField(
+                        controller: controller,
+                        maxLines: 1,
+                        autofocus: false,
+                        style: Theme
+                            .of(context)
+                            .accentTextTheme
+                            .subtitle2,
+                        decoration: InputDecoration(
+                            labelText: 'Email',
+                            filled: true,
+                            fillColor: Theme
+                                .of(context)
+                                .dialogBackgroundColor,
+                            focusedBorder: Theme
+                                .of(context)
+                                .inputDecorationTheme
+                                .focusedBorder,
+                            enabledBorder: Theme
+                                .of(context)
+                                .inputDecorationTheme
+                                .enabledBorder,
+                            errorBorder: Theme
+                                .of(context)
+                                .inputDecorationTheme
+                                .errorBorder,
+                            focusedErrorBorder:
+                            Theme
+                                .of(context)
+                                .inputDecorationTheme
+                                .focusedErrorBorder,
+                            errorStyle: Theme
+                                .of(context)
+                                .inputDecorationTheme
+                                .errorStyle,
+                            prefixIcon: Icon(Icons.mail_outline)),
+                      )),
+                ],
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("CANCEL", style: Theme
+                      .of(context)
+                      .accentTextTheme
+                      .button),
+                  onPressed: () => NavigationHelper.navigateBackOne(upperContext),
+                ),
+                FlatButton(
+                    child: Text("EMAIL ME", style: Theme
+                        .of(context)
+                        .accentTextTheme
+                        .button),
+                    onPressed: () {
+                      BlocProvider.of<LoginBloc>(upperContext)
+                          .resetPassword(controller.text.trim());
+                      NavigationHelper.navigateBackOne(upperContext);
+                    })
+              ]);
         });
   }
 

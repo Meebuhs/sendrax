@@ -79,6 +79,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
+  void resetPassword(String email) {
+    LoginRepo.getInstance().resetPassword(email);
+  }
+
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginWithEmailEvent) {

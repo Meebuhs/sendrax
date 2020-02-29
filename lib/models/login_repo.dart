@@ -98,6 +98,10 @@ class LoginRepo {
     });
   }
 
+  void resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   Future<FirebaseUser> getCurrentUser() async {
     FirebaseUser user = await _auth.currentUser();
     return user;
