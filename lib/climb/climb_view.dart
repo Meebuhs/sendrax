@@ -86,7 +86,7 @@ class ClimbWidget extends StatelessWidget {
     List<DateTime> datesToBuild = _generateDates(state);
 
     int itemCount = 1;
-    if (widget.climb.imageURL != null) {
+    if (widget.climb.imageURL != "") {
       itemCount++;
     }
     if (state.attempts.isEmpty) {
@@ -98,7 +98,7 @@ class ClimbWidget extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        if (widget.climb.imageURL != null) {
+        if (widget.climb.imageURL != "") {
           if (index == 0) {
             return _showImage(context);
           } else if (index == 1) {

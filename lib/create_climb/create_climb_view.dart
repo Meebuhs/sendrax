@@ -129,7 +129,7 @@ class CreateClimbWidget extends StatelessWidget {
 
   Widget _showImage(CreateClimbState state, BuildContext context) {
     Widget content;
-    if (state.deleteImage || (state.imageFile == null && state.imageUrl == null)) {
+    if (state.deleteImage || (state.imageFile == null && state.imageUrl == "")) {
       content = Container(
           decoration: BoxDecoration(
               borderRadius:
