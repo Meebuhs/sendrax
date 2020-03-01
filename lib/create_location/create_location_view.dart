@@ -79,7 +79,7 @@ class CreateLocationWidget extends StatelessWidget {
 
   Widget _showForm(CreateLocationState state, BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
         child: Form(
           key: state.formKey,
           child: ListView(
@@ -155,6 +155,7 @@ class CreateLocationWidget extends StatelessWidget {
           )));
     } else if (state.imageFile != null) {
       content = Material(
+          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
           child: Hero(
               tag: "${widget.location.displayName}-image",
               child: Container(
@@ -170,6 +171,7 @@ class CreateLocationWidget extends StatelessWidget {
               )));
     } else {
       content = Material(
+          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
           child: Hero(
               tag: "${widget.location.displayName}-image",
               child: CachedNetworkImage(

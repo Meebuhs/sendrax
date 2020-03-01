@@ -72,8 +72,9 @@ class AttemptItem extends StatelessWidget {
     }
 
     return Padding(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
         child: Container(
+            margin: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING / 2),
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
@@ -82,7 +83,7 @@ class AttemptItem extends StatelessWidget {
             child: Row(children: <Widget>[
               Expanded(
                   child:
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: columnTexts)),
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: columnTexts)),
               Container(
                 padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
                 child: _showDownclimbedTick(context),

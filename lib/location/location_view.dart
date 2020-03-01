@@ -49,10 +49,13 @@ class LocationWidget extends StatelessWidget {
             color: Colors.transparent,
             child: Hero(
                 tag: "${widget.location.displayName}-text",
-                child: Text(widget.location.displayName, style: Theme
-                    .of(context)
-                    .primaryTextTheme
-                    .headline6,))),
+                child: Text(
+                  widget.location.displayName,
+                  style: Theme
+                      .of(context)
+                      .primaryTextTheme
+                      .headline6,
+                ))),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
@@ -79,7 +82,7 @@ class LocationWidget extends StatelessWidget {
           } else if (state.climbs.isEmpty) {
             content = Column(children: <Widget>[
               _showFilterDropdownRow(state, context),
-              _showImage(),
+              Padding(padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: _showImage()),
               Expanded(
                   child: Center(
                 child: Text(
@@ -288,25 +291,28 @@ class LocationWidget extends StatelessWidget {
         filteredClimbs.where((climb) => climb.section == section).toList();
     if (climbsToInclude.isNotEmpty) {
       return Card(
+          margin: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
           child: Column(children: <Widget>[
-        Row(children: <Widget>[
-          Expanded(
-              child: Padding(
-                  padding: EdgeInsets.all(1.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                      color: Theme.of(context).accentColor,
-                    ),
-                    padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-                    child: Row(children: cardHeaderChildren),
-                  ))),
-        ]),
-        Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: climbsToInclude.map((climb) => _buildClimbItem(climb, state)).toList())
-      ]));
+            Row(children: <Widget>[
+              Expanded(
+                  child: Padding(
+                      padding: EdgeInsets.all(1.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                          color: Theme
+                              .of(context)
+                              .accentColor,
+                        ),
+                        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                        child: Row(children: cardHeaderChildren),
+                      ))),
+            ]),
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: climbsToInclude.map((climb) => _buildClimbItem(climb, state)).toList())
+          ]));
     } else {
       return Column();
     }
@@ -330,7 +336,11 @@ class LocationWidget extends StatelessWidget {
   Widget _buildClimbs(BuildContext context, LocationState state, List<Climb> climbs) {
     List<Widget> climbItems = climbs.map((climb) => _buildClimbItem(climb, state)).toList();
     return Container(
-        color: Theme.of(context).cardColor,
+        decoration: BoxDecoration(
+            color: Theme
+                .of(context)
+                .cardColor,
+            borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
         child: Column(
           children: climbItems,
         ));
@@ -359,10 +369,13 @@ class LocationWidget extends StatelessWidget {
           imageBuilder: (context, imageProvider) =>
               InkWell(
                 child: Material(
+                  borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
                   child: Hero(
                       tag: "${widget.location.displayName}-image",
                       child: Container(
                           decoration: BoxDecoration(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
                               image: DecorationImage(
                                 image: imageProvider,
                                 fit: BoxFit.cover,

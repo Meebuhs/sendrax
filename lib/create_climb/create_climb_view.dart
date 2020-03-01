@@ -79,7 +79,7 @@ class CreateClimbWidget extends StatelessWidget {
 
   Widget _showForm(CreateClimbState state, BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
         child: Form(
           key: state.formKey,
           child: Column(
@@ -143,6 +143,7 @@ class CreateClimbWidget extends StatelessWidget {
           )));
     } else if (state.imageFile != null) {
       content = Material(
+          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
           child: Hero(
               tag: "climbImageHero",
               child: Container(
@@ -158,6 +159,7 @@ class CreateClimbWidget extends StatelessWidget {
               )));
     } else {
       content = Material(
+          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
           child: Hero(
               tag: "climbImageHero",
               child: CachedNetworkImage(

@@ -149,20 +149,25 @@ class ClimbWidget extends StatelessWidget {
 
   Widget _showImage(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+      padding: EdgeInsets.fromLTRB(
+          UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, 0),
       height: 200,
       child: CachedNetworkImage(
         imageUrl: widget.climb.imageURL,
         imageBuilder: (context, imageProvider) =>
             InkWell(
-              child: Material(child: Hero(
-                  tag: "climbImageHero",
-                  child: Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          )))),
+              child: Material(
+                borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                child: Hero(
+                    tag: "climbImageHero",
+                    child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            )))),
               ),
               onTap: () => navigateToImageView(imageProvider),
         ),
@@ -196,7 +201,11 @@ class ClimbWidget extends StatelessWidget {
         color: Theme.of(context).accentColor,
         thickness: 1.0,
         height: 0.0,
-      )
+      ),
+      Container(
+        height: 0,
+        margin: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+      ),
     ]);
   }
 
@@ -207,8 +216,7 @@ class ClimbWidget extends StatelessWidget {
     List<Widget> attemptItems = <Widget>[];
     attemptItems.add(
       Padding(
-        padding:
-            EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, 0, 0),
+        padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
         child: SizedBox(
           width: double.infinity,
           child: Text(
@@ -223,9 +231,11 @@ class ClimbWidget extends StatelessWidget {
     for (Attempt attempt in attemptsOnDate) {
       attemptItems.add(_buildAttempt(attempt, widget.climb.id));
     }
-    return Column(
-      children: attemptItems,
-    );
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
+        child: Column(
+          children: attemptItems,
+        ));
   }
 
   AttemptItem _buildAttempt(Attempt attempt, String climbId) {
@@ -412,7 +422,7 @@ class ClimbWidget extends StatelessWidget {
   }
 
   void navigateToImageView(ImageProvider image) {
-    NavigationHelper.navigateToImageView(
-        widgetState.context, image, "climbImageHero", addToBackStack: true);
+    NavigationHelper.navigateToImageView(widgetState.context, image, "climbImageHero",
+        addToBackStack: true);
   }
 }

@@ -90,7 +90,7 @@ class LogWidget extends StatelessWidget {
         content,
         Container(
           alignment: Alignment.bottomRight,
-          padding: EdgeInsets.all(UIConstants.STANDARD_PADDING),
+          padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
           child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
