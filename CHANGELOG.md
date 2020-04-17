@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added sent and repeated statuses to each climb
 
+### Fixed
+
+- Fixed issue where images were being displayed for climbs without a set image in view only climb 
+
 ## 0.4.0 - 2020-03-02
 
 ### Added
