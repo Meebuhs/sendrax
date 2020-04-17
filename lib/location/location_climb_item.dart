@@ -9,6 +9,31 @@ class ClimbItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String label = createLabel();
+
+    Widget statusIcon = createStatusIcon(context);
+
+    return Container(
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: Row(children: <Widget>[
+          Expanded(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: Theme
+                  .of(context)
+                  .accentTextTheme
+                  .subtitle2,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
+            child: statusIcon,
+          ),
+        ]));
+  }
+
+  String createLabel() {
     String label;
 
     if (climb.displayName == "") {
@@ -24,14 +49,28 @@ class ClimbItem extends StatelessWidget {
         label = "${climb.grade} - ${climb.displayName} - ${(climb.categories..sort()).join(', ')}";
       }
     }
+    return label;
+  }
 
-    return Container(
-      padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-      child: Text(
-        label,
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).accentTextTheme.subtitle2,
-      ),
+  Widget createStatusIcon(BuildContext context) {
+    IconData statusIcon;
+
+    if (climb.repeated) {
+      statusIcon = Icons.rotate_right;
+    } else if (climb.sent) {
+      statusIcon = Icons.check;
+    }
+
+    return Icon(
+      statusIcon,
+      color: Theme
+          .of(context)
+          .accentColor,
+      size: Theme
+          .of(context)
+          .accentTextTheme
+          .subtitle2
+          .fontSize,
     );
   }
 }
