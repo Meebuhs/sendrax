@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed issue where images were being displayed for climbs without a set image in view only climb 
+- Fixed archive section not properly archiving climbs
 
 ## 0.4.0 - 2020-03-02
 

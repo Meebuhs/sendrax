@@ -57,7 +57,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   }
 
   void archiveSection(String section, BuildContext context) {
-    for (Climb climb in location.climbs) {
+    for (Climb climb in state.climbs) {
       if (climb.section == section) {
         ClimbRepo.getInstance().setClimbProperty(climb.id, "archived", true);
       }
