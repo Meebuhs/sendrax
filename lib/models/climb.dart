@@ -2,7 +2,7 @@ import 'attempt.dart';
 
 class Climb {
   Climb(this.id, this.displayName, this.imageURL, this.imageURI, this.locationId, this.grade,
-      this.gradeSet, this.section, this.archived, this.categories,
+      this.gradeSet, this.section, this.archived, this.sent, this.repeated, this.categories,
       [this.attempts]);
 
   final String id;
@@ -14,6 +14,8 @@ class Climb {
   final String gradeSet;
   final String section;
   final bool archived;
+  final bool sent;
+  final bool repeated;
   final List<String> categories;
   final List<Attempt> attempts;
 
@@ -28,6 +30,8 @@ class Climb {
       "gradeSet": gradeSet,
       "section": section,
       "archived": archived,
+      "sent": sent,
+      "repeated": repeated,
       "categories": categories,
     };
   }

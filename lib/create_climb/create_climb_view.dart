@@ -396,6 +396,8 @@ class CreateClimbWidget extends StatelessWidget {
         widget.climb.gradeSet,
         state.section,
         widget.climb.archived,
+        widget.climb.sent,
+        widget.climb.repeated,
         state.selectedCategories,
         widget.climb.attempts);
     NavigationHelper.navigateToClimb(widgetState.context, climb, widget.location, widget.categories,

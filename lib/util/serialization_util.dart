@@ -45,6 +45,8 @@ class Deserializer {
         climb['gradeSet'],
         climb['section'],
         climb['archived'],
+        climb['sent'],
+        climb['repeated'],
         _deserializeClimbCategories(climb['categories']), <Attempt>[]);
   }
   // @formatter:on

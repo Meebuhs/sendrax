@@ -53,6 +53,8 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
           state.gradeSet,
           state.section,
           false,
+          false,
+          false,
           state.selectedCategories, <Attempt>[]);
       try {
         ClimbRepo.getInstance().setClimb(climb);
