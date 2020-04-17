@@ -67,6 +67,8 @@ class TimeFrames {
 
 class SendTypes {
   static const List<String> SEND_TYPES = const ["Onsight", "Flash", "Send", "Repeat", "Attempt"];
+  static const List<String> SENDS = const ["Onsight", "Flash", "Send"];
+  static const List<String> REPEATS = const ["Repeat"];
 }
 
 // @formatter:off

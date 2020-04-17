@@ -229,7 +229,7 @@ class ClimbWidget extends StatelessWidget {
       ),
     );
     for (Attempt attempt in attemptsOnDate) {
-      attemptItems.add(_buildAttempt(attempt, widget.climb.id));
+      attemptItems.add(_buildAttempt(attempt, widget.climb));
     }
     return Container(
         padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
@@ -238,8 +238,8 @@ class ClimbWidget extends StatelessWidget {
         ));
   }
 
-  AttemptItem _buildAttempt(Attempt attempt, String climbId) {
-    return AttemptItem(attempt: attempt, climbId: climbId);
+  AttemptItem _buildAttempt(Attempt attempt, Climb climb) {
+    return AttemptItem(attempt: attempt, climb: climb);
   }
 
   Widget _showForm(ClimbState state, BuildContext context) {

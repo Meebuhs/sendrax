@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sendrax/climb/climb_bloc.dart';
 import 'package:sendrax/models/attempt.dart';
+import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
@@ -8,9 +10,13 @@ import 'edit_attempt_bloc.dart';
 import 'edit_attempt_state.dart';
 
 class EditAttemptScreen extends StatefulWidget {
-  EditAttemptScreen({Key key, @required this.attempt}) : super(key: key);
+  EditAttemptScreen(
+      {Key key, @required this.attempt, @required this.climb, @required this.upperContext})
+      : super(key: key);
 
   final Attempt attempt;
+  final Climb climb;
+  final BuildContext upperContext;
 
   @override
   _EditAttemptScreenState createState() => _EditAttemptScreenState();
@@ -20,7 +26,7 @@ class _EditAttemptScreenState extends State<EditAttemptScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<EditAttemptBloc>(
-      create: (context) => EditAttemptBloc(widget.attempt),
+      create: (context) => EditAttemptBloc(widget.attempt, widget.climb),
       child: EditAttemptWidget(
         widget: widget,
         widgetState: this,
@@ -75,7 +81,7 @@ class EditAttemptWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             _showCancelButton(state, context),
-                            _showSubmitButton(state, context)
+                            _showSubmitButton(state, widget.upperContext, context)
                           ],
                         ))
                   ],
@@ -156,12 +162,14 @@ class EditAttemptWidget extends StatelessWidget {
     );
   }
 
-  Widget _showSubmitButton(EditAttemptState state, BuildContext context) {
+  Widget _showSubmitButton(EditAttemptState state, BuildContext upperContext,
+      BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
       child: FlatButton(
         onPressed: () {
           BlocProvider.of<EditAttemptBloc>(context).editAttempt();
+          BlocProvider.of<ClimbBloc>(upperContext).reconcileClimbStatus(widget.climb);
           NavigationHelper.navigateBackOne(context);
         },
         child: Text('EDIT', style: Theme.of(context).accentTextTheme.button),

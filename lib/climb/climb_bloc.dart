@@ -11,6 +11,7 @@ import 'package:sendrax/models/climb_repo.dart';
 import 'package:sendrax/models/location.dart';
 import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/navigation_helper.dart';
+import 'package:sendrax/util/constants.dart';
 import 'package:uuid/uuid.dart';
 
 import 'climb_event.dart';
@@ -69,7 +70,8 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
           state.downclimbed,
           state.notes);
       try {
-        AttemptRepo.getInstance().setAttempt(attempt);
+        AttemptRepo.getInstance().setAttempt(attempt, climb);
+        reconcileClimbStatus(climb);
         state.loading = false;
       } catch (e) {
         state.loading = false;
@@ -93,9 +95,30 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     WidgetsBinding.instance.addPostFrameCallback((_) => state.notesInputController.clear());
   }
 
+  void reconcileClimbStatus(Climb climb) async {
+    final user = await UserRepo.getInstance().getCurrentUser();
+    List<Attempt> attempts =
+    await ClimbRepo
+        .getInstance()
+        .getAttemptsByClimbId(climb.id, user)
+        .first;
+    print(attempts);
+    bool sent = false;
+    bool repeated = false;
+    for (Attempt attempt in attempts) {
+      if (SendTypes.SENDS.contains(attempt.sendType)) {
+        sent = true;
+      } else if (SendTypes.REPEATS.contains(attempt.sendType)) {
+        repeated = true;
+      }
+    }
+    ClimbRepo.getInstance().setClimbProperty(climb.id, "sent", sent);
+    ClimbRepo.getInstance().setClimbProperty(climb.id, "repeated", repeated);
+  }
+
   void archiveClimb(
       BuildContext context, ClimbWidget view, Location location, List<String> categories) {
-    ClimbRepo.getInstance().setClimbArchived(this.climb.id, true);
+    ClimbRepo.getInstance().setClimbProperty(this.climb.id, "archived", true);
     NavigationHelper.resetToLocation(context, location, categories);
   }
 

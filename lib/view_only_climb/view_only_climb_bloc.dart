@@ -38,7 +38,7 @@ class ViewOnlyClimbBloc extends Bloc<ViewOnlyClimbEvent, ViewOnlyClimbState> {
   }
 
   void unarchiveClimb(BuildContext context) {
-    ClimbRepo.getInstance().setClimbArchived(climbId, false);
+    ClimbRepo.getInstance().setClimbProperty(climbId, "archived", false);
     NavigationHelper.navigateBackTwo(context);
   }
 
