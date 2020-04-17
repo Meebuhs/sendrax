@@ -62,7 +62,12 @@ class HistoryWidget extends StatelessWidget {
         builder: (context, HistoryState state) {
           if (widget.attempts.isEmpty) {
             return Column(children: <Widget>[
-              _showFilterDropdownRow(state, context),
+              Container(
+                color: Theme
+                    .of(context)
+                    .cardColor,
+                child: _showFilterDropdownRow(state, context),
+              ),
               Expanded(
                   child: Center(
                 child: Text(
@@ -96,18 +101,35 @@ class HistoryWidget extends StatelessWidget {
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Expanded(
-                child: _showGradeSetDropdown(state, context),
+                child: _showDropdown(widget.grades.keys.toList(), state.filterGradeSet, "Grade Set",
+                    BlocProvider
+                        .of<HistoryBloc>(context)
+                        .setGradeSetFilter, state, context),
               ),
               Expanded(
-                child: _showGradeDropdown(state, context),
+                child: _showDropdown(widget.grades[state.filterGradeSet], state.filterGrade,
+                    "Grade", BlocProvider
+                        .of<HistoryBloc>(context)
+                        .setGradeFilter, state, context),
               ),
             ]),
             Row(children: <Widget>[
               Expanded(
-                child: _showLocationDropdown(state, context),
+                child: _showDropdown(
+                    widget.locationNamesToIds.keys.toList(),
+                    state.filterLocation,
+                    "Location",
+                    BlocProvider
+                        .of<HistoryBloc>(context)
+                        .setLocationFilter,
+                    state,
+                    context),
               ),
               Expanded(
-                child: _showCategoryDropdown(state, context),
+                child: _showDropdown(widget.categories, state.filterCategory, "Category",
+                    BlocProvider
+                        .of<HistoryBloc>(context)
+                        .setCategoryFilter, state, context),
               ),
             ]),
           ]),
@@ -122,63 +144,19 @@ class HistoryWidget extends StatelessWidget {
     ]);
   }
 
-  Widget _showGradeSetDropdown(HistoryState state, BuildContext context) {
+  Widget _showDropdown(List<String> items, String value, String hintText,
+      Function(String) onChanged, HistoryState state, BuildContext context) {
     return Container(
         color: Theme.of(context).cardColor,
         padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
         child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
           style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widget.grades.keys.toList()),
-          value: state.filterGradeSet,
-          hint: Text("Grade Set"),
+              items: _createDropdownItems(items),
+              value: value,
+              hint: Text(hintText),
           isExpanded: true,
-          onChanged: (value) => BlocProvider.of<HistoryBloc>(context).setGradeSetFilter(value),
-        )));
-  }
-
-  Widget _showGradeDropdown(HistoryState state, BuildContext context) {
-    return Container(
-        color: Theme.of(context).cardColor,
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-          style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widget.grades[state.filterGradeSet]),
-          value: state.filterGrade,
-          hint: Text("Grade"),
-          isExpanded: true,
-          onChanged: (value) => BlocProvider.of<HistoryBloc>(context).setGradeFilter(value),
-        )));
-  }
-
-  Widget _showLocationDropdown(HistoryState state, BuildContext context) {
-    return Container(
-        color: Theme.of(context).cardColor,
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-          style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widget.locationNamesToIds.keys.toList()),
-          value: state.filterLocation,
-          hint: Text("Location"),
-          isExpanded: true,
-          onChanged: (value) => BlocProvider.of<HistoryBloc>(context).setLocationFilter(value),
-        )));
-  }
-
-  Widget _showCategoryDropdown(HistoryState state, BuildContext context) {
-    return Container(
-        color: Theme.of(context).cardColor,
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-          style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widget.categories),
-          value: state.filterCategory,
-          hint: Text("Category"),
-          isExpanded: true,
-          onChanged: (value) => BlocProvider.of<HistoryBloc>(context).setCategoryFilter(value),
+              onChanged: (value) => onChanged(value),
         )));
   }
 

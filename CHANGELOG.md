@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added sent and repeated statuses to each climb
+- Added sent and repeated filters to location view
 
 ### Fixed
 

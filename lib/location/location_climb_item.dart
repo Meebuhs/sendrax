@@ -27,7 +27,8 @@ class ClimbItem extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
+            // Archive section icon is 24px, status icon is 14px, 5px padding to align them
+            padding: EdgeInsets.only(right: 5),
             child: statusIcon,
           ),
         ]));

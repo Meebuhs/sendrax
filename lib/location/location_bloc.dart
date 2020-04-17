@@ -48,8 +48,12 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     add(GradeFilteredEvent(grade));
   }
 
-  void setCategoryFilter(String grade) {
-    add(CategoryFilteredEvent(grade));
+  void setStatusFilter(String status) {
+    add(StatusFilteredEvent(status));
+  }
+
+  void setCategoryFilter(String category) {
+    add(CategoryFilteredEvent(category));
   }
 
   void clearFilters() {
@@ -76,6 +80,8 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       yield LocationState.setFilterSection(event.filterSection, state);
     } else if (event is GradeFilteredEvent) {
       yield LocationState.setFilterGrade(event.filterGrade, state);
+    } else if (event is StatusFilteredEvent) {
+      yield LocationState.setFilterStatus(event.filterStatus, state);
     } else if (event is CategoryFilteredEvent) {
       yield LocationState.setFilterCategory(event.filterCategory, state);
     } else if (event is FiltersClearedEvent) {

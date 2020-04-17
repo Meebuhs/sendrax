@@ -81,7 +81,12 @@ class LocationWidget extends StatelessWidget {
             );
           } else if (state.climbs.isEmpty) {
             content = Column(children: <Widget>[
-              _showFilterDropdownRow(state, context),
+              Container(
+                color: Theme
+                    .of(context)
+                    .cardColor,
+                child: _showFilterDropdownRow(state, context),
+              ),
               Padding(padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: _showImage()),
               Expanded(
                   child: Center(
@@ -94,7 +99,12 @@ class LocationWidget extends StatelessWidget {
             ]);
           } else {
             content = Column(children: <Widget>[
-              _showFilterDropdownRow(state, context),
+              Container(
+                color: Theme
+                    .of(context)
+                    .cardColor,
+                child: _showFilterDropdownRow(state, context),
+              ),
               Expanded(
                 child: _buildFilteredList(state, context),
               )
@@ -108,13 +118,36 @@ class LocationWidget extends StatelessWidget {
     return Column(children: <Widget>[
       Row(children: <Widget>[
         Expanded(
-          child: _showSectionDropdown(state, context),
-        ),
-        Expanded(
-          child: _showGradeDropdown(state, context),
-        ),
-        Expanded(
-          child: _showCategoryDropdown(state, context),
+          child: Column(children: <Widget>[
+            Row(children: <Widget>[
+              Expanded(
+                child: _showDropdown(widget.location.sections, state.filterSection, "Section",
+                    BlocProvider
+                        .of<LocationBloc>(context)
+                        .setSectionFilter, state, context),
+              ),
+              Expanded(
+                child: _showDropdown(widget.location.grades, state.filterGrade, "Grade",
+                    BlocProvider
+                        .of<LocationBloc>(context)
+                        .setGradeFilter, state, context),
+              ),
+            ]),
+            Row(children: <Widget>[
+              Expanded(
+                child: _showDropdown(SendTypes.CATEGORIES, state.filterStatus, "Status",
+                    BlocProvider
+                        .of<LocationBloc>(context)
+                        .setStatusFilter, state, context),
+              ),
+              Expanded(
+                child: _showDropdown(widget.categories, state.filterCategory, "Category",
+                    BlocProvider
+                        .of<LocationBloc>(context)
+                        .setCategoryFilter, state, context),
+              ),
+            ]),
+          ]),
         ),
         _showClearDropdownsButton(state, context)
       ]),
@@ -126,48 +159,19 @@ class LocationWidget extends StatelessWidget {
     ]);
   }
 
-  Widget _showSectionDropdown(LocationState state, BuildContext context) {
+  Widget _showDropdown(List<String> items, String value, String hintText,
+      Function(String) onChanged, LocationState state, BuildContext context) {
     return Container(
         color: Theme.of(context).cardColor,
         padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
         child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
           style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widget.location.sections),
-          value: state.filterSection,
-          hint: Text("Section"),
+              items: _createDropdownItems(items),
+              value: value,
+              hint: Text(hintText),
           isExpanded: true,
-          onChanged: (value) => BlocProvider.of<LocationBloc>(context).setSectionFilter(value),
-        )));
-  }
-
-  Widget _showGradeDropdown(LocationState state, BuildContext context) {
-    return Container(
-        color: Theme.of(context).cardColor,
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-          style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widget.location.grades),
-          value: state.filterGrade,
-          hint: Text("Grade"),
-          isExpanded: true,
-          onChanged: (value) => BlocProvider.of<LocationBloc>(context).setGradeFilter(value),
-        )));
-  }
-
-  Widget _showCategoryDropdown(LocationState state, BuildContext context) {
-    return Container(
-        color: Theme.of(context).cardColor,
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING),
-        child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-          style: Theme.of(context).accentTextTheme.subtitle2,
-          items: _createDropdownItems(widget.categories),
-          value: state.filterCategory,
-          hint: Text("Category"),
-          isExpanded: true,
-          onChanged: (value) => BlocProvider.of<LocationBloc>(context).setCategoryFilter(value),
+              onChanged: (value) => onChanged(value),
         )));
   }
 
@@ -190,8 +194,9 @@ class LocationWidget extends StatelessWidget {
         color: Theme.of(context).cardColor,
         child: IconButton(
             icon: Icon(Icons.cancel,
-                color: (state.filterGrade == null &&
-                        state.filterSection == null &&
+                color: (state.filterSection == null &&
+                    state.filterGrade == null &&
+                    state.filterStatus == null &&
                         state.filterCategory == null)
                     ? Colors.grey
                     : Theme.of(context).accentColor),
@@ -202,6 +207,10 @@ class LocationWidget extends StatelessWidget {
     List<Climb> filteredClimbs = List.from(state.climbs.where((climb) =>
         (state.filterSection == null || climb.section == state.filterSection) &&
         (state.filterGrade == null || climb.grade == state.filterGrade) &&
+            (state.filterStatus == null ||
+                ((state.filterStatus == "Repeated" && climb.repeated) ||
+                    (state.filterStatus == "Sent, Not Repeated" && !climb.repeated && climb.sent) ||
+                    (state.filterStatus == "Not Sent" && !(climb.sent || climb.repeated)))) &&
         (state.filterCategory == null || climb.categories.contains(state.filterCategory))));
     filteredClimbs.sort((a, b) =>
         widget.location.grades.indexOf(a.grade).compareTo(widget.location.grades.indexOf(b.grade)));
