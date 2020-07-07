@@ -4,14 +4,16 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/attempt_repo.dart';
+import 'package:sendrax/models/climb.dart';
 
 import 'edit_attempt_event.dart';
 import 'edit_attempt_state.dart';
 
 class EditAttemptBloc extends Bloc<EditAttemptEvent, EditAttemptState> {
-  EditAttemptBloc(this.attempt);
+  EditAttemptBloc(this.attempt, this.climb);
 
   final Attempt attempt;
+  final Climb climb;
 
   @override
   EditAttemptState get initialState => EditAttemptState.initial(attempt);
@@ -37,7 +39,7 @@ class EditAttemptBloc extends Bloc<EditAttemptEvent, EditAttemptState> {
         state.sendType,
         state.downclimbed,
         state.notesInputController.value.text);
-    AttemptRepo.getInstance().setAttempt(editedAttempt);
+    AttemptRepo.getInstance().setAttempt(editedAttempt, climb);
   }
 
   void resetNotesInput() {

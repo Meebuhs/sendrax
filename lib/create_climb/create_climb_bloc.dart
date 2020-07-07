@@ -52,7 +52,9 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
           state.grade,
           state.gradeSet,
           state.section,
-          false,
+          this.climb.archived,
+          this.climb.sent,
+          this.climb.repeated,
           state.selectedCategories, <Attempt>[]);
       try {
         ClimbRepo.getInstance().setClimb(climb);
@@ -73,7 +75,7 @@ class CreateClimbBloc extends Bloc<CreateClimbEvent, CreateClimbState> {
                 attempt.sendType,
                 attempt.downclimbed,
                 attempt.notes);
-            AttemptRepo.getInstance().setAttempt(updatedAttempt);
+            AttemptRepo.getInstance().setAttempt(updatedAttempt, climb);
           }
         }
         state.loading = false;

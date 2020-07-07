@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sendrax/climb/climb_bloc.dart';
 import 'package:sendrax/edit_attempt/edit_attempt_view.dart';
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/attempt_repo.dart';
+import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
 class AttemptItem extends StatelessWidget {
-  AttemptItem({Key key, @required this.attempt, @required this.climbId}) : super(key: key);
+  AttemptItem({Key key, @required this.attempt, @required this.climb}) : super(key: key);
 
   final Attempt attempt;
-  final String climbId;
+  final Climb climb;
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +43,13 @@ class AttemptItem extends StatelessWidget {
               action: SnackBarAction(
                 label: 'Undo',
                 onPressed: () {
-                  AttemptRepo.getInstance().setAttempt(attempt);
+                  AttemptRepo.getInstance().setAttempt(attempt, climb);
+                  BlocProvider.of<ClimbBloc>(context).reconcileClimbStatus(climb);
                 },
               ),
             ));
-            AttemptRepo.getInstance().deleteAttempt(attempt.id, climbId);
+            AttemptRepo.getInstance().deleteAttempt(attempt.id, climb.id);
+            BlocProvider.of<ClimbBloc>(context).reconcileClimbStatus(climb);
             return true;
           } else {
             _showEditAttemptDialog(context);
@@ -121,6 +126,8 @@ class AttemptItem extends StatelessWidget {
               children: <Widget>[
                 EditAttemptScreen(
                   attempt: attempt,
+                  climb: climb,
+                  upperContext: upperContext,
                 ),
               ]);
         });

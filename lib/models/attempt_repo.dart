@@ -6,6 +6,7 @@ import 'package:sendrax/models/user_repo.dart';
 import 'package:sendrax/util/constants.dart';
 import 'package:sendrax/util/serialization_util.dart';
 
+import 'climb.dart';
 import 'firebase_repo.dart';
 import 'user.dart';
 
@@ -34,7 +35,7 @@ class AttemptRepo {
     });
   }
 
-  void setAttempt(Attempt attempt) async {
+  void setAttempt(Attempt attempt, Climb climb) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(

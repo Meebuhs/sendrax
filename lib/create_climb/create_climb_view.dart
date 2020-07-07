@@ -227,7 +227,8 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   void _openPictureDialog(BuildContext context, ImageSource imageSource) async {
-    File image = await ImagePicker.pickImage(source: imageSource);
+    final _picker = ImagePicker();
+    File image = File((await _picker.getImage(source: imageSource)).path);
     BlocProvider.of<CreateClimbBloc>(context).setImageFile(image);
   }
 
@@ -396,6 +397,8 @@ class CreateClimbWidget extends StatelessWidget {
         widget.climb.gradeSet,
         state.section,
         widget.climb.archived,
+        widget.climb.sent,
+        widget.climb.repeated,
         state.selectedCategories,
         widget.climb.attempts);
     NavigationHelper.navigateToClimb(widgetState.context, climb, widget.location, widget.categories,

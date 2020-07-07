@@ -111,12 +111,12 @@ class ClimbRepo {
     }
   }
 
-  void setClimbArchived(String climbId, bool archived) async {
+  void setClimbProperty(String climbId, String property, bool value) async {
     final user = await UserRepo.getInstance().getCurrentUser();
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
         .document(climbId)
-        .updateData({"archived": archived});
+        .updateData({property: value});
   }
 }

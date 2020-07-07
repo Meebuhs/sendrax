@@ -22,6 +22,12 @@ class GradeFilteredEvent extends LocationEvent {
   final String filterGrade;
 }
 
+class StatusFilteredEvent extends LocationEvent {
+  StatusFilteredEvent(this.filterStatus);
+
+  final String filterStatus;
+}
+
 class CategoryFilteredEvent extends LocationEvent {
   CategoryFilteredEvent(this.filterCategory);
 
