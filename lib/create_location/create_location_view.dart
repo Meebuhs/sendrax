@@ -149,7 +149,7 @@ class CreateLocationWidget extends StatelessWidget {
               color: Theme.of(context).cardColor),
           child: Center(
               child: Text(
-            "Add an image to this climb (optional)",
+                "Add an image to this location (optional)",
             style: Theme.of(context).accentTextTheme.subtitle2,
             textAlign: TextAlign.center,
           )));
@@ -239,7 +239,8 @@ class CreateLocationWidget extends StatelessWidget {
   }
 
   void _openPictureDialog(BuildContext context, ImageSource imageSource) async {
-    File image = await ImagePicker.pickImage(source: imageSource);
+    final _picker = ImagePicker();
+    File image = File((await _picker.getImage(source: imageSource)).path);
     BlocProvider.of<CreateLocationBloc>(context).setImageFile(image);
   }
 
