@@ -435,11 +435,11 @@ class LocationWidget extends StatelessWidget {
                   "The climbs will still appear in your log but will no longer appear for this location",
                   style: Theme.of(context).accentTextTheme.bodyText2),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
                   onPressed: () => NavigationHelper.navigateBackOne(upperContext),
                 ),
-                FlatButton(
+                TextButton(
                   child: Text("ARCHIVE", style: Theme.of(context).accentTextTheme.button),
                   onPressed: () => BlocProvider.of<LocationBloc>(upperContext)
                       .archiveSection(section, upperContext),

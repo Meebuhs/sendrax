@@ -293,11 +293,13 @@ class LoginWidget extends StatelessWidget {
         padding: EdgeInsets.only(top: UIConstants.STANDARD_PADDING),
         child: SizedBox(
           height: 40.0,
-          child: FlatButton(
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-            color: Theme.of(context).accentColor,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+              backgroundColor: Theme.of(context).accentColor,
+            ),
             child: Text(state.isLogin ? 'LOGIN' : 'CREATE ACCOUNT',
                 style: Theme.of(context).primaryTextTheme.button),
             onPressed: () => BlocProvider.of<LoginBloc>(context)
@@ -388,13 +390,13 @@ class LoginWidget extends StatelessWidget {
                 ],
               ),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text("CANCEL",
                       style: Theme.of(context).accentTextTheme.button),
                   onPressed: () =>
                       NavigationHelper.navigateBackOne(upperContext),
                 ),
-                FlatButton(
+                TextButton(
                     child: Text("EMAIL ME",
                         style: Theme.of(context).accentTextTheme.button),
                     onPressed: () {

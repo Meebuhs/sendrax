@@ -13,7 +13,11 @@ import 'climb_bloc.dart';
 import 'climb_state.dart';
 
 class ClimbScreen extends StatefulWidget {
-  ClimbScreen({Key key, @required this.climb, @required this.location, @required this.categories})
+  ClimbScreen(
+      {Key key,
+      @required this.climb,
+      @required this.location,
+      @required this.categories})
       : super(key: key);
 
   final Climb climb;
@@ -35,7 +39,9 @@ class _ClimbState extends State<ClimbScreen> {
 }
 
 class ClimbWidget extends StatelessWidget {
-  const ClimbWidget({Key key, @required this.widget, @required this.widgetState}) : super(key: key);
+  const ClimbWidget(
+      {Key key, @required this.widget, @required this.widgetState})
+      : super(key: key);
 
   final ClimbScreen widget;
   final _ClimbState widgetState;
@@ -51,7 +57,8 @@ class ClimbWidget extends StatelessWidget {
             onPressed: () => _editClimb(),
           ),
           IconButton(
-              icon: Icon(Icons.archive), onPressed: () => _showArchiveClimbDialog(context, this)),
+              icon: Icon(Icons.archive),
+              onPressed: () => _showArchiveClimbDialog(context, this)),
           IconButton(
               icon: Icon(Icons.delete_forever),
               onPressed: () => _showDeleteClimbDialog(context, this)),
@@ -75,7 +82,10 @@ class ClimbWidget extends StatelessWidget {
             );
           } else {
             content = Column(
-              children: <Widget>[Expanded(child: _showListView(state)), _showForm(state, context)],
+              children: <Widget>[
+                Expanded(child: _showListView(state)),
+                _showForm(state, context)
+              ],
             );
           }
           return content;
@@ -126,7 +136,8 @@ class ClimbWidget extends StatelessWidget {
     List<DateTime> dates = <DateTime>[];
     for (Attempt attempt in state.attempts) {
       DateTime attemptDate = attempt.timestamp.toDate();
-      DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
+      DateTime startOfDay =
+          DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
       if (!dates.contains(startOfDay)) {
         dates.add(startOfDay);
       }
@@ -149,27 +160,27 @@ class ClimbWidget extends StatelessWidget {
 
   Widget _showImage(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-          UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, 0),
+      padding: EdgeInsets.fromLTRB(UIConstants.SMALLER_PADDING,
+          UIConstants.SMALLER_PADDING, UIConstants.SMALLER_PADDING, 0),
       height: 200,
       child: CachedNetworkImage(
         imageUrl: widget.climb.imageURL,
-        imageBuilder: (context, imageProvider) =>
-            InkWell(
-              child: Material(
-                borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                child: Hero(
-                    tag: "climbImageHero",
-                    child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            )))),
-              ),
-              onTap: () => navigateToImageView(imageProvider),
+        imageBuilder: (context, imageProvider) => InkWell(
+          child: Material(
+            borderRadius: BorderRadius.all(
+                Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+            child: Hero(
+                tag: "climbImageHero",
+                child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        )))),
+          ),
+          onTap: () => navigateToImageView(imageProvider),
         ),
         placeholder: (context, url) => SizedBox(
             width: 60,
@@ -188,31 +199,36 @@ class ClimbWidget extends StatelessWidget {
         ? "${widget.climb.grade}"
         : "${widget.climb.grade} - ${widget.climb.section}";
 
-    String secondComponentText =
-        (widget.climb.categories.isNotEmpty) ? " - ${widget.climb.categories.join(', ')}" : "";
+    String secondComponentText = (widget.climb.categories.isNotEmpty)
+        ? " - ${widget.climb.categories.join(', ')}"
+        : "";
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Container(
-          child: Padding(
-              padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-              child: Text("$firstComponentText$secondComponentText",
-                  style: Theme.of(context).accentTextTheme.subtitle2))),
-      Divider(
-        color: Theme.of(context).accentColor,
-        thickness: 1.0,
-        height: 0.0,
-      ),
-      Container(
-        height: 0,
-        margin: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
-      ),
-    ]);
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+              child: Padding(
+                  padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                  child: Text("$firstComponentText$secondComponentText",
+                      style: Theme.of(context).accentTextTheme.subtitle2))),
+          Divider(
+            color: Theme.of(context).accentColor,
+            thickness: 1.0,
+            height: 0.0,
+          ),
+          Container(
+            height: 0,
+            margin: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+          ),
+        ]);
   }
 
-  Widget _buildDateCard(BuildContext context, ClimbState state, List<DateTime> dates, int index) {
+  Widget _buildDateCard(
+      BuildContext context, ClimbState state, List<DateTime> dates, int index) {
     List<Attempt> attemptsOnDate = List.from(state.attempts.where((attempt) =>
         (attempt.timestamp.toDate().difference(dates[index]) > Duration() &&
-            attempt.timestamp.toDate().difference(dates[index]) < Duration(days: 1))));
+            attempt.timestamp.toDate().difference(dates[index]) <
+                Duration(days: 1))));
     List<Widget> attemptItems = <Widget>[];
     attemptItems.add(
       Padding(
@@ -257,13 +273,15 @@ class ClimbWidget extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Padding(
-                    padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+                    padding:
+                        EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
                     child: Row(children: <Widget>[
                       Expanded(
                         child: _showSendTypeDropdown(state, context),
                       ),
                       Padding(
-                          padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: UIConstants.STANDARD_PADDING),
                           child: SizedBox(
                             width: 95,
                             child: _showDownclimbedCheckbox(state, context),
@@ -287,14 +305,16 @@ class ClimbWidget extends StatelessWidget {
       value: state.sendType,
       hint: Text("Send type"),
       isExpanded: true,
-      decoration: InputDecoration(filled: true, fillColor: Theme.of(context).cardColor),
+      decoration:
+          InputDecoration(filled: true, fillColor: Theme.of(context).cardColor),
       validator: (String value) {
         if (value == null) {
           return 'A send type must be selected';
         }
         return null;
       },
-      onChanged: (value) => BlocProvider.of<ClimbBloc>(context).selectSendType(value),
+      onChanged: (value) =>
+          BlocProvider.of<ClimbBloc>(context).selectSendType(value),
     ));
   }
 
@@ -323,8 +343,8 @@ class ClimbWidget extends StatelessWidget {
             activeColor: Theme.of(context).accentColor,
             focusColor: Theme.of(context).accentColor,
             value: state.downclimbed,
-            onChanged: (value) =>
-                BlocProvider.of<ClimbBloc>(context).toggleDownclimbedCheckbox(value)),
+            onChanged: (value) => BlocProvider.of<ClimbBloc>(context)
+                .toggleDownclimbedCheckbox(value)),
       ],
     );
   }
@@ -343,7 +363,8 @@ class ClimbWidget extends StatelessWidget {
           fillColor: Theme.of(context).cardColor,
           suffixIcon: IconButton(
               icon: Icon(Icons.cancel),
-              onPressed: () => BlocProvider.of<ClimbBloc>(context).resetNotesInput())),
+              onPressed: () =>
+                  BlocProvider.of<ClimbBloc>(context).resetNotesInput())),
     );
   }
 
@@ -352,19 +373,24 @@ class ClimbWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
         child: SizedBox(
           width: 95,
-          child: FlatButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-            color: Theme.of(context).accentColor,
-            child: Text('SUBMIT', style: Theme.of(context).primaryTextTheme.button),
-            onPressed: () => BlocProvider.of<ClimbBloc>(context).validateAndSubmit(state, context),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+              backgroundColor: Theme.of(context).accentColor,
+            ),
+            child: Text('SUBMIT',
+                style: Theme.of(context).primaryTextTheme.button),
+            onPressed: () => BlocProvider.of<ClimbBloc>(context)
+                .validateAndSubmit(state, context),
           ),
         ));
   }
 
   void _editClimb() {
-    NavigationHelper.navigateToCreateClimb(
-        widgetState.context, widget.climb, widget.location, widget.categories, true,
+    NavigationHelper.navigateToCreateClimb(widgetState.context, widget.climb,
+        widget.location, widget.categories, true,
         addToBackStack: true);
   }
 
@@ -380,14 +406,17 @@ class ClimbWidget extends StatelessWidget {
                   "It will still appear in your log but will no longer appear for this location",
                   style: Theme.of(context).accentTextTheme.bodyText2),
               actions: <Widget>[
-                FlatButton(
-                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
+                TextButton(
+                  child: Text("CANCEL",
+                      style: Theme.of(context).accentTextTheme.button),
                   onPressed: navigateToLocation,
                 ),
-                FlatButton(
-                  child: Text("ARCHIVE", style: Theme.of(context).accentTextTheme.button),
+                TextButton(
+                  child: Text("ARCHIVE",
+                      style: Theme.of(context).accentTextTheme.button),
                   onPressed: () => BlocProvider.of<ClimbBloc>(upperContext)
-                      .archiveClimb(upperContext, view, widget.location, widget.categories),
+                      .archiveClimb(upperContext, view, widget.location,
+                          widget.categories),
                 )
               ]);
         });
@@ -404,14 +433,17 @@ class ClimbWidget extends StatelessWidget {
               content: Text("There is no way to get it back",
                   style: Theme.of(context).accentTextTheme.bodyText2),
               actions: <Widget>[
-                FlatButton(
-                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
+                TextButton(
+                  child: Text("CANCEL",
+                      style: Theme.of(context).accentTextTheme.button),
                   onPressed: navigateToLocation,
                 ),
-                FlatButton(
-                  child: Text("DELETE", style: Theme.of(context).accentTextTheme.button),
+                TextButton(
+                  child: Text("DELETE",
+                      style: Theme.of(context).accentTextTheme.button),
                   onPressed: () => BlocProvider.of<ClimbBloc>(upperContext)
-                      .deleteClimb(upperContext, view, widget.location, widget.categories),
+                      .deleteClimb(upperContext, view, widget.location,
+                          widget.categories),
                 )
               ]);
         });
@@ -422,7 +454,8 @@ class ClimbWidget extends StatelessWidget {
   }
 
   void navigateToImageView(ImageProvider image) {
-    NavigationHelper.navigateToImageView(widgetState.context, image, "climbImageHero",
+    NavigationHelper.navigateToImageView(
+        widgetState.context, image, "climbImageHero",
         addToBackStack: true);
   }
 }

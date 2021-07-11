@@ -155,7 +155,7 @@ class EditAttemptWidget extends StatelessWidget {
   Widget _showCancelButton(EditAttemptState state, BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
-      child: FlatButton(
+      child: TextButton(
         onPressed: () => NavigationHelper.navigateBackOne(context),
         child: Text('CANCEL', style: Theme.of(context).accentTextTheme.button),
       ),
@@ -166,7 +166,7 @@ class EditAttemptWidget extends StatelessWidget {
       BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
-      child: FlatButton(
+      child: TextButton(
         onPressed: () {
           BlocProvider.of<EditAttemptBloc>(context).editAttempt();
           BlocProvider.of<ClimbBloc>(upperContext).reconcileClimbStatus(widget.climb);

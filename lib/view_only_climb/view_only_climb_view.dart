@@ -241,11 +241,11 @@ class ViewOnlyClimbWidget extends StatelessWidget {
               content: Text("There is no way to get it back",
                   style: Theme.of(context).accentTextTheme.bodyText2),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
                   onPressed: navigateBackOne,
                 ),
-                FlatButton(
+                TextButton(
                   child: Text("DELETE", style: Theme.of(context).accentTextTheme.button),
                   onPressed: () =>
                       BlocProvider.of<ViewOnlyClimbBloc>(upperContext).deleteClimb(upperContext),
@@ -266,11 +266,11 @@ class ViewOnlyClimbWidget extends StatelessWidget {
                   "It will still appear in the log but will also reappear in its original location.",
                   style: Theme.of(context).accentTextTheme.bodyText2),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
                   onPressed: navigateBackOne,
                 ),
-                FlatButton(
+                TextButton(
                   child: Text("REVIVE", style: Theme.of(context).accentTextTheme.button),
                   onPressed: () =>
                       BlocProvider.of<ViewOnlyClimbBloc>(upperContext).unarchiveClimb(upperContext),

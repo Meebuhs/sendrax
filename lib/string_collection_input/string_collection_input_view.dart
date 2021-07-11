@@ -25,17 +25,20 @@ class StringCollectionInputScreen extends StatefulWidget {
       _StringCollectionInputScreenState(items, upperContext, submitInput);
 }
 
-class _StringCollectionInputScreenState extends State<StringCollectionInputScreen> {
+class _StringCollectionInputScreenState
+    extends State<StringCollectionInputScreen> {
   final List<String> itemList;
   final BuildContext upperContext;
   final Function(List<String>, BuildContext context) submitInput;
 
-  _StringCollectionInputScreenState(this.itemList, this.upperContext, this.submitInput);
+  _StringCollectionInputScreenState(
+      this.itemList, this.upperContext, this.submitInput);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<StringCollectionInputBloc>(
-      create: (context) => StringCollectionInputBloc(itemList, upperContext, submitInput),
+      create: (context) =>
+          StringCollectionInputBloc(itemList, upperContext, submitInput),
       child: StringCollectionInputWidget(
         widget: widget,
         widgetState: this,
@@ -45,7 +48,8 @@ class _StringCollectionInputScreenState extends State<StringCollectionInputScree
 }
 
 class StringCollectionInputWidget extends StatelessWidget {
-  const StringCollectionInputWidget({Key key, @required this.widget, @required this.widgetState})
+  const StringCollectionInputWidget(
+      {Key key, @required this.widget, @required this.widgetState})
       : super(key: key);
 
   final StringCollectionInputScreen widget;
@@ -64,7 +68,8 @@ class StringCollectionInputWidget extends StatelessWidget {
                 maxWidth: 300.0,
               ),
               child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: UIConstants.STANDARD_PADDING),
                   child: Column(children: <Widget>[
                     _showItemList(state, context),
                     Row(children: <Widget>[
@@ -85,7 +90,7 @@ class StringCollectionInputWidget extends StatelessWidget {
   }
 
   Widget _showItemList(StringCollectionInputState state, BuildContext context) {
-    List<Widget> itemChips = List<Widget>();
+    List<Widget> itemChips = [];
     state.items.forEach((item) {
       itemChips.add(_buildItemChip(state, context, item));
     });
@@ -96,8 +101,8 @@ class StringCollectionInputWidget extends StatelessWidget {
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).dialogBackgroundColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
                 child: ListView(children: <Widget>[
                   Wrap(
                       alignment: WrapAlignment.center,
@@ -107,7 +112,8 @@ class StringCollectionInputWidget extends StatelessWidget {
                 ]))));
   }
 
-  Widget _buildItemChip(StringCollectionInputState state, BuildContext context, String item) {
+  Widget _buildItemChip(
+      StringCollectionInputState state, BuildContext context, String item) {
     return Container(
       child: InputChip(
         label: Text(item),
@@ -117,12 +123,14 @@ class StringCollectionInputWidget extends StatelessWidget {
           Icons.cancel,
           color: Colors.black,
         ),
-        onDeleted: () => BlocProvider.of<StringCollectionInputBloc>(context).removeItem(item),
+        onDeleted: () => BlocProvider.of<StringCollectionInputBloc>(context)
+            .removeItem(item),
       ),
     );
   }
 
-  Widget _showAddItemInput(StringCollectionInputState state, BuildContext context) {
+  Widget _showAddItemInput(
+      StringCollectionInputState state, BuildContext context) {
     return TextFormField(
       key: state.itemInputKey,
       maxLines: 1,
@@ -142,37 +150,46 @@ class StringCollectionInputWidget extends StatelessWidget {
     );
   }
 
-  Widget _showAddItemButton(StringCollectionInputState state, BuildContext context) {
+  Widget _showAddItemButton(
+      StringCollectionInputState state, BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
         child: Container(
-          child: FlatButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-            color: Theme.of(context).accentColor,
-            child: Text('ADD', style: Theme.of(context).primaryTextTheme.button),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+              backgroundColor: Theme.of(context).accentColor,
+            ),
+            child:
+                Text('ADD', style: Theme.of(context).primaryTextTheme.button),
             onPressed: () => BlocProvider.of<StringCollectionInputBloc>(context)
                 .addItem(state.itemInputKey.currentState.value.trim()),
           ),
         ));
   }
 
-  Widget _showCancelButton(StringCollectionInputState state, BuildContext context) {
+  Widget _showCancelButton(
+      StringCollectionInputState state, BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
-      child: FlatButton(
+      child: TextButton(
         onPressed: () => NavigationHelper.navigateBackOne(context),
         child: Text('CANCEL', style: Theme.of(context).accentTextTheme.button),
       ),
     );
   }
 
-  Widget _showSubmitButton(StringCollectionInputState state, BuildContext context) {
+  Widget _showSubmitButton(
+      StringCollectionInputState state, BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
-      child: FlatButton(
-        onPressed: () => BlocProvider.of<StringCollectionInputBloc>(context).submitItems(context),
-        child: Text('FINISHED', style: Theme.of(context).accentTextTheme.button),
+      child: TextButton(
+        onPressed: () => BlocProvider.of<StringCollectionInputBloc>(context)
+            .submitItems(context),
+        child:
+            Text('FINISHED', style: Theme.of(context).accentTextTheme.button),
       ),
     );
   }

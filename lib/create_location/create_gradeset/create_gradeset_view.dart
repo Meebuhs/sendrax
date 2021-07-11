@@ -27,7 +27,8 @@ class _CreateGradeSetState extends State<CreateGradeSet> {
 }
 
 class CreateGradeSetWidget extends StatelessWidget {
-  const CreateGradeSetWidget({Key key, @required this.widget, @required this.widgetState})
+  const CreateGradeSetWidget(
+      {Key key, @required this.widget, @required this.widgetState})
       : super(key: key);
 
   final CreateGradeSet widget;
@@ -46,7 +47,8 @@ class CreateGradeSetWidget extends StatelessWidget {
                 maxWidth: 300.0,
               ),
               child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: UIConstants.STANDARD_PADDING),
                   child: Column(children: <Widget>[
                     _showNameInput(state, context),
                     _showItemList(state, context),
@@ -92,7 +94,7 @@ class CreateGradeSetWidget extends StatelessWidget {
   }
 
   Widget _showItemList(CreateGradeSetState state, BuildContext context) {
-    List<Widget> itemChips = List<Widget>();
+    List<Widget> itemChips = [];
     state.grades.forEach((item) {
       itemChips.add(_buildItemChip(state, context, item));
     });
@@ -102,8 +104,8 @@ class CreateGradeSetWidget extends StatelessWidget {
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).dialogBackgroundColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
                 child: ListView(children: <Widget>[
                   Wrap(
                       alignment: WrapAlignment.center,
@@ -113,7 +115,8 @@ class CreateGradeSetWidget extends StatelessWidget {
                 ]))));
   }
 
-  Widget _buildItemChip(CreateGradeSetState state, BuildContext context, String item) {
+  Widget _buildItemChip(
+      CreateGradeSetState state, BuildContext context, String item) {
     return Container(
       child: InputChip(
         label: Text(item),
@@ -123,7 +126,8 @@ class CreateGradeSetWidget extends StatelessWidget {
           Icons.cancel,
           color: Colors.black,
         ),
-        onDeleted: () => BlocProvider.of<CreateGradeSetBloc>(context).removeGrade(item),
+        onDeleted: () =>
+            BlocProvider.of<CreateGradeSetBloc>(context).removeGrade(item),
       ),
     );
   }
@@ -152,11 +156,15 @@ class CreateGradeSetWidget extends StatelessWidget {
     return Padding(
         padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
         child: Container(
-          child: FlatButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-            color: Theme.of(context).accentColor,
-            child: Text('ADD', style: Theme.of(context).primaryTextTheme.button),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+              backgroundColor: Theme.of(context).accentColor,
+            ),
+            child:
+                Text('ADD', style: Theme.of(context).primaryTextTheme.button),
             onPressed: () => BlocProvider.of<CreateGradeSetBloc>(context)
                 .addGrade(state.itemInputKey.currentState.value.trim()),
           ),
@@ -168,12 +176,15 @@ class CreateGradeSetWidget extends StatelessWidget {
       return Align(
           alignment: Alignment.bottomLeft,
           child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  UIConstants.STANDARD_PADDING, 2.0, UIConstants.STANDARD_PADDING, 0.0),
+              padding: EdgeInsets.fromLTRB(UIConstants.STANDARD_PADDING, 2.0,
+                  UIConstants.STANDARD_PADDING, 0.0),
               child: Text(
                 state.errorMessage,
                 style: TextStyle(
-                    fontSize: 13.0, color: Colors.red, height: 1.0, fontWeight: FontWeight.w400),
+                    fontSize: 13.0,
+                    color: Colors.red,
+                    height: 1.0,
+                    fontWeight: FontWeight.w400),
               )));
     } else {
       return Container(
@@ -185,16 +196,19 @@ class CreateGradeSetWidget extends StatelessWidget {
   Widget _showCancelButton(CreateGradeSetState state, BuildContext context) {
     return Align(
         alignment: Alignment.bottomRight,
-        child: FlatButton(
+        child: TextButton(
             onPressed: () => NavigationHelper.navigateBackOne(context),
-            child: Text('CANCEL', style: Theme.of(context).accentTextTheme.button)));
+            child: Text('CANCEL',
+                style: Theme.of(context).accentTextTheme.button)));
   }
 
   Widget _showSubmitButton(CreateGradeSetState state, BuildContext context) {
     return Align(
         alignment: Alignment.bottomRight,
-        child: FlatButton(
-            onPressed: () => BlocProvider.of<CreateGradeSetBloc>(context).createGradeSet(context),
-            child: Text('CREATE', style: Theme.of(context).accentTextTheme.button)));
+        child: TextButton(
+            onPressed: () => BlocProvider.of<CreateGradeSetBloc>(context)
+                .createGradeSet(context),
+            child: Text('CREATE',
+                style: Theme.of(context).accentTextTheme.button)));
   }
 }

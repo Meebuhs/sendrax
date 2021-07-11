@@ -15,7 +15,10 @@ import 'create_location_state.dart';
 
 class CreateLocationScreen extends StatefulWidget {
   CreateLocationScreen(
-      {Key key, @required this.location, @required this.categories, @required this.isEdit})
+      {Key key,
+      @required this.location,
+      @required this.categories,
+      @required this.isEdit})
       : super(key: key);
 
   final Location location;
@@ -30,7 +33,8 @@ class _CreateLocationState extends State<CreateLocationScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateLocationBloc>(
-      create: (context) => CreateLocationBloc(widget.location, widget.categories, widget.isEdit),
+      create: (context) =>
+          CreateLocationBloc(widget.location, widget.categories, widget.isEdit),
       child: CreateLocationWidget(
         widget: widget,
         widgetState: this,
@@ -40,7 +44,8 @@ class _CreateLocationState extends State<CreateLocationScreen> {
 }
 
 class CreateLocationWidget extends StatelessWidget {
-  const CreateLocationWidget({Key key, @required this.widget, @required this.widgetState})
+  const CreateLocationWidget(
+      {Key key, @required this.widget, @required this.widgetState})
       : super(key: key);
 
   final CreateLocationScreen widget;
@@ -50,7 +55,9 @@ class CreateLocationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text((widget.isEdit) ? "Edit ${widget.location.displayName}" : "Create a location"),
+        title: Text((widget.isEdit)
+            ? "Edit ${widget.location.displayName}"
+            : "Create a location"),
         actions: <Widget>[
           (widget.isEdit)
               ? IconButton(
@@ -100,7 +107,8 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  Widget _showDisplayNameInput(CreateLocationState state, BuildContext context) {
+  Widget _showDisplayNameInput(
+      CreateLocationState state, BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
       child: TextFormField(
@@ -141,59 +149,58 @@ class CreateLocationWidget extends StatelessWidget {
 
   Widget _showImage(CreateLocationState state, BuildContext context) {
     Widget content;
-    if (state.deleteImage || (state.imageFile == null && state.imageUrl == "")) {
+    if (state.deleteImage ||
+        (state.imageFile == null && state.imageUrl == "")) {
       content = Container(
           decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
               color: Theme.of(context).cardColor),
           child: Center(
               child: Text(
-                "Add an image to this location (optional)",
+            "Add an image to this location (optional)",
             style: Theme.of(context).accentTextTheme.subtitle2,
             textAlign: TextAlign.center,
           )));
     } else if (state.imageFile != null) {
       content = Material(
-          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+          borderRadius:
+              BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
           child: Hero(
               tag: "${widget.location.displayName}-image",
               child: Container(
                 decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                    borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
                     image: DecorationImage(
-                      image: Image
-                          .file(state.imageFile)
-                          .image,
+                      image: Image.file(state.imageFile).image,
                       fit: BoxFit.cover,
                     )),
               )));
     } else {
       content = Material(
-          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+          borderRadius:
+              BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
           child: Hero(
               tag: "${widget.location.displayName}-image",
               child: CachedNetworkImage(
                 imageUrl: state.imageUrl,
-                imageBuilder: (context, imageProvider) =>
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          )),
-                    ),
-                placeholder: (context, url) =>
-                    SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 4.0,
-                            ))),
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      )),
+                ),
+                placeholder: (context, url) => SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: Center(
+                        child: CircularProgressIndicator(
+                      strokeWidth: 4.0,
+                    ))),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               )));
     }
@@ -207,18 +214,26 @@ class CreateLocationWidget extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
             color: Theme.of(context).accentColor,
-            borderRadius:
-                BorderRadius.vertical(bottom: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+            borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
-              child: _showImagePickerButton(state, context, "CAMERA",
-                  Icon(Icons.camera_alt, color: Colors.black, size: 22), ImageSource.camera),
+              child: _showImagePickerButton(
+                  state,
+                  context,
+                  "CAMERA",
+                  Icon(Icons.camera_alt, color: Colors.black, size: 22),
+                  ImageSource.camera),
             ),
             Expanded(
-              child: _showImagePickerButton(state, context, "GALLERY",
-                  Icon(Icons.image, color: Colors.black, size: 22), ImageSource.gallery),
+              child: _showImagePickerButton(
+                  state,
+                  context,
+                  "GALLERY",
+                  Icon(Icons.image, color: Colors.black, size: 22),
+                  ImageSource.gallery),
             ),
             Expanded(
               child: _showImageRemoveButton(state, context),
@@ -227,11 +242,13 @@ class CreateLocationWidget extends StatelessWidget {
         ));
   }
 
-  Widget _showImagePickerButton(CreateLocationState state, BuildContext context, String buttonText,
-      Icon icon, ImageSource imageSource) {
-    return FlatButton(
+  Widget _showImagePickerButton(CreateLocationState state, BuildContext context,
+      String buttonText, Icon icon, ImageSource imageSource) {
+    return TextButton(
       child: Row(children: <Widget>[
-        Padding(padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2), child: icon),
+        Padding(
+            padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2),
+            child: icon),
         Text(buttonText, style: Theme.of(context).primaryTextTheme.button),
       ]),
       onPressed: () => _openPictureDialog(context, imageSource),
@@ -244,15 +261,17 @@ class CreateLocationWidget extends StatelessWidget {
     BlocProvider.of<CreateLocationBloc>(context).setImageFile(image);
   }
 
-  Widget _showImageRemoveButton(CreateLocationState state, BuildContext context) {
-    return FlatButton(
+  Widget _showImageRemoveButton(
+      CreateLocationState state, BuildContext context) {
+    return TextButton(
       child: Row(children: <Widget>[
         Padding(
             padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2),
             child: Icon(Icons.delete_forever, color: Colors.black, size: 22)),
         Text("DELETE", style: Theme.of(context).primaryTextTheme.button),
       ]),
-      onPressed: () => BlocProvider.of<CreateLocationBloc>(context).deleteImage(),
+      onPressed: () =>
+          BlocProvider.of<CreateLocationBloc>(context).deleteImage(),
     );
   }
 
@@ -280,7 +299,9 @@ class CreateLocationWidget extends StatelessWidget {
         child: DropdownButtonHideUnderline(
             child: DropdownButtonFormField<String>(
                 decoration: InputDecoration(
-                    isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
+                    isDense: true,
+                    filled: true,
+                    fillColor: Theme.of(context).cardColor),
                 style: Theme.of(context).accentTextTheme.subtitle2,
                 items: _createDropdownItems(state),
                 value: state.gradeSet,
@@ -293,7 +314,8 @@ class CreateLocationWidget extends StatelessWidget {
                   return null;
                 },
                 onChanged: (value) =>
-                    BlocProvider.of<CreateLocationBloc>(context).selectGrade(value))));
+                    BlocProvider.of<CreateLocationBloc>(context)
+                        .selectGrade(value))));
   }
 
   List<DropdownMenuItem> _createDropdownItems(CreateLocationState state) {
@@ -305,14 +327,19 @@ class CreateLocationWidget extends StatelessWidget {
     }).toList();
   }
 
-  Widget _showGradeCreationButton(CreateLocationState state, BuildContext context) {
+  Widget _showGradeCreationButton(
+      CreateLocationState state, BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
-        child: FlatButton(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-          color: Theme.of(context).accentColor,
-          child: Text('CREATE GRADE SET', style: Theme.of(context).primaryTextTheme.button),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+            backgroundColor: Theme.of(context).accentColor,
+          ),
+          child: Text('CREATE GRADE SET',
+              style: Theme.of(context).primaryTextTheme.button),
           onPressed: () => _showCreateGradeSetDialog(context),
         ));
   }
@@ -322,7 +349,8 @@ class CreateLocationWidget extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-              title: Text("Create a grade set", style: Theme.of(context).accentTextTheme.headline5),
+              title: Text("Create a grade set",
+                  style: Theme.of(context).accentTextTheme.headline5),
               backgroundColor: Theme.of(context).cardColor,
               children: <Widget>[
                 CreateGradeSet(),
@@ -336,12 +364,15 @@ class CreateLocationWidget extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
             decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
                 color: Theme.of(context).cardColor),
             child: StreamBuilder(
-                stream: BlocProvider.of<CreateLocationBloc>(context).sectionsStream.stream,
-                initialData: (state.sections == null) ? <String>[] : state.sections,
+                stream: BlocProvider.of<CreateLocationBloc>(context)
+                    .sectionsStream
+                    .stream,
+                initialData:
+                    (state.sections == null) ? <String>[] : state.sections,
                 builder: (BuildContext context, snapshot) {
                   return Center(
                       child: Text(
@@ -357,19 +388,23 @@ class CreateLocationWidget extends StatelessWidget {
   Widget _showSectionCreator(CreateLocationState state, BuildContext context) {
     return SizedBox(
         width: double.infinity,
-        child: FlatButton(
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.vertical(bottom: Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
-          color: Theme.of(context).accentColor,
-          child: Text((widget.isEdit) ? "EDIT SECTIONS" : 'CREATE SECTIONS (optional)',
+        child: TextButton(
+          style: TextButton.styleFrom(
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(UIConstants.BUTTON_BORDER_RADIUS))),
+            backgroundColor: Theme.of(context).accentColor,
+          ),
+          child: Text(
+              (widget.isEdit) ? "EDIT SECTIONS" : 'CREATE SECTIONS (optional)',
               style: Theme.of(context).primaryTextTheme.button),
           onPressed: () => _showAddSectionsDialog(state, context),
         ));
   }
 
-  void _showAddSectionsDialog(CreateLocationState state, BuildContext upperContext) {
+  void _showAddSectionsDialog(
+      CreateLocationState state, BuildContext upperContext) {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {
@@ -396,35 +431,44 @@ class CreateLocationWidget extends StatelessWidget {
         padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
         child: SizedBox(
             width: double.infinity,
-            child: FlatButton(
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-              color: Theme.of(context).accentColor,
-              child: Text('SUBMIT', style: Theme.of(context).primaryTextTheme.button),
+            child: TextButton(
+              style: TextButton.styleFrom(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        UIConstants.BUTTON_BORDER_RADIUS)),
+                backgroundColor: Theme.of(context).accentColor,
+              ),
+              child: Text('SUBMIT',
+                  style: Theme.of(context).primaryTextTheme.button),
               onPressed: () => BlocProvider.of<CreateLocationBloc>(context)
                   .validateAndSubmit(state, context, this),
             )));
   }
 
-  void _showDeleteLocationDialog(BuildContext upperContext, CreateLocationWidget view) {
+  void _showDeleteLocationDialog(
+      BuildContext upperContext, CreateLocationWidget view) {
     showDialog(
         context: upperContext,
         builder: (BuildContext context) {
           return AlertDialog(
               title: Text("Are you sure you want to delete this location?",
                   style: Theme.of(context).accentTextTheme.headline5),
-              content: Text("There is no way to get it (or any of its climbs) back",
+              content: Text(
+                  "There is no way to get it (or any of its climbs) back",
                   style: Theme.of(context).accentTextTheme.bodyText2),
               actions: <Widget>[
-                FlatButton(
-                  child: Text("CANCEL", style: Theme.of(context).accentTextTheme.button),
+                TextButton(
+                  child: Text("CANCEL",
+                      style: Theme.of(context).accentTextTheme.button),
                   onPressed: () => navigateBackOne(),
                 ),
-                FlatButton(
-                  child: Text("DELETE", style: Theme.of(context).accentTextTheme.button),
-                  onPressed: () => BlocProvider.of<CreateLocationBloc>(upperContext)
-                      .deleteLocation(upperContext, view),
+                TextButton(
+                  child: Text("DELETE",
+                      style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () =>
+                      BlocProvider.of<CreateLocationBloc>(upperContext)
+                          .deleteLocation(upperContext, view),
                 )
               ]);
         });

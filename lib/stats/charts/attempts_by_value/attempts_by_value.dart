@@ -29,7 +29,7 @@ class AttemptsByValueChart extends StatefulWidget {
   final Function(Attempt) processAttempt;
   final Function() createEmptyMap;
   final List<FilterType> enableFilters;
-  bool rotateLabels = false;
+  final bool rotateLabels;
 
   @override
   _AttemptsByValueChartState createState() => _AttemptsByValueChartState();

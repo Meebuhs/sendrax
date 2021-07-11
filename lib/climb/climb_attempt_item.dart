@@ -37,7 +37,7 @@ class AttemptItem extends StatelessWidget {
         ),
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.endToStart) {
-            Scaffold.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
                   "Deleted ${DateFormat('EEEE d/M h:mm a').format(attempt.timestamp.toDate())} - ${attempt.sendType}"),
               action: SnackBarAction(
