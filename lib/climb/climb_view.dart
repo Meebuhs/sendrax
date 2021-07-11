@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+
 import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/models/climb.dart';
 import 'package:sendrax/models/location.dart';
@@ -364,29 +365,35 @@ class ClimbWidget extends StatelessWidget {
 
     List<Widget> buttons = [];
     SendTypes.SEND_TYPES.asMap().forEach((index, sendType) {
-      buttons.add(TextButton(
-        child: Text(sendType),
-        style: TextButton.styleFrom(
-          backgroundColor: isSendAllowed[index]
-              ? SeriesConstants.COLOURS[index]
-              : darken(SeriesConstants.COLOURS[index]),
-          primary: Colors.black,
-          shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-        ),
-        onPressed: isSendAllowed[index]
-            ? () => BlocProvider.of<ClimbBloc>(context)
-                .validateAndSubmit(state, context, sendType)
-            : null,
-      ));
+      buttons.add(Padding(
+          padding: EdgeInsets.only(
+              right: index == 4 ? 0 : UIConstants.SMALLER_PADDING),
+          child: TextButton(
+            child: Text(sendType),
+            style: TextButton.styleFrom(
+              backgroundColor: isSendAllowed[index]
+                  ? SeriesConstants.COLOURS[index]
+                  : darken(SeriesConstants.COLOURS[index]),
+              primary: Colors.black,
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+            ),
+            onPressed: isSendAllowed[index]
+                ? () => BlocProvider.of<ClimbBloc>(context)
+                    .validateAndSubmit(state, context, sendType)
+                : null,
+          )));
     });
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: ButtonBar(
-        alignment: MainAxisAlignment.center,
-        children: buttons,
+    return Padding(
+      padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: buttons,
+        ),
       ),
     );
   }
