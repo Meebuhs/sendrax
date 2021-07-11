@@ -298,82 +298,23 @@ class ClimbWidget extends StatelessWidget {
           child: Form(
             key: state.formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                    padding:
-                        EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
-                    child: Row(children: <Widget>[
-                      Expanded(
-                        child: _showSendTypeDropdown(state, context),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: UIConstants.STANDARD_PADDING),
-                          child: SizedBox(
-                            width: 95,
-                            child: _showDownclimbedCheckbox(state, context),
-                          )),
-                    ])),
                 Row(children: <Widget>[
                   Expanded(child: _showNotesInput(state, context)),
-                  _showSubmitButton(state, context)
-                ])
+                  Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: UIConstants.STANDARD_PADDING),
+                      child: SizedBox(
+                        width: 95,
+                        child: _showDownclimbedCheckbox(state, context),
+                      )),
+                ]),
+                _showSubmitButtons(state, context)
               ],
             ),
           ))
     ]);
-  }
-
-  Widget _showSendTypeDropdown(ClimbState state, BuildContext context) {
-    return DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<String>(
-      style: Theme.of(context).accentTextTheme.subtitle2,
-      items: _createDropdownItems(SendTypes.SEND_TYPES),
-      value: state.sendType,
-      hint: Text("Send type"),
-      isExpanded: true,
-      decoration:
-          InputDecoration(filled: true, fillColor: Theme.of(context).cardColor),
-      validator: (String value) {
-        if (value == null) {
-          return 'A send type must be selected';
-        }
-        return null;
-      },
-      onChanged: (value) =>
-          BlocProvider.of<ClimbBloc>(context).selectSendType(value),
-    ));
-  }
-
-  List<DropdownMenuItem> _createDropdownItems(List<String> items) {
-    if (items.isNotEmpty) {
-      return items.map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList();
-    } else {
-      // null disables the dropdown
-      return null;
-    }
-  }
-
-  Widget _showDownclimbedCheckbox(ClimbState state, BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text("Downclimbed", style: Theme.of(context).accentTextTheme.subtitle2),
-        Checkbox(
-            checkColor: Colors.black,
-            hoverColor: Theme.of(context).accentColor,
-            activeColor: Theme.of(context).accentColor,
-            focusColor: Theme.of(context).accentColor,
-            value: state.downclimbed,
-            onChanged: (value) => BlocProvider.of<ClimbBloc>(context)
-                .toggleDownclimbedCheckbox(value)),
-      ],
-    );
   }
 
   Widget _showNotesInput(ClimbState state, BuildContext context) {
@@ -395,24 +336,66 @@ class ClimbWidget extends StatelessWidget {
     );
   }
 
-  Widget _showSubmitButton(ClimbState state, BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.STANDARD_PADDING),
-        child: SizedBox(
-          width: 95,
-          child: TextButton(
-            style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-              backgroundColor: Theme.of(context).accentColor,
-            ),
-            child: Text('SUBMIT',
-                style: Theme.of(context).primaryTextTheme.button),
-            onPressed: () => BlocProvider.of<ClimbBloc>(context)
-                .validateAndSubmit(state, context),
-          ),
-        ));
+  Widget _showDownclimbedCheckbox(ClimbState state, BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text("Downclimbed", style: Theme.of(context).accentTextTheme.subtitle2),
+        Checkbox(
+            checkColor: Colors.black,
+            hoverColor: Theme.of(context).accentColor,
+            activeColor: Theme.of(context).accentColor,
+            focusColor: Theme.of(context).accentColor,
+            value: state.downclimbed,
+            onChanged: (value) => BlocProvider.of<ClimbBloc>(context)
+                .toggleDownclimbedCheckbox(value)),
+      ],
+    );
+  }
+
+  Widget _showSubmitButtons(ClimbState state, BuildContext context) {
+    // this is a little cryptic but basically we only allow onsight, flash and
+    // send only when the climb has not yet been sent, repeat only when it has
+    // and attempt is always allowed.
+    bool hasSent = state.attempts
+        .any((attempt) => SendTypes.SENDS.contains(attempt.sendType));
+    // Onsight, Flash, Send, Repeat, Attempt
+    List<bool> isSendAllowed = [!hasSent, !hasSent, !hasSent, hasSent, true];
+
+    List<Widget> buttons = [];
+    SendTypes.SEND_TYPES.asMap().forEach((index, sendType) {
+      buttons.add(TextButton(
+        child: Text(sendType),
+        style: TextButton.styleFrom(
+          backgroundColor: isSendAllowed[index]
+              ? SeriesConstants.COLOURS[index]
+              : darken(SeriesConstants.COLOURS[index]),
+          primary: Colors.black,
+          shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+        ),
+        onPressed: isSendAllowed[index]
+            ? () => BlocProvider.of<ClimbBloc>(context)
+                .validateAndSubmit(state, context, sendType)
+            : null,
+      ));
+    });
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: ButtonBar(
+        alignment: MainAxisAlignment.center,
+        children: buttons,
+      ),
+    );
+  }
+
+  Color darken(Color color, [double amount = .6]) {
+    final hsl = HSLColor.fromColor(color);
+    final darkenedHsl = hsl.withAlpha((hsl.alpha - amount).clamp(0.0, 1.0));
+
+    return darkenedHsl.toColor();
   }
 
   void _editClimb() {
