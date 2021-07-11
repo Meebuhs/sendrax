@@ -9,9 +9,9 @@ class ClimbItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String label = createLabel();
+    String label = _createLabel();
 
-    Widget statusIcon = createStatusIcon(context);
+    Widget statusIcon = _createStatusIcon(context);
 
     return Container(
         padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
@@ -20,10 +20,7 @@ class ClimbItem extends StatelessWidget {
             child: Text(
               label,
               overflow: TextOverflow.ellipsis,
-              style: Theme
-                  .of(context)
-                  .accentTextTheme
-                  .subtitle2,
+              style: Theme.of(context).accentTextTheme.subtitle2,
             ),
           ),
           Container(
@@ -34,7 +31,7 @@ class ClimbItem extends StatelessWidget {
         ]));
   }
 
-  String createLabel() {
+  String _createLabel() {
     String label;
 
     if (climb.displayName == "") {
@@ -47,13 +44,14 @@ class ClimbItem extends StatelessWidget {
       if (climb.categories.isEmpty) {
         label = "${climb.grade} - ${climb.displayName}";
       } else {
-        label = "${climb.grade} - ${climb.displayName} - ${(climb.categories..sort()).join(', ')}";
+        label =
+            "${climb.grade} - ${climb.displayName} - ${(climb.categories..sort()).join(', ')}";
       }
     }
     return label;
   }
 
-  Widget createStatusIcon(BuildContext context) {
+  Widget _createStatusIcon(BuildContext context) {
     IconData statusIcon;
 
     if (climb.repeated) {
@@ -64,14 +62,8 @@ class ClimbItem extends StatelessWidget {
 
     return Icon(
       statusIcon,
-      color: Theme
-          .of(context)
-          .accentColor,
-      size: Theme
-          .of(context)
-          .accentTextTheme
-          .subtitle2
-          .fontSize,
+      color: Theme.of(context).accentColor,
+      size: Theme.of(context).accentTextTheme.subtitle2.fontSize,
     );
   }
 }

@@ -34,7 +34,8 @@ class _CreateClimbState extends State<CreateClimbScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CreateClimbBloc>(
-      create: (context) => CreateClimbBloc(widget.climb, widget.location.grades),
+      create: (context) =>
+          CreateClimbBloc(widget.climb, widget.location.grades),
       child: CreateClimbWidget(
         widget: widget,
         widgetState: this,
@@ -44,7 +45,8 @@ class _CreateClimbState extends State<CreateClimbScreen> {
 }
 
 class CreateClimbWidget extends StatelessWidget {
-  const CreateClimbWidget({Key key, @required this.widget, @required this.widgetState})
+  const CreateClimbWidget(
+      {Key key, @required this.widget, @required this.widgetState})
       : super(key: key);
 
   final CreateClimbScreen widget;
@@ -52,8 +54,9 @@ class CreateClimbWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String editTitleText =
-        (widget.climb.displayName == "") ? "Edit climb" : "Edit ${widget.climb.displayName}";
+    String editTitleText = (widget.climb.displayName == "")
+        ? "Edit climb"
+        : "Edit ${widget.climb.displayName}";
     return Scaffold(
       appBar: AppBar(
         title: Text((widget.isEdit) ? editTitleText : "Create a climb"),
@@ -129,11 +132,12 @@ class CreateClimbWidget extends StatelessWidget {
 
   Widget _showImage(CreateClimbState state, BuildContext context) {
     Widget content;
-    if (state.deleteImage || (state.imageFile == null && state.imageUrl == "")) {
+    if (state.deleteImage ||
+        (state.imageFile == null && state.imageUrl == "")) {
       content = Container(
           decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
               color: Theme.of(context).cardColor),
           child: Center(
               child: Text(
@@ -143,45 +147,43 @@ class CreateClimbWidget extends StatelessWidget {
           )));
     } else if (state.imageFile != null) {
       content = Material(
-          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+          borderRadius:
+              BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
           child: Hero(
               tag: "climbImageHero",
               child: Container(
                 decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                    borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
                     image: DecorationImage(
-                      image: Image
-                          .file(state.imageFile)
-                          .image,
+                      image: Image.file(state.imageFile).image,
                       fit: BoxFit.cover,
                     )),
               )));
     } else {
       content = Material(
-          borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+          borderRadius:
+              BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
           child: Hero(
               tag: "climbImageHero",
               child: CachedNetworkImage(
                 imageUrl: state.imageUrl,
-                imageBuilder: (context, imageProvider) =>
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          )),
-                    ),
-                placeholder: (context, url) =>
-                    SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 4.0,
-                            ))),
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      )),
+                ),
+                placeholder: (context, url) => SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: Center(
+                        child: CircularProgressIndicator(
+                      strokeWidth: 4.0,
+                    ))),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               )));
     }
@@ -195,18 +197,26 @@ class CreateClimbWidget extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
             color: Theme.of(context).accentColor,
-            borderRadius:
-                BorderRadius.vertical(bottom: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+            borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
-              child: _showImagePickerButton(state, context, "CAMERA",
-                  Icon(Icons.camera_alt, color: Colors.black, size: 22), ImageSource.camera),
+              child: _showImagePickerButton(
+                  state,
+                  context,
+                  "CAMERA",
+                  Icon(Icons.camera_alt, color: Colors.black, size: 22),
+                  ImageSource.camera),
             ),
             Expanded(
-              child: _showImagePickerButton(state, context, "GALLERY",
-                  Icon(Icons.image, color: Colors.black, size: 22), ImageSource.gallery),
+              child: _showImagePickerButton(
+                  state,
+                  context,
+                  "GALLERY",
+                  Icon(Icons.image, color: Colors.black, size: 22),
+                  ImageSource.gallery),
             ),
             Expanded(
               child: _showImageRemoveButton(state, context),
@@ -215,11 +225,13 @@ class CreateClimbWidget extends StatelessWidget {
         ));
   }
 
-  Widget _showImagePickerButton(CreateClimbState state, BuildContext context, String buttonText,
-      Icon icon, ImageSource imageSource) {
-    return FlatButton(
+  Widget _showImagePickerButton(CreateClimbState state, BuildContext context,
+      String buttonText, Icon icon, ImageSource imageSource) {
+    return TextButton(
       child: Row(children: <Widget>[
-        Padding(padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2), child: icon),
+        Padding(
+            padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2),
+            child: icon),
         Text(buttonText, style: Theme.of(context).primaryTextTheme.button),
       ]),
       onPressed: () => _openPictureDialog(context, imageSource),
@@ -233,7 +245,7 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   Widget _showImageRemoveButton(CreateClimbState state, BuildContext context) {
-    return FlatButton(
+    return TextButton(
       child: Row(children: <Widget>[
         Padding(
             padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING / 2),
@@ -261,8 +273,8 @@ class CreateClimbWidget extends StatelessWidget {
 
   Widget _showSectionDropdown(CreateClimbState state, BuildContext context) {
     return DropdownButtonFormField<String>(
-      decoration:
-          InputDecoration(isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
+      decoration: InputDecoration(
+          isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
       style: Theme.of(context).accentTextTheme.subtitle2,
       disabledHint: Text("No sections"),
       iconDisabledColor: Colors.grey,
@@ -278,14 +290,17 @@ class CreateClimbWidget extends StatelessWidget {
         }
         return null;
       },
-      onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectSection(value),
+      onChanged: (value) =>
+          BlocProvider.of<CreateClimbBloc>(context).selectSection(value),
     );
   }
 
   Widget _showGradeDropdown(CreateClimbState state, BuildContext context) {
     return DropdownButtonFormField<String>(
-        decoration:
-            InputDecoration(isDense: true, filled: true, fillColor: Theme.of(context).cardColor),
+        decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: Theme.of(context).cardColor),
         style: Theme.of(context).accentTextTheme.subtitle2,
         items: _createDropdownItems(state.grades),
         value: state.grade,
@@ -297,7 +312,8 @@ class CreateClimbWidget extends StatelessWidget {
           }
           return null;
         },
-        onChanged: (value) => BlocProvider.of<CreateClimbBloc>(context).selectGrade(value));
+        onChanged: (value) =>
+            BlocProvider.of<CreateClimbBloc>(context).selectGrade(value));
   }
 
   List<DropdownMenuItem> _createDropdownItems(List<String> items) {
@@ -315,7 +331,7 @@ class CreateClimbWidget extends StatelessWidget {
   }
 
   Widget _showCategorySelection(CreateClimbState state, BuildContext context) {
-    List<Widget> itemChips = List<Widget>();
+    List<Widget> itemChips = [];
     widget.categories.forEach((item) {
       itemChips.add(_buildItemChip(state, context, item));
     });
@@ -325,8 +341,8 @@ class CreateClimbWidget extends StatelessWidget {
             child: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(UIConstants.FIELD_BORDER_RADIUS))),
                 child: (itemChips.isNotEmpty)
                     ? ListView(children: <Widget>[
                         Wrap(
@@ -337,12 +353,16 @@ class CreateClimbWidget extends StatelessWidget {
                       ])
                     : Center(
                         child: Container(
-                            child: Text("You don't currently have any climb categories",
+                            child: Text(
+                                "You don't currently have any climb categories",
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).accentTextTheme.subtitle2))))));
+                                style: Theme.of(context)
+                                    .accentTextTheme
+                                    .subtitle2))))));
   }
 
-  Widget _buildItemChip(CreateClimbState state, BuildContext context, String item) {
+  Widget _buildItemChip(
+      CreateClimbState state, BuildContext context, String item) {
     return Container(
       child: InputChip(
         label: Text(item),
@@ -353,8 +373,8 @@ class CreateClimbWidget extends StatelessWidget {
         labelStyle: state.selectedCategories.contains(item)
             ? Theme.of(context).primaryTextTheme.subtitle2
             : Theme.of(context).accentTextTheme.subtitle2,
-        onSelected: (selected) =>
-            BlocProvider.of<CreateClimbBloc>(context).toggleCategory(selected, item),
+        onSelected: (selected) => BlocProvider.of<CreateClimbBloc>(context)
+            .toggleCategory(selected, item),
       ),
     );
   }
@@ -366,12 +386,16 @@ class CreateClimbWidget extends StatelessWidget {
             padding: EdgeInsets.only(top: UIConstants.SMALLER_PADDING),
             child: SizedBox(
                 width: double.infinity,
-                child: FlatButton(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
-                  color: Theme.of(context).accentColor,
-                  child: Text('SUBMIT', style: Theme.of(context).primaryTextTheme.button),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            UIConstants.BUTTON_BORDER_RADIUS)),
+                    backgroundColor: Theme.of(context).accentColor,
+                  ),
+                  child: Text('SUBMIT',
+                      style: Theme.of(context).primaryTextTheme.button),
                   onPressed: () => BlocProvider.of<CreateClimbBloc>(context)
                       .validateAndSubmit(widget.isEdit, state, context, this),
                 ))));
@@ -401,7 +425,8 @@ class CreateClimbWidget extends StatelessWidget {
         widget.climb.repeated,
         state.selectedCategories,
         widget.climb.attempts);
-    NavigationHelper.navigateToClimb(widgetState.context, climb, widget.location, widget.categories,
+    NavigationHelper.navigateToClimb(
+        widgetState.context, climb, widget.location, widget.categories,
         addToBackStack: true);
   }
 }

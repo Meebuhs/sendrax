@@ -34,25 +34,24 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     add(AttemptsClearedEvent());
     final user = await UserRepo.getInstance().getCurrentUser();
     if (user != null) {
-      climbSubscription =
-          ClimbRepo.getInstance().getAttemptsByClimbId(climb.id, user).listen((attempts) {
+      climbSubscription = ClimbRepo.getInstance()
+          .getAttemptsByClimbId(climb.id, user)
+          .listen((attempts) {
         // compare b to a so that the most recent attempt appears at the start of the list.
-        add(AttemptsUpdatedEvent(attempts..sort((a, b) => b.timestamp.compareTo(a.timestamp))));
+        add(AttemptsUpdatedEvent(
+            attempts..sort((a, b) => b.timestamp.compareTo(a.timestamp))));
       });
     } else {
       add(ClimbErrorEvent());
     }
   }
 
-  void selectSendType(String sendType) {
-    add(SendTypeSelectedEvent(sendType));
-  }
-
   void toggleDownclimbedCheckbox(bool downclimbed) {
     add(DownclimbedToggledEvent(downclimbed));
   }
 
-  void validateAndSubmit(ClimbState state, BuildContext context) async {
+  void validateAndSubmit(
+      ClimbState state, BuildContext context, String sendType) async {
     FocusScope.of(context).unfocus();
     state.loading = true;
 
@@ -66,7 +65,7 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
           climb.categories,
           climb.locationId,
           Timestamp.now(),
-          state.sendType,
+          sendType,
           state.downclimbed,
           state.notes);
       try {
@@ -92,14 +91,13 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
   }
 
   void resetNotesInput() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => state.notesInputController.clear());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => state.notesInputController.clear());
   }
 
   void reconcileClimbStatus(Climb climb) async {
     final user = await UserRepo.getInstance().getCurrentUser();
-    List<Attempt> attempts =
-    await ClimbRepo
-        .getInstance()
+    List<Attempt> attempts = await ClimbRepo.getInstance()
         .getAttemptsByClimbId(climb.id, user)
         .first;
     print(attempts);
@@ -116,14 +114,14 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
     ClimbRepo.getInstance().setClimbProperty(climb.id, "repeated", repeated);
   }
 
-  void archiveClimb(
-      BuildContext context, ClimbWidget view, Location location, List<String> categories) {
+  void archiveClimb(BuildContext context, ClimbWidget view, Location location,
+      List<String> categories) {
     ClimbRepo.getInstance().setClimbProperty(this.climb.id, "archived", true);
     NavigationHelper.resetToLocation(context, location, categories);
   }
 
-  void deleteClimb(
-      BuildContext context, ClimbWidget view, Location location, List<String> categories) {
+  void deleteClimb(BuildContext context, ClimbWidget view, Location location,
+      List<String> categories) {
     ClimbRepo.getInstance().deleteClimb(this.climb.id, this.climb.imageURI);
     NavigationHelper.resetToLocation(context, location, categories);
   }
@@ -134,8 +132,6 @@ class ClimbBloc extends Bloc<ClimbEvent, ClimbState> {
       yield ClimbState.updateAttempts(true, state.attempts, state);
     } else if (event is AttemptsUpdatedEvent) {
       yield ClimbState.updateAttempts(false, event.attempts, state);
-    } else if (event is SendTypeSelectedEvent) {
-      yield ClimbState.selectSendType(event.sendType, state);
     } else if (event is DownclimbedToggledEvent) {
       yield ClimbState.toggleDownclimbed(event.downclimbed, state);
     } else if (event is ClimbErrorEvent) {

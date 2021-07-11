@@ -10,12 +10,6 @@ class AttemptsUpdatedEvent extends ClimbEvent {
   final List<Attempt> attempts;
 }
 
-class SendTypeSelectedEvent extends ClimbEvent {
-  SendTypeSelectedEvent(this.sendType);
-
-  final String sendType;
-}
-
 class DownclimbedToggledEvent extends ClimbEvent {
   DownclimbedToggledEvent(this.downclimbed);
 

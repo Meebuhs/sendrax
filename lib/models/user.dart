@@ -2,13 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'login_response.dart';
 
-class User extends LoginResponse {
+class AppUser extends LoginResponse {
   final String uid;
 
-  User(this.uid);
+  AppUser(this.uid);
 
-  User.fromFirebaseUser(FirebaseUser firebaseUser)
-      : this(firebaseUser.uid);
+  AppUser.fromFirebaseUser(User firebaseUser) : this(firebaseUser.uid);
 
   Map<String, dynamic> get map {
     return {"uid": uid};

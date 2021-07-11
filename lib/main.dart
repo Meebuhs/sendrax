@@ -1,8 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'login/login_view.dart';
 
-void main() => runApp(sendrax());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(sendrax());
+}
 
 class sendrax extends StatefulWidget {
   @override
@@ -120,7 +125,8 @@ class _sendraxState extends State<sendrax> {
                 borderSide: BorderSide(color: errorColour, width: 1.5),
                 borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
-              errorStyle: TextStyle(fontSize: 12.0, color: errorColour, letterSpacing: 0.4),
+              errorStyle: TextStyle(
+                  fontSize: 12.0, color: errorColour, letterSpacing: 0.4),
             ),
             snackBarTheme: SnackBarThemeData(
               backgroundColor: primaryColour,
