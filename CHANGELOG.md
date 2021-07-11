@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.0 - 2021-07-11
+
+### Added
+
+- Added sent and repeated status to climb views
+- Added attempt count to climb views
+
+### Changed
+
+- Changed climb form to use buttons for each send type instead of a dropdown
+- Migrate Flutter to 2.2.3, Firebase auth to 2.0.0, Firebase Storage to 9.0.0, Cloud Firestore to 2.3.0
+
 ## 0.5.0 - 2020-04-17
 
 ### Added
