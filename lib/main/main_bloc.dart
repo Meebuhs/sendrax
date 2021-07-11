@@ -33,25 +33,28 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     }
   }
 
-  void _retrieveUserAttempts(User user) async {
+  void _retrieveUserAttempts(AppUser user) async {
     add(ClearAttemptsEvent());
-    attemptsSubscription = AttemptRepo.getInstance().getAttempts(user).listen((attempts) {
+    attemptsSubscription =
+        AttemptRepo.getInstance().getAttempts(user).listen((attempts) {
       add(AttemptsUpdatedEvent(attempts));
     });
   }
 
-  void _retrieveUserLocations(User user) async {
+  void _retrieveUserLocations(AppUser user) async {
     add(ClearLocationsEvent());
-    locationsSubscription =
-        LocationRepo.getInstance().getLocationsForUser(user).listen((locations) async {
-          add(LocationsUpdatedEvent(
-              locations..sort((a, b) => a.displayName.compareTo(b.displayName))));
+    locationsSubscription = LocationRepo.getInstance()
+        .getLocationsForUser(user)
+        .listen((locations) async {
+      add(LocationsUpdatedEvent(
+          locations..sort((a, b) => a.displayName.compareTo(b.displayName))));
     });
   }
 
-  void _retrieveUserCategories(User user) async {
+  void _retrieveUserCategories(AppUser user) async {
     add(ClearCategoriesEvent());
-    categoriesSubscription = UserRepo.getInstance().getUserCategories(user).listen((categories) {
+    categoriesSubscription =
+        UserRepo.getInstance().getUserCategories(user).listen((categories) {
       add(CategoriesUpdatedEvent(categories));
     });
   }

@@ -12,16 +12,17 @@ import 'login_state.dart';
 import 'login_view.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  StreamSubscription<FirebaseUser> _authStateListener;
+  StreamSubscription<User> _authStateListener;
 
   @override
   LoginState get initialState => LoginState.initial();
 
   void setupAuthStateListener(LoginWidget view) {
     if (_authStateListener == null) {
-      _authStateListener = FirebaseAuth.instance.onAuthStateChanged.listen((user) {
+      _authStateListener =
+          FirebaseAuth.instance.authStateChanges().listen((user) {
         if (user != null) {
-          UserRepo.getInstance().setCurrentUser(User.fromFirebaseUser(user));
+          UserRepo.getInstance().setCurrentUser(AppUser.fromFirebaseUser(user));
           view.navigateToMain();
         } else {
           add(LogoutEvent());
@@ -45,7 +46,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           await LoginRepo.getInstance().signIn(state.username, state.password);
         } else {
           await LoginRepo.getInstance().checkUsernameAvailable(state.username);
-          await LoginRepo.getInstance().signUp(state.username, state.email, state.password);
+          await LoginRepo.getInstance()
+              .signUp(state.username, state.email, state.password);
         }
         state.loading = false;
       } catch (e) {

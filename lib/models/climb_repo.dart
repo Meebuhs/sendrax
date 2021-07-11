@@ -14,7 +14,7 @@ import 'user.dart';
 class ClimbRepo {
   static ClimbRepo _instance;
 
-  final Firestore _firestore;
+  final FirebaseFirestore _firestore;
 
   ClimbRepo._internal(this._firestore);
 
@@ -25,9 +25,9 @@ class ClimbRepo {
     return _instance;
   }
 
-  Stream<Climb> getClimbFromId(String climbId, User user) {
+  Stream<Climb> getClimbFromId(String climbId, AppUser user) {
     return _firestore
-        .document(
+        .doc(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId")
         .snapshots()
         .map((data) {
@@ -35,23 +35,23 @@ class ClimbRepo {
     });
   }
 
-  Stream<Climb> getAttemptsForClimb(Climb climb, User user) {
+  Stream<Climb> getAttemptsForClimb(Climb climb, AppUser user) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/${climb.id}/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .snapshots()
         .map((data) {
-      return Deserializer.deserializeClimbAttempts(data.documents, climb);
+      return Deserializer.deserializeClimbAttempts(data.docs, climb);
     });
   }
 
-  Stream<List<Attempt>> getAttemptsByClimbId(String climbId, User user) {
+  Stream<List<Attempt>> getAttemptsByClimbId(String climbId, AppUser user) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .snapshots()
         .map((data) {
-      return Deserializer.deserializeAttempts(data.documents);
+      return Deserializer.deserializeAttempts(data.docs);
     });
   }
 
@@ -60,8 +60,8 @@ class ClimbRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
-        .document(climb.id)
-        .setData(climb.map, merge: true);
+        .doc(climb.id)
+        .set(climb.map, SetOptions(merge: true));
   }
 
   void deleteClimb(String climbId, String imageUri) async {
@@ -72,8 +72,8 @@ class ClimbRepo {
     QuerySnapshot attempts = await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
-        .getDocuments();
-    attempts.documents.forEach((attempt) async {
+        .get();
+    attempts.docs.forEach((attempt) async {
       docCounter++;
       batch.delete(attempt.reference);
       if (docCounter > 498) {
@@ -88,8 +88,8 @@ class ClimbRepo {
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .where("climbId", isEqualTo: climbId)
-        .getDocuments();
-    attempts.documents.forEach((attempt) async {
+        .get();
+    attempts.docs.forEach((attempt) async {
       docCounter++;
       batch.delete(attempt.reference);
       if (docCounter > 498) {
@@ -103,7 +103,7 @@ class ClimbRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
-        .document(climbId)
+        .doc(climbId)
         .delete();
 
     if (imageUri != "") {
@@ -116,7 +116,7 @@ class ClimbRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
-        .document(climbId)
-        .updateData({property: value});
+        .doc(climbId)
+        .update({property: value});
   }
 }

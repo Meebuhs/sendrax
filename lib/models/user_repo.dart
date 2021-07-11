@@ -11,7 +11,7 @@ import 'user.dart';
 class UserRepo {
   static UserRepo _instance;
 
-  final Firestore _firestore;
+  final FirebaseFirestore _firestore;
 
   UserRepo._internal(this._firestore);
 
@@ -22,19 +22,18 @@ class UserRepo {
     return _instance;
   }
 
-  Future<User> getCurrentUser() async {
+  Future<AppUser> getCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userId = prefs.getString(StorageKeys.USER_ID_KEY);
     if (userId != null) {
-      return User(userId);
+      return AppUser(userId);
     }
     return null;
   }
 
-  void setCurrentUser(User user) async {
+  void setCurrentUser(AppUser user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs
-        .setString(StorageKeys.USER_ID_KEY, user.uid);
+    await prefs.setString(StorageKeys.USER_ID_KEY, user.uid);
   }
 
   void clearCurrentUser() async {
@@ -42,16 +41,16 @@ class UserRepo {
     await prefs.clear();
   }
 
-  Stream<List<String>> getUserCategories(User user) {
+  Stream<List<String>> getUserCategories(AppUser user) {
     return _firestore
-        .document("${FirestorePaths.USERS_COLLECTION}/${user.uid}/")
+        .doc("${FirestorePaths.USERS_COLLECTION}/${user.uid}/")
         .snapshots()
         .map((data) => Deserializer.deserializeUserCategories(data));
   }
 
-  void setUserCategories(User user, List<String> categories) async {
+  void setUserCategories(AppUser user, List<String> categories) async {
     await _firestore
-        .document("${FirestorePaths.USERS_COLLECTION}/${user.uid}/")
-        .updateData({"${FirestorePaths.CATEGORIES_SUBPATH}": categories});
+        .doc("${FirestorePaths.USERS_COLLECTION}/${user.uid}/")
+        .update({"${FirestorePaths.CATEGORIES_SUBPATH}": categories});
   }
 }

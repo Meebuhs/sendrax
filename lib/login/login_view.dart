@@ -21,17 +21,22 @@ class _LoginState extends State<LoginScreen> with TickerProviderStateMixin {
   @override
   initState() {
     super.initState();
-    _animationController = AnimationController(duration: Duration(milliseconds: 600), vsync: this);
+    _animationController =
+        AnimationController(duration: Duration(milliseconds: 600), vsync: this);
     _heightAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        curve: Interval(0.0, 0.5, curve: Curves.easeOutQuad), parent: _animationController));
-    _slideAnimation = Tween(begin: Offset(-1.5, 0.0), end: Offset.zero).animate(CurvedAnimation(
-        curve: Interval(0.4, 1.0, curve: Curves.easeOutQuad), parent: _animationController));
+        curve: Interval(0.0, 0.5, curve: Curves.easeOutQuad),
+        parent: _animationController));
+    _slideAnimation = Tween(begin: Offset(-1.5, 0.0), end: Offset.zero).animate(
+        CurvedAnimation(
+            curve: Interval(0.4, 1.0, curve: Curves.easeOutQuad),
+            parent: _animationController));
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc(), child: LoginWidget(widget: widget, widgetState: this));
+        create: (context) => LoginBloc(),
+        child: LoginWidget(widget: widget, widgetState: this));
   }
 
   @override
@@ -42,7 +47,9 @@ class _LoginState extends State<LoginScreen> with TickerProviderStateMixin {
 }
 
 class LoginWidget extends StatelessWidget {
-  const LoginWidget({Key key, @required this.widget, @required this.widgetState}) : super(key: key);
+  const LoginWidget(
+      {Key key, @required this.widget, @required this.widgetState})
+      : super(key: key);
 
   final LoginScreen widget;
   final _LoginState widgetState;
@@ -56,7 +63,7 @@ class LoginWidget extends StatelessWidget {
       ),
       body: _buildBody(context),
       backgroundColor: Theme.of(context).backgroundColor,
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
     );
   }
 
@@ -79,7 +86,8 @@ class LoginWidget extends StatelessWidget {
                           width: 60,
                           decoration: BoxDecoration(
                             color: Colors.black,
-                            borderRadius: BorderRadius.circular(UIConstants.FIELD_BORDER_RADIUS),
+                            borderRadius: BorderRadius.circular(
+                                UIConstants.FIELD_BORDER_RADIUS),
                           ))),
                   SizedBox(
                       width: 60,
@@ -130,7 +138,8 @@ class LoginWidget extends StatelessWidget {
           focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
           enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
           errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
-          focusedErrorBorder: Theme.of(context).inputDecorationTheme.focusedErrorBorder,
+          focusedErrorBorder:
+              Theme.of(context).inputDecorationTheme.focusedErrorBorder,
           errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
           prefixIcon: Icon(Icons.perm_identity)),
       validator: (String value) {
@@ -149,41 +158,20 @@ class LoginWidget extends StatelessWidget {
       child: TextFormField(
         maxLines: 1,
         autofocus: false,
-        style: Theme
-            .of(context)
-            .accentTextTheme
-            .subtitle2,
+        style: Theme.of(context).accentTextTheme.subtitle2,
         decoration: InputDecoration(
             labelText: 'Email',
             filled: true,
-            fillColor: Theme
-                .of(context)
-                .cardColor,
-            focusedBorder: Theme
-                .of(context)
-                .inputDecorationTheme
-                .focusedBorder,
-            enabledBorder: Theme
-                .of(context)
-                .inputDecorationTheme
-                .enabledBorder,
-            errorBorder: Theme
-                .of(context)
-                .inputDecorationTheme
-                .errorBorder,
-            focusedErrorBorder: Theme
-                .of(context)
-                .inputDecorationTheme
-                .focusedErrorBorder,
-            errorStyle: Theme
-                .of(context)
-                .inputDecorationTheme
-                .errorStyle,
+            fillColor: Theme.of(context).cardColor,
+            focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
+            enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
+            errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
+            focusedErrorBorder:
+                Theme.of(context).inputDecorationTheme.focusedErrorBorder,
+            errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
             prefixIcon: Icon(Icons.mail_outline)),
         validator: (String value) {
-          if (value
-              .trim()
-              .isEmpty) {
+          if (value.trim().isEmpty) {
             return 'Email cannot be empty';
           }
           return null;
@@ -203,7 +191,8 @@ class LoginWidget extends StatelessWidget {
                 )),
             SlideTransition(
               position: widgetState._slideAnimation,
-              child: widgetState._heightAnimation.value == 1 ? emailContent : null,
+              child:
+                  widgetState._heightAnimation.value == 1 ? emailContent : null,
             )
           ]);
         });
@@ -234,7 +223,8 @@ class LoginWidget extends StatelessWidget {
             focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
             enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
             errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
-            focusedErrorBorder: Theme.of(context).inputDecorationTheme.focusedErrorBorder,
+            focusedErrorBorder:
+                Theme.of(context).inputDecorationTheme.focusedErrorBorder,
             errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
             prefixIcon: Icon(Icons.lock_outline)),
         validator: (String value) {
@@ -265,7 +255,8 @@ class LoginWidget extends StatelessWidget {
             focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
             enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder,
             errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
-            focusedErrorBorder: Theme.of(context).inputDecorationTheme.focusedErrorBorder,
+            focusedErrorBorder:
+                Theme.of(context).inputDecorationTheme.focusedErrorBorder,
             errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
             prefixIcon: Icon(Icons.lock_outline)),
         validator: (String value) {
@@ -289,7 +280,9 @@ class LoginWidget extends StatelessWidget {
                 )),
             SlideTransition(
               position: widgetState._slideAnimation,
-              child: widgetState._heightAnimation.value == 1 ? passwordContent : null,
+              child: widgetState._heightAnimation.value == 1
+                  ? passwordContent
+                  : null,
             )
           ]);
         });
@@ -302,11 +295,13 @@ class LoginWidget extends StatelessWidget {
           height: 40.0,
           child: FlatButton(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
+                borderRadius:
+                    BorderRadius.circular(UIConstants.BUTTON_BORDER_RADIUS)),
             color: Theme.of(context).accentColor,
             child: Text(state.isLogin ? 'LOGIN' : 'CREATE ACCOUNT',
                 style: Theme.of(context).primaryTextTheme.button),
-            onPressed: () => BlocProvider.of<LoginBloc>(context).validateAndSubmit(state, context),
+            onPressed: () => BlocProvider.of<LoginBloc>(context)
+                .validateAndSubmit(state, context),
           ),
         ));
   }
@@ -317,11 +312,11 @@ class LoginWidget extends StatelessWidget {
             width: double.infinity,
             height: 30,
             child: Center(
-                child: Text(state.isLogin ? 'Create an account' : 'Have an account? Sign in',
-                    style: Theme
-                        .of(context)
-                        .accentTextTheme
-                        .subtitle2))),
+                child: Text(
+                    state.isLogin
+                        ? 'Create an account'
+                        : 'Have an account? Sign in',
+                    style: Theme.of(context).accentTextTheme.subtitle2))),
         onTap: () {
           BlocProvider.of<LoginBloc>(context).toggleFormMode(state);
           state.isLogin
@@ -336,10 +331,8 @@ class LoginWidget extends StatelessWidget {
           width: double.infinity,
           height: 30,
           child: Center(
-              child: Text('Forgot password', style: Theme
-                  .of(context)
-                  .accentTextTheme
-                  .subtitle2)),
+              child: Text('Forgot password',
+                  style: Theme.of(context).accentTextTheme.subtitle2)),
         ),
         onTap: () {
           _showPasswordResetDialog(context);
@@ -353,22 +346,15 @@ class LoginWidget extends StatelessWidget {
         context: upperContext,
         builder: (BuildContext context) {
           return AlertDialog(
-              backgroundColor: Theme
-                  .of(context)
-                  .cardColor,
-              title:
-              Text("Reset your password", style: Theme
-                  .of(context)
-                  .accentTextTheme
-                  .headline5),
+              backgroundColor: Theme.of(context).cardColor,
+              title: Text("Reset your password",
+                  style: Theme.of(context).accentTextTheme.headline5),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("Enter your email below and we'll send you a link to reset your password.",
-                      style: Theme
-                          .of(context)
-                          .accentTextTheme
-                          .bodyText2),
+                  Text(
+                      "Enter your email below and we'll send you a link to reset your password.",
+                      style: Theme.of(context).accentTextTheme.bodyText2),
                   Padding(
                       padding: EdgeInsets.only(
                         top: UIConstants.STANDARD_PADDING,
@@ -377,35 +363,24 @@ class LoginWidget extends StatelessWidget {
                         controller: controller,
                         maxLines: 1,
                         autofocus: false,
-                        style: Theme
-                            .of(context)
-                            .accentTextTheme
-                            .subtitle2,
+                        style: Theme.of(context).accentTextTheme.subtitle2,
                         decoration: InputDecoration(
                             labelText: 'Email',
                             filled: true,
-                            fillColor: Theme
-                                .of(context)
-                                .dialogBackgroundColor,
-                            focusedBorder: Theme
-                                .of(context)
+                            fillColor: Theme.of(context).dialogBackgroundColor,
+                            focusedBorder: Theme.of(context)
                                 .inputDecorationTheme
                                 .focusedBorder,
-                            enabledBorder: Theme
-                                .of(context)
+                            enabledBorder: Theme.of(context)
                                 .inputDecorationTheme
                                 .enabledBorder,
-                            errorBorder: Theme
-                                .of(context)
+                            errorBorder: Theme.of(context)
                                 .inputDecorationTheme
                                 .errorBorder,
-                            focusedErrorBorder:
-                            Theme
-                                .of(context)
+                            focusedErrorBorder: Theme.of(context)
                                 .inputDecorationTheme
                                 .focusedErrorBorder,
-                            errorStyle: Theme
-                                .of(context)
+                            errorStyle: Theme.of(context)
                                 .inputDecorationTheme
                                 .errorStyle,
                             prefixIcon: Icon(Icons.mail_outline)),
@@ -414,17 +389,14 @@ class LoginWidget extends StatelessWidget {
               ),
               actions: <Widget>[
                 FlatButton(
-                  child: Text("CANCEL", style: Theme
-                      .of(context)
-                      .accentTextTheme
-                      .button),
-                  onPressed: () => NavigationHelper.navigateBackOne(upperContext),
+                  child: Text("CANCEL",
+                      style: Theme.of(context).accentTextTheme.button),
+                  onPressed: () =>
+                      NavigationHelper.navigateBackOne(upperContext),
                 ),
                 FlatButton(
-                    child: Text("EMAIL ME", style: Theme
-                        .of(context)
-                        .accentTextTheme
-                        .button),
+                    child: Text("EMAIL ME",
+                        style: Theme.of(context).accentTextTheme.button),
                     onPressed: () {
                       BlocProvider.of<LoginBloc>(upperContext)
                           .resetPassword(controller.text.trim());

@@ -16,13 +16,13 @@ timeframe. It works equally well outdoors where climbs are named and permanent a
 can archive a climb when it's taken down and replaced with something new.
 
 This app was developed for my own personal use and as a learning experience in exploring flutter.
-It has only been tested on android API level 29 and has a feature set dictated by what I've found
+It has only been tested on android API levels 29 & 30 and has a feature set dictated by what I've found
 I want/need in my own climbing sessions.
 
 ## Download
 
 I have only made an apk available. If you are looking to install on ios you will have to build it
-yourself. I will in future look at releasing an ipa.
+yourself. I may in future look at releasing an ipa.
 
 [Download the latest release](https://github.com/Meebuhs/sendrax/releases)
 
@@ -32,9 +32,17 @@ Releases for web are pending support from
 
 ## Build
 
-The app has been developed on `flutter channel stable`.
+The app has been developed on `flutter channel stable`, which as of the latest release was `2.2.3`.
 
 Ensure that you have [flutter installed](https://flutter.dev/docs/get-started/install).
+
+The android build process requires a `android/keystore.properties` file with the following entries:
+```
+storeFile=~/path/to/keystore
+storePassword=
+keyAlias=
+keyPassword=
+```
 
 You will also have to set up a firebase project and add `google-services.json` for android and 
 `GoogleService-Info.plist` for ios. Instructions for adding firebase to flutter can be 

@@ -13,7 +13,7 @@ import 'user.dart';
 class AttemptRepo {
   static AttemptRepo _instance;
 
-  final Firestore _firestore;
+  final FirebaseFirestore _firestore;
 
   AttemptRepo._internal(this._firestore);
 
@@ -24,14 +24,14 @@ class AttemptRepo {
     return _instance;
   }
 
-  Stream<List<Attempt>> getAttempts(User user) {
+  Stream<List<Attempt>> getAttempts(AppUser user) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((data) {
-      return Deserializer.deserializeAttempts(data.documents);
+      return Deserializer.deserializeAttempts(data.docs);
     });
   }
 
@@ -40,14 +40,14 @@ class AttemptRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/${attempt.climbId}/${FirestorePaths.ATTEMPTS_SUBPATH}")
-        .document(attempt.id)
-        .setData(attempt.map, merge: true);
+        .doc(attempt.id)
+        .set(attempt.map, SetOptions(merge: true));
     // Store duplicate in attempts collection for use in log and stats
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
-        .document(attempt.id)
-        .setData(attempt.map, merge: true);
+        .doc(attempt.id)
+        .set(attempt.map, SetOptions(merge: true));
   }
 
   void deleteAttempt(String attemptId, String climbId) async {
@@ -55,12 +55,12 @@ class AttemptRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}/$climbId/${FirestorePaths.ATTEMPTS_SUBPATH}")
-        .document(attemptId)
+        .doc(attemptId)
         .delete();
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
-        .document(attemptId)
+        .doc(attemptId)
         .delete();
   }
 }

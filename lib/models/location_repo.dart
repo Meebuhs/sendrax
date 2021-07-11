@@ -14,7 +14,7 @@ import 'user.dart';
 class LocationRepo {
   static LocationRepo _instance;
 
-  final Firestore _firestore;
+  final FirebaseFirestore _firestore;
 
   LocationRepo._internal(this._firestore);
 
@@ -25,22 +25,22 @@ class LocationRepo {
     return _instance;
   }
 
-  Stream<List<Location>> getLocationsForUser(User user) {
+  Stream<List<Location>> getLocationsForUser(AppUser user) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
         .snapshots()
-        .map((data) => Deserializer.deserializeLocations(data.documents));
+        .map((data) => Deserializer.deserializeLocations(data.docs));
   }
 
-  Stream<List<Climb>> getClimbsForLocation(String locationId, User user) {
+  Stream<List<Climb>> getClimbsForLocation(String locationId, AppUser user) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
         .where("archived", isEqualTo: false)
         .where("locationId", isEqualTo: locationId)
         .snapshots()
-        .map((data) => Deserializer.deserializeClimbs(data.documents));
+        .map((data) => Deserializer.deserializeClimbs(data.docs));
   }
 
   void setLocation(Location location) async {
@@ -48,8 +48,8 @@ class LocationRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
-        .document(location.id)
-        .setData(location.map, merge: true);
+        .doc(location.id)
+        .set(location.map, SetOptions(merge: true));
   }
 
   void deleteLocation(String locationId, String imageUri) async {
@@ -57,7 +57,7 @@ class LocationRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.LOCATIONS_SUBPATH}")
-        .document(locationId)
+        .doc(locationId)
         .delete();
 
     // Delete all climbs contained in this location
@@ -67,8 +67,8 @@ class LocationRepo {
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.CLIMBS_SUBPATH}")
         .where("locationId", isEqualTo: locationId)
-        .getDocuments();
-    climbs.documents.forEach((climb) async {
+        .get();
+    climbs.docs.forEach((climb) async {
       docCounter++;
       batch.delete(climb.reference);
       if (docCounter > 498) {
@@ -83,8 +83,8 @@ class LocationRepo {
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.ATTEMPTS_SUBPATH}")
         .where("locationId", isEqualTo: locationId)
-        .getDocuments();
-    attempts.documents.forEach((attempt) async {
+        .get();
+    attempts.docs.forEach((attempt) async {
       docCounter++;
       batch.delete(attempt.reference);
       if (docCounter > 498) {

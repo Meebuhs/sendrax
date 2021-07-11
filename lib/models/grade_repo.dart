@@ -11,7 +11,7 @@ import 'gradeset.dart';
 
 class GradeRepo {
   static GradeRepo _instance;
-  final Firestore _firestore;
+  final FirebaseFirestore _firestore;
 
   GradeRepo._internal(this._firestore);
 
@@ -22,21 +22,21 @@ class GradeRepo {
     return _instance;
   }
 
-  Stream<List<String>> getGradesForId(User user, String gradeSet) {
+  Stream<List<String>> getGradesForId(AppUser user, String gradeSet) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
-        .document(gradeSet)
+        .doc(gradeSet)
         .snapshots()
         .map((data) => Deserializer.deserializeGradeSet(data).grades);
   }
 
-  Stream<List<String>> getGradeIds(User user) {
+  Stream<List<String>> getGradeIds(AppUser user) {
     return _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
         .snapshots()
-        .map((data) => Deserializer.deserializeGradeSetIds(data.documents));
+        .map((data) => Deserializer.deserializeGradeSetIds(data.docs));
   }
 
   void setGradeSet(GradeSet gradeSet) async {
@@ -44,7 +44,7 @@ class GradeRepo {
     await _firestore
         .collection(
             "${FirestorePaths.USERS_COLLECTION}/${user.uid}/${FirestorePaths.GRADES_SUBPATH}")
-        .document(gradeSet.id)
-        .setData(gradeSet.map, merge: true);
+        .doc(gradeSet.id)
+        .set(gradeSet.map, SetOptions(merge: true));
   }
 }
