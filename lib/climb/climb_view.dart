@@ -112,7 +112,7 @@ class ClimbWidget extends StatelessWidget {
           if (index == 0) {
             return _showImage(context);
           } else if (index == 1) {
-            return _showClimbInformation(context);
+            return _showClimbInformation(context, state);
           } else if (state.attempts.isEmpty) {
             return _showEmptyAttemptList(context);
           } else {
@@ -120,7 +120,7 @@ class ClimbWidget extends StatelessWidget {
           }
         } else {
           if (index == 0) {
-            return _showClimbInformation(context);
+            return _showClimbInformation(context, state);
           } else if (state.attempts.isEmpty) {
             return _showEmptyAttemptList(context);
           } else {
@@ -194,14 +194,16 @@ class ClimbWidget extends StatelessWidget {
     );
   }
 
-  Widget _showClimbInformation(BuildContext context) {
-    String firstComponentText = (widget.climb.section == null)
+  Widget _showClimbInformation(BuildContext context, ClimbState state) {
+    String gradeAndSectionText = (widget.climb.section == null)
         ? "${widget.climb.grade}"
         : "${widget.climb.grade} - ${widget.climb.section}";
 
-    String secondComponentText = (widget.climb.categories.isNotEmpty)
+    String categoriesText = (widget.climb.categories.isNotEmpty)
         ? " - ${widget.climb.categories.join(', ')}"
         : "";
+
+    String attemptsText = " A: ${state.attempts.length}";
 
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,8 +211,17 @@ class ClimbWidget extends StatelessWidget {
           Container(
               child: Padding(
                   padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
-                  child: Text("$firstComponentText$secondComponentText",
-                      style: Theme.of(context).accentTextTheme.subtitle2))),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                          child: Text("$gradeAndSectionText$categoriesText",
+                              style:
+                                  Theme.of(context).accentTextTheme.subtitle2)),
+                      _createStatusIcon(context),
+                      Text("$attemptsText",
+                          style: Theme.of(context).accentTextTheme.subtitle2)
+                    ],
+                  ))),
           Divider(
             color: Theme.of(context).accentColor,
             thickness: 1.0,
@@ -221,6 +232,22 @@ class ClimbWidget extends StatelessWidget {
             margin: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
           ),
         ]);
+  }
+
+  Widget _createStatusIcon(BuildContext context) {
+    IconData statusIcon;
+
+    if (widget.climb.repeated) {
+      statusIcon = Icons.rotate_right;
+    } else if (widget.climb.sent) {
+      statusIcon = Icons.check;
+    }
+
+    return Icon(
+      statusIcon,
+      color: Theme.of(context).accentColor,
+      size: Theme.of(context).accentTextTheme.subtitle2.fontSize,
+    );
   }
 
   Widget _buildDateCard(
