@@ -71,7 +71,12 @@ class CreateClimbWidget extends StatelessWidget {
         bloc: BlocProvider.of<CreateClimbBloc>(context),
         builder: (context, CreateClimbState state) {
           if (state.loading) {
-            return Center(child: CircularProgressIndicator(strokeWidth: 4.0));
+            return Center(
+                child: CircularProgressIndicator(
+              strokeWidth: 4.0,
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
+            ));
           } else {
             return Center(
               child: _showForm(state, context),
@@ -183,6 +188,8 @@ class CreateClimbWidget extends StatelessWidget {
                     child: Center(
                         child: CircularProgressIndicator(
                       strokeWidth: 4.0,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).accentColor),
                     ))),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               )));

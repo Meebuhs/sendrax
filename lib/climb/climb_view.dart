@@ -79,6 +79,8 @@ class ClimbWidget extends StatelessWidget {
             content = Center(
               child: CircularProgressIndicator(
                 strokeWidth: 4.0,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).accentColor),
               ),
             );
           } else {
@@ -189,6 +191,8 @@ class ClimbWidget extends StatelessWidget {
             child: Center(
                 child: CircularProgressIndicator(
               strokeWidth: 4.0,
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
             ))),
         errorWidget: (context, url, error) => Icon(Icons.error),
       ),

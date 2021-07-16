@@ -37,7 +37,8 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
   @override
   void initState() {
     filteredAttemptsStream = StreamController<List<Attempt>>.broadcast();
-    filteredAttemptsListener = filteredAttemptsStream.stream.listen((filteredAttempts) {
+    filteredAttemptsListener =
+        filteredAttemptsStream.stream.listen((filteredAttempts) {
       setState(() {
         chartSeries = _buildChartSeries(context, filteredAttempts);
       });
@@ -74,7 +75,8 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
           )));
     }
     return Padding(
-        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING), child: Column(children: children));
+        padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+        child: Column(children: children));
   }
 
   Widget _buildChart(BuildContext context) {
@@ -83,7 +85,8 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
             decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
             child: (chartSeries != null)
                 ? charts.TimeSeriesChart(
                     chartSeries,
@@ -97,33 +100,51 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
                     primaryMeasureAxis: charts.NumericAxisSpec(
                         renderSpec: charts.GridlineRendererSpec(
                           labelStyle: charts.TextStyleSpec(
-                            fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                            fontWeight:
-                                Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                            color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                            fontSize: Theme.of(context)
+                                .accentTextTheme
+                                .caption
+                                .fontSize
+                                .toInt(),
+                            fontWeight: Theme.of(context)
+                                .accentTextTheme
+                                .caption
+                                .fontWeight
+                                .toString(),
+                            color: charts.ColorUtil.fromDartColor(
+                                Theme.of(context).accentColor),
                           ),
                           lineStyle: charts.LineStyleSpec(
                             color: charts.ColorUtil.fromDartColor(
                                 Theme.of(context).dialogBackgroundColor),
                           ),
                         ),
-                        tickProviderSpec:
-                        charts.BasicNumericTickProviderSpec(desiredTickCount: 6)),
+                        tickProviderSpec: charts.BasicNumericTickProviderSpec(
+                            desiredTickCount: 6)),
                     domainAxis: charts.DateTimeAxisSpec(
                         renderSpec: charts.SmallTickRendererSpec(
                       lineStyle: charts.LineStyleSpec(
-                        color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                        color: charts.ColorUtil.fromDartColor(
+                            Theme.of(context).accentColor),
                       ),
                       labelStyle: charts.TextStyleSpec(
-                        fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                        fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                        color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                        fontSize: Theme.of(context)
+                            .accentTextTheme
+                            .caption
+                            .fontSize
+                            .toInt(),
+                        fontWeight: Theme.of(context)
+                            .accentTextTheme
+                            .caption
+                            .fontWeight
+                            .toString(),
+                        color: charts.ColorUtil.fromDartColor(
+                            Theme.of(context).accentColor),
                       ),
                     )),
                   )
                 : Center(
                     child: Text(
-                    "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
+                    "There are no existing attempts${widget.attempts.isNotEmpty ? " matching these filters" : ""}. \nGo log some!",
                     style: Theme.of(context).accentTextTheme.subtitle2,
                     textAlign: TextAlign.center,
                   ))));
@@ -139,12 +160,14 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
 
     List<AttemptsByDateSeries> chartData = <AttemptsByDateSeries>[];
     DateTime firstDate = filteredAttempts.first.timestamp.toDate();
-    DateTime currentDate = DateTime(firstDate.year, firstDate.month, firstDate.day);
+    DateTime currentDate =
+        DateTime(firstDate.year, firstDate.month, firstDate.day);
     int currentCount = 1;
 
     for (Attempt attempt in filteredAttempts.skip(1)) {
       DateTime attemptDate = attempt.timestamp.toDate();
-      DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
+      DateTime startOfDay =
+          DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
       if (currentDate != startOfDay) {
         chartData.add(AttemptsByDateSeries(currentDate, currentCount));
         currentDate = startOfDay;
@@ -158,7 +181,8 @@ class _AttemptsByDateChartState extends State<AttemptsByDateChart> {
     return [
       charts.Series<AttemptsByDateSeries, DateTime>(
         id: 'attemptsByDate',
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
         domainFn: (AttemptsByDateSeries attempts, _) => attempts.date,
         measureFn: (AttemptsByDateSeries attempts, _) => attempts.count,
         data: chartData,

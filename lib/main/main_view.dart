@@ -21,12 +21,14 @@ class _MainState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<MainBloc>(
-        create: (context) => MainBloc(), child: MainWidget(widget: widget, widgetState: this));
+        create: (context) => MainBloc(),
+        child: MainWidget(widget: widget, widgetState: this));
   }
 }
 
 class MainWidget extends StatelessWidget {
-  const MainWidget({Key key, @required this.widget, @required this.widgetState}) : super(key: key);
+  const MainWidget({Key key, @required this.widget, @required this.widgetState})
+      : super(key: key);
 
   final MainScreen widget;
   final _MainState widgetState;
@@ -46,7 +48,10 @@ class MainWidget extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return AppBar(
       title: Text('sendrax'),
-      actions: <Widget>[IconButton(icon: Icon(Icons.lock_open), onPressed: () => logout(context))],
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.lock_open), onPressed: () => logout(context))
+      ],
       bottom: _buildTabBar(),
     );
   }
@@ -70,6 +75,8 @@ class MainWidget extends StatelessWidget {
             return Center(
               child: CircularProgressIndicator(
                 strokeWidth: 4.0,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).accentColor),
               ),
             );
           } else {
@@ -79,12 +86,15 @@ class MainWidget extends StatelessWidget {
 
             for (Location location in state.locations) {
               grades.putIfAbsent(location.gradeSet, () => location.grades);
-              locationNamesToIds.putIfAbsent(location.displayName, () => location.id);
-              locationNamesToGradeSet.putIfAbsent(location.displayName, () => location.gradeSet);
+              locationNamesToIds.putIfAbsent(
+                  location.displayName, () => location.id);
+              locationNamesToGradeSet.putIfAbsent(
+                  location.displayName, () => location.gradeSet);
             }
             return TabBarView(
               children: [
-                LogScreen(locations: state.locations, categories: state.categories),
+                LogScreen(
+                    locations: state.locations, categories: state.categories),
                 HistoryScreen(
                   attempts: state.attempts,
                   locations: state.locations,

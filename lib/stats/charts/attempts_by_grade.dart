@@ -10,11 +10,11 @@ import 'attempt_filter.dart';
 class AttemptsByGradeChart extends StatefulWidget {
   AttemptsByGradeChart(
       {Key key,
-        @required this.attempts,
-        @required this.categories,
-        @required this.grades,
-        @required this.locationNamesToIds,
-        @required this.locationNamesToGradeSet})
+      @required this.attempts,
+      @required this.categories,
+      @required this.grades,
+      @required this.locationNamesToIds,
+      @required this.locationNamesToGradeSet})
       : super(key: key);
   final List<Attempt> attempts;
   final List<String> categories;
@@ -37,7 +37,8 @@ class _AttemptsByGradeChartState extends State<AttemptsByGradeChart> {
   @override
   void initState() {
     filteredAttemptsStream = StreamController<List<Attempt>>.broadcast();
-    filteredAttemptsListener = filteredAttemptsStream.stream.listen((filteredAttempts) {
+    filteredAttemptsListener =
+        filteredAttemptsStream.stream.listen((filteredAttempts) {
       setState(() {
         if (filterGradeSet != null) {
           chartSeries = _buildChartSeries(context, filteredAttempts);
@@ -90,35 +91,56 @@ class _AttemptsByGradeChartState extends State<AttemptsByGradeChart> {
           primaryMeasureAxis: charts.NumericAxisSpec(
               renderSpec: charts.GridlineRendererSpec(
             labelStyle: charts.TextStyleSpec(
-              fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-              fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+              fontSize:
+                  Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+              fontWeight: Theme.of(context)
+                  .accentTextTheme
+                  .caption
+                  .fontWeight
+                  .toString(),
+              color:
+                  charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
             ),
             lineStyle: charts.LineStyleSpec(
-              color: charts.ColorUtil.fromDartColor(Theme.of(context).dialogBackgroundColor),
+              color: charts.ColorUtil.fromDartColor(
+                  Theme.of(context).dialogBackgroundColor),
             ),
           )),
           domainAxis: charts.OrdinalAxisSpec(
             renderSpec: charts.SmallTickRendererSpec(
               lineStyle: charts.LineStyleSpec(
-                color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                color: charts.ColorUtil.fromDartColor(
+                    Theme.of(context).accentColor),
               ),
               labelStyle: charts.TextStyleSpec(
-                fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                fontSize:
+                    Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                fontWeight: Theme.of(context)
+                    .accentTextTheme
+                    .caption
+                    .fontWeight
+                    .toString(),
+                color: charts.ColorUtil.fromDartColor(
+                    Theme.of(context).accentColor),
               ),
             ),
-            tickProviderSpec: charts.StaticOrdinalTickProviderSpec(_buildTicks()),
+            tickProviderSpec:
+                charts.StaticOrdinalTickProviderSpec(_buildTicks()),
           ),
           barGroupingType: charts.BarGroupingType.stacked,
           defaultInteractions: false,
           behaviors: [
             charts.SeriesLegend(
               entryTextStyle: charts.TextStyleSpec(
-                fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                fontSize:
+                    Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                fontWeight: Theme.of(context)
+                    .accentTextTheme
+                    .caption
+                    .fontWeight
+                    .toString(),
+                color: charts.ColorUtil.fromDartColor(
+                    Theme.of(context).accentColor),
               ),
             ),
           ],
@@ -126,7 +148,7 @@ class _AttemptsByGradeChartState extends State<AttemptsByGradeChart> {
       } else {
         content = Center(
             child: Text(
-          "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
+          "There are no existing attempts${widget.attempts.isNotEmpty ? " matching these filters" : ""}. \nGo log some!",
           style: Theme.of(context).accentTextTheme.subtitle2,
           textAlign: TextAlign.center,
         ));
@@ -145,7 +167,8 @@ class _AttemptsByGradeChartState extends State<AttemptsByGradeChart> {
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
             decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
             child: content));
   }
 
@@ -155,7 +178,8 @@ class _AttemptsByGradeChartState extends State<AttemptsByGradeChart> {
       return null;
     }
 
-    Map<String, Map<String, int>> attemptsBySendType = <String, Map<String, int>>{};
+    Map<String, Map<String, int>> attemptsBySendType =
+        <String, Map<String, int>>{};
     for (String sendType in SendTypes.SEND_TYPES) {
       attemptsBySendType.putIfAbsent(
           sendType,
@@ -168,12 +192,14 @@ class _AttemptsByGradeChartState extends State<AttemptsByGradeChart> {
       attemptsBySendType[attempt.sendType].update(grade, (count) => count + 1);
     }
 
-    Map<String, List<AttemptsByGradeSeries>> chartDataMap = <String, List<AttemptsByGradeSeries>>{};
+    Map<String, List<AttemptsByGradeSeries>> chartDataMap =
+        <String, List<AttemptsByGradeSeries>>{};
 
     for (String sendType in SendTypes.SEND_TYPES) {
       chartDataMap.putIfAbsent(sendType, () => <AttemptsByGradeSeries>[]);
       for (String grade in attemptsBySendType[sendType].keys) {
-        chartDataMap[sendType].add(AttemptsByGradeSeries(grade, attemptsBySendType[sendType][grade]));
+        chartDataMap[sendType].add(
+            AttemptsByGradeSeries(grade, attemptsBySendType[sendType][grade]));
       }
     }
 
@@ -182,7 +208,8 @@ class _AttemptsByGradeChartState extends State<AttemptsByGradeChart> {
     SendTypes.SEND_TYPES.asMap().forEach((index, sendType) {
       chartSeries.add(charts.Series<AttemptsByGradeSeries, String>(
         id: sendType,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(SeriesConstants.COLOURS[index]),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(SeriesConstants.COLOURS[index]),
         domainFn: (AttemptsByGradeSeries attempts, _) => attempts.grade,
         measureFn: (AttemptsByGradeSeries attempts, _) => attempts.count,
         data: chartDataMap[sendType],
@@ -193,7 +220,9 @@ class _AttemptsByGradeChartState extends State<AttemptsByGradeChart> {
   }
 
   List<charts.TickSpec<String>> _buildTicks() {
-    return widget.grades[filterGradeSet].map((grade) => charts.TickSpec(grade)).toList();
+    return widget.grades[filterGradeSet]
+        .map((grade) => charts.TickSpec(grade))
+        .toList();
   }
 
   @override

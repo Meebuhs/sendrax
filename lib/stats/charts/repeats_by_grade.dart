@@ -37,7 +37,8 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
   @override
   void initState() {
     filteredAttemptsStream = StreamController<List<Attempt>>.broadcast();
-    filteredAttemptsListener = filteredAttemptsStream.stream.listen((filteredAttempts) {
+    filteredAttemptsListener =
+        filteredAttemptsStream.stream.listen((filteredAttempts) {
       setState(() {
         if (filterGradeSet != null) {
           chartSeries = _buildChartSeries(context, filteredAttempts);
@@ -90,26 +91,41 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
           primaryMeasureAxis: charts.NumericAxisSpec(
               renderSpec: charts.GridlineRendererSpec(
             labelStyle: charts.TextStyleSpec(
-              fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-              fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+              fontSize:
+                  Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+              fontWeight: Theme.of(context)
+                  .accentTextTheme
+                  .caption
+                  .fontWeight
+                  .toString(),
+              color:
+                  charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
             ),
             lineStyle: charts.LineStyleSpec(
-              color: charts.ColorUtil.fromDartColor(Theme.of(context).dialogBackgroundColor),
+              color: charts.ColorUtil.fromDartColor(
+                  Theme.of(context).dialogBackgroundColor),
             ),
           )),
           domainAxis: charts.OrdinalAxisSpec(
             renderSpec: charts.SmallTickRendererSpec(
               lineStyle: charts.LineStyleSpec(
-                color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                color: charts.ColorUtil.fromDartColor(
+                    Theme.of(context).accentColor),
               ),
               labelStyle: charts.TextStyleSpec(
-                fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                fontSize:
+                    Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                fontWeight: Theme.of(context)
+                    .accentTextTheme
+                    .caption
+                    .fontWeight
+                    .toString(),
+                color: charts.ColorUtil.fromDartColor(
+                    Theme.of(context).accentColor),
               ),
             ),
-            tickProviderSpec: charts.StaticOrdinalTickProviderSpec(_buildTicks()),
+            tickProviderSpec:
+                charts.StaticOrdinalTickProviderSpec(_buildTicks()),
           ),
           barGroupingType: charts.BarGroupingType.stacked,
           defaultInteractions: false,
@@ -117,7 +133,7 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
       } else {
         content = Center(
             child: Text(
-          "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
+          "There are no existing attempts${widget.attempts.isNotEmpty ? " matching these filters" : ""}. \nGo log some!",
           style: Theme.of(context).accentTextTheme.subtitle2,
           textAlign: TextAlign.center,
         ));
@@ -136,7 +152,8 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
             decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
             child: content));
   }
 
@@ -166,11 +183,14 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
     }
 
     for (List<Attempt> attempts in climbs.values) {
-      if (attempts.any((attempt) => ["Onsight", "Flash", "Send"].contains(attempt.sendType))) {
+      if (attempts.any((attempt) =>
+          ["Onsight", "Flash", "Send"].contains(attempt.sendType))) {
         attemptsByGrade.update(
             attempts.first.climbGrade,
-            (value) =>
-                value..add(attempts.where((attempt) => attempt.sendType == "Repeat").length));
+            (value) => value
+              ..add(attempts
+                  .where((attempt) => attempt.sendType == "Repeat")
+                  .length));
       }
     }
 
@@ -178,7 +198,9 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
     for (String grade in widget.grades[filterGradeSet]) {
       if (attemptsByGrade[grade].isNotEmpty) {
         chartData.add(RepeatsByGradeSeries(
-            grade, attemptsByGrade[grade].reduce((a, b) => a + b) / attemptsByGrade[grade].length));
+            grade,
+            attemptsByGrade[grade].reduce((a, b) => a + b) /
+                attemptsByGrade[grade].length));
       } else {
         chartData.add(RepeatsByGradeSeries(grade, 0.0));
       }
@@ -189,7 +211,8 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
     return [
       charts.Series<RepeatsByGradeSeries, String>(
         id: 'attemptsToSend',
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
         domainFn: (RepeatsByGradeSeries attempts, _) => attempts.grade,
         measureFn: (RepeatsByGradeSeries attempts, _) => attempts.average,
         data: chartData,
@@ -198,7 +221,9 @@ class _RepeatsByGradeChartState extends State<RepeatsByGradeChart> {
   }
 
   List<charts.TickSpec<String>> _buildTicks() {
-    return widget.grades[filterGradeSet].map((grade) => charts.TickSpec(grade)).toList();
+    return widget.grades[filterGradeSet]
+        .map((grade) => charts.TickSpec(grade))
+        .toList();
   }
 
   @override
