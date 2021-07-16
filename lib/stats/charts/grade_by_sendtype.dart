@@ -40,7 +40,8 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
   @override
   void initState() {
     filteredAttemptsStream = StreamController<List<Attempt>>.broadcast();
-    filteredAttemptsListener = filteredAttemptsStream.stream.listen((filteredAttempts) {
+    filteredAttemptsListener =
+        filteredAttemptsStream.stream.listen((filteredAttempts) {
       setState(() {
         if (filterGradeSet != null) {
           chartSeries = _buildChartSeries(context, filteredAttempts);
@@ -71,7 +72,11 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
             locationNamesToIds: widget.locationNamesToIds,
             locationNamesToGradeSet: widget.locationNamesToGradeSet,
             filteredAttemptsStream: filteredAttemptsStream,
-            enableFilters: [FilterType.gradeSet, FilterType.timeframe, FilterType.location],
+            enableFilters: [
+              FilterType.gradeSet,
+              FilterType.timeframe,
+              FilterType.location
+            ],
             gradeSetFilterStream: gradeSetFilterStream,
             grades: widget.grades,
           ),
@@ -89,32 +94,56 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
           primaryMeasureAxis: charts.NumericAxisSpec(
             renderSpec: charts.GridlineRendererSpec(
                 labelStyle: charts.TextStyleSpec(
-                  fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                  fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                  color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                  fontSize: Theme.of(context)
+                      .accentTextTheme
+                      .caption
+                      .fontSize
+                      .toInt(),
+                  fontWeight: Theme.of(context)
+                      .accentTextTheme
+                      .caption
+                      .fontWeight
+                      .toString(),
+                  color: charts.ColorUtil.fromDartColor(
+                      Theme.of(context).accentColor),
                 ),
                 lineStyle: charts.LineStyleSpec(
-                  color: charts.ColorUtil.fromDartColor(Theme.of(context).dialogBackgroundColor),
+                  color: charts.ColorUtil.fromDartColor(
+                      Theme.of(context).dialogBackgroundColor),
                 )),
-            tickProviderSpec: charts.StaticNumericTickProviderSpec(_buildTicks()),
+            tickProviderSpec:
+                charts.StaticNumericTickProviderSpec(_buildTicks()),
           ),
           domainAxis: charts.DateTimeAxisSpec(
               renderSpec: charts.SmallTickRendererSpec(
             lineStyle: charts.LineStyleSpec(
-              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+              color:
+                  charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
             ),
             labelStyle: charts.TextStyleSpec(
-              fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-              fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-              color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+              fontSize:
+                  Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+              fontWeight: Theme.of(context)
+                  .accentTextTheme
+                  .caption
+                  .fontWeight
+                  .toString(),
+              color:
+                  charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
             ),
           )),
           behaviors: [
             charts.SeriesLegend(
               entryTextStyle: charts.TextStyleSpec(
-                fontSize: Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
-                fontWeight: Theme.of(context).accentTextTheme.caption.fontWeight.toString(),
-                color: charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+                fontSize:
+                    Theme.of(context).accentTextTheme.caption.fontSize.toInt(),
+                fontWeight: Theme.of(context)
+                    .accentTextTheme
+                    .caption
+                    .fontWeight
+                    .toString(),
+                color: charts.ColorUtil.fromDartColor(
+                    Theme.of(context).accentColor),
               ),
             ),
           ],
@@ -122,7 +151,7 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
       } else {
         content = Center(
             child: Text(
-          "There are no existing attempts ${widget.attempts.isNotEmpty ? "matching these filters" : ""}. \nGo log some!",
+          "There are no existing attempts${widget.attempts.isNotEmpty ? " matching these filters" : ""}. \nGo log some!",
           style: Theme.of(context).accentTextTheme.subtitle2,
           textAlign: TextAlign.center,
         ));
@@ -141,7 +170,8 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
             decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(UIConstants.CARD_BORDER_RADIUS))),
             child: content));
   }
 
@@ -151,9 +181,11 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
       return null;
     }
 
-    Map<String, List<AttemptsByDateSeries>> chartDataMap = <String, List<AttemptsByDateSeries>>{};
+    Map<String, List<AttemptsByDateSeries>> chartDataMap =
+        <String, List<AttemptsByDateSeries>>{};
     DateTime firstDate = filteredAttempts.first.timestamp.toDate();
-    DateTime currentDate = DateTime(firstDate.year, firstDate.month, firstDate.day);
+    DateTime currentDate =
+        DateTime(firstDate.year, firstDate.month, firstDate.day);
 
     Map<String, int> gradeToValueMap = <String, int>{};
     int counter = 1;
@@ -166,32 +198,40 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
       chartDataMap.putIfAbsent(sendType, () => <AttemptsByDateSeries>[]);
     }
 
-    Map<String, List<int>> sendTypeToGradesAttempted =
-        Map.fromIterable(SendTypes.SEND_TYPES, key: (item) => item, value: (item) => <int>[]);
-    sendTypeToGradesAttempted.update(filteredAttempts.first.sendType,
-        (value) => value..add(gradeToValueMap[filteredAttempts.first.climbGrade]));
+    Map<String, List<int>> sendTypeToGradesAttempted = Map.fromIterable(
+        SendTypes.SEND_TYPES,
+        key: (item) => item,
+        value: (item) => <int>[]);
+    sendTypeToGradesAttempted.update(
+        filteredAttempts.first.sendType,
+        (value) =>
+            value..add(gradeToValueMap[filteredAttempts.first.climbGrade]));
 
     for (Attempt attempt in filteredAttempts.skip(1)) {
       DateTime attemptDate = attempt.timestamp.toDate();
-      DateTime startOfDay = DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
+      DateTime startOfDay =
+          DateTime(attemptDate.year, attemptDate.month, attemptDate.day);
 
       if (currentDate != startOfDay) {
-        chartDataMap = _updateChartData(currentDate, sendTypeToGradesAttempted, chartDataMap);
+        chartDataMap = _updateChartData(
+            currentDate, sendTypeToGradesAttempted, chartDataMap);
         currentDate = startOfDay;
-        sendTypeToGradesAttempted =
-            Map.fromIterable(SendTypes.SEND_TYPES, key: (item) => item, value: (item) => <int>[]);
+        sendTypeToGradesAttempted = Map.fromIterable(SendTypes.SEND_TYPES,
+            key: (item) => item, value: (item) => <int>[]);
       }
-      sendTypeToGradesAttempted.update(
-          attempt.sendType, (value) => value..add(gradeToValueMap[attempt.climbGrade]));
+      sendTypeToGradesAttempted.update(attempt.sendType,
+          (value) => value..add(gradeToValueMap[attempt.climbGrade]));
     }
-    chartDataMap = _updateChartData(currentDate, sendTypeToGradesAttempted, chartDataMap);
+    chartDataMap =
+        _updateChartData(currentDate, sendTypeToGradesAttempted, chartDataMap);
 
     List<charts.Series<AttemptsByDateSeries, DateTime>> chartSeries =
         <charts.Series<AttemptsByDateSeries, DateTime>>[];
     SendTypes.SEND_TYPES.asMap().forEach((index, sendType) {
       chartSeries.add(charts.Series<AttemptsByDateSeries, DateTime>(
         id: sendType,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(SeriesConstants.COLOURS[index]),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(SeriesConstants.COLOURS[index]),
         domainFn: (AttemptsByDateSeries attempts, _) => attempts.date,
         measureFn: (AttemptsByDateSeries attempts, _) => attempts.gradeValue,
         data: chartDataMap[sendType],
@@ -216,8 +256,11 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
                       sendTypeToGradesAttempted[sendType].length));
           } else {
             return value
-              ..add(AttemptsByDateSeries(currentDate,
-                  sendTypeToGradesAttempted[sendType].reduce((a, b) => a > b ? a : b).toDouble()));
+              ..add(AttemptsByDateSeries(
+                  currentDate,
+                  sendTypeToGradesAttempted[sendType]
+                      .reduce((a, b) => a > b ? a : b)
+                      .toDouble()));
           }
         });
       }
@@ -233,7 +276,8 @@ class _GradeBySendTypeChartState extends State<GradeBySendTypeChart> {
       )
     ];
 
-    for (int gradeValue in Iterable.generate(widget.grades[filterGradeSet].length)) {
+    for (int gradeValue
+        in Iterable.generate(widget.grades[filterGradeSet].length)) {
       ticks.add(charts.TickSpec(
         gradeValue.toDouble() + 1,
         label: widget.grades[filterGradeSet][gradeValue],

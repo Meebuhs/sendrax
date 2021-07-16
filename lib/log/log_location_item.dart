@@ -5,7 +5,10 @@ import 'package:sendrax/util/constants.dart';
 
 class LocationItem extends StatelessWidget {
   LocationItem(
-      {Key key, @required this.location, @required this.categories, @required this.onTapped})
+      {Key key,
+      @required this.location,
+      @required this.categories,
+      @required this.onTapped})
       : super(key: key);
 
   final Location location;
@@ -47,17 +50,17 @@ class LocationItem extends StatelessWidget {
             padding: EdgeInsets.all(1.0),
             child: CachedNetworkImage(
               imageUrl: location.imageURL,
-              imageBuilder: (context, imageProvider) =>
-                  Hero(
-                    tag: "${location.displayName}-image",
-                    child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ))),
+              imageBuilder: (context, imageProvider) => Hero(
+                tag: "${location.displayName}-image",
+                child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(
+                                UIConstants.CARD_BORDER_RADIUS)),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ))),
               ),
               placeholder: (context, url) => Row(
                 children: <Widget>[
@@ -68,6 +71,8 @@ class LocationItem extends StatelessWidget {
                       child: Center(
                         child: CircularProgressIndicator(
                           strokeWidth: 4.0,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).accentColor),
                         ),
                       ),
                     ),
@@ -93,10 +98,7 @@ class LocationItem extends StatelessWidget {
             child: Text(
               location.displayName,
               overflow: TextOverflow.ellipsis,
-              style: Theme
-                  .of(context)
-                  .accentTextTheme
-                  .headline6,
+              style: Theme.of(context).accentTextTheme.headline6,
             )));
   }
 }

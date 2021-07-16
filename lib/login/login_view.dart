@@ -95,6 +95,8 @@ class LoginWidget extends StatelessWidget {
                       child: Center(
                           child: CircularProgressIndicator(
                         strokeWidth: 4.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).accentColor),
                       ))),
                 ]),
               )

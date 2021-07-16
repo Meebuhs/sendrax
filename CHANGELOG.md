@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.1 - 2021-07-16
+
+### Added
+
+- Added coloured send type indicators to attempts in climb view
+
+### Changed
+
+- Changed progress indicators to fit app theme
+
+### Fixed
+
+- Fixed logic for disabling Onsight and Flash buttons
+- Fixed sizing of dismissible background on attempts in climb view
+- Fixed a misplaced full stop on empty charts (thanks pat :tada:)
+
 ## 0.6.0 - 2021-07-11
 
 ### Added

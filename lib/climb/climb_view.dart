@@ -79,6 +79,8 @@ class ClimbWidget extends StatelessWidget {
             content = Center(
               child: CircularProgressIndicator(
                 strokeWidth: 4.0,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).accentColor),
               ),
             );
           } else {
@@ -189,6 +191,8 @@ class ClimbWidget extends StatelessWidget {
             child: Center(
                 child: CircularProgressIndicator(
               strokeWidth: 4.0,
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
             ))),
         errorWidget: (context, url, error) => Icon(Icons.error),
       ),
@@ -355,13 +359,20 @@ class ClimbWidget extends StatelessWidget {
   }
 
   Widget _showSubmitButtons(ClimbState state, BuildContext context) {
-    // this is a little cryptic but basically we only allow onsight, flash and
-    // send only when the climb has not yet been sent, repeat only when it has
-    // and attempt is always allowed.
+    // this is a little cryptic but basically we only allow onsight, flash when
+    // a climb hasn't been attempted, send only when the climb has not yet been
+    // sent, repeat only when it has and attempt is always allowed.
+    bool hasAttempt = state.attempts.isNotEmpty;
     bool hasSent = state.attempts
         .any((attempt) => SendTypes.SENDS.contains(attempt.sendType));
     // Onsight, Flash, Send, Repeat, Attempt
-    List<bool> isSendAllowed = [!hasSent, !hasSent, !hasSent, hasSent, true];
+    List<bool> isSendAllowed = [
+      !hasAttempt,
+      !hasAttempt,
+      !hasSent,
+      hasSent,
+      true
+    ];
 
     List<Widget> buttons = [];
     SendTypes.SEND_TYPES.asMap().forEach((index, sendType) {
