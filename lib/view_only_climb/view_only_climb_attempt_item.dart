@@ -4,7 +4,8 @@ import 'package:sendrax/models/attempt.dart';
 import 'package:sendrax/util/constants.dart';
 
 class AttemptItem extends StatelessWidget {
-  AttemptItem({Key key, @required this.attempt, @required this.climbId}) : super(key: key);
+  AttemptItem({Key key, @required this.attempt, @required this.climbId})
+      : super(key: key);
 
   final Attempt attempt;
   final String climbId;
@@ -34,20 +35,31 @@ class AttemptItem extends StatelessWidget {
     return Padding(
         padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
         child: Container(
-            padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+            padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING / 2),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
-              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.all(
+                  Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+              color: SeriesConstants
+                  .COLOURS[SendTypes.SEND_TYPES.indexOf(attempt.sendType)],
             ),
-            child: Row(children: <Widget>[
-              Expanded(
-                  child:
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: columnTexts)),
-              Container(
-                padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
-                child: _showDownclimbedTick(context),
-              ),
-            ])));
+            child: Container(
+                padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                  color: Theme.of(context).cardColor,
+                ),
+                child: Row(children: <Widget>[
+                  Expanded(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: columnTexts)),
+                  Container(
+                    padding:
+                        EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
+                    child: _showDownclimbedTick(context),
+                  ),
+                ]))));
   }
 
   Widget _showDownclimbedTick(BuildContext context) {

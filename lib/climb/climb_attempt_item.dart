@@ -10,53 +10,63 @@ import 'package:sendrax/navigation_helper.dart';
 import 'package:sendrax/util/constants.dart';
 
 class AttemptItem extends StatelessWidget {
-  AttemptItem({Key key, @required this.attempt, @required this.climb}) : super(key: key);
+  AttemptItem({Key key, @required this.attempt, @required this.climb})
+      : super(key: key);
 
   final Attempt attempt;
   final Climb climb;
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-        key: Key(attempt.id),
-        secondaryBackground: Container(
-          color: Theme.of(context).errorColor,
-          child: Padding(
-            padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
-            child: Icon(Icons.delete_forever, color: Colors.black),
-          ),
-          alignment: Alignment.centerRight,
-        ),
-        background: Container(
-          color: Theme.of(context).accentColor,
-          child: Padding(
-            padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
-            child: Icon(Icons.mode_edit, color: Colors.black),
-          ),
-          alignment: Alignment.centerLeft,
-        ),
-        confirmDismiss: (direction) async {
-          if (direction == DismissDirection.endToStart) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                  "Deleted ${DateFormat('EEEE d/M h:mm a').format(attempt.timestamp.toDate())} - ${attempt.sendType}"),
-              action: SnackBarAction(
-                label: 'Undo',
-                onPressed: () {
-                  AttemptRepo.getInstance().setAttempt(attempt, climb);
-                  BlocProvider.of<ClimbBloc>(context).reconcileClimbStatus(climb);
-                },
+    return Padding(
+        padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+        child: Dismissible(
+            key: Key(attempt.id),
+            secondaryBackground: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                  color: Theme.of(context).errorColor),
+              child: Padding(
+                padding: EdgeInsets.only(right: UIConstants.SMALLER_PADDING),
+                child: Icon(Icons.delete_forever, color: Colors.black),
               ),
-            ));
-            AttemptRepo.getInstance().deleteAttempt(attempt.id, climb.id);
-            BlocProvider.of<ClimbBloc>(context).reconcileClimbStatus(climb);
-            return true;
-          } else {
-            _showEditAttemptDialog(context);
-            return false;
-          }
-        },
-        child: _buildAttempt(context));
+              alignment: Alignment.centerRight,
+            ),
+            background: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+                  color: Theme.of(context).accentColor),
+              child: Padding(
+                padding: EdgeInsets.only(left: UIConstants.SMALLER_PADDING),
+                child: Icon(Icons.mode_edit, color: Colors.black),
+              ),
+              alignment: Alignment.centerLeft,
+            ),
+            confirmDismiss: (direction) async {
+              if (direction == DismissDirection.endToStart) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                      "Deleted ${DateFormat('EEEE d/M h:mm a').format(attempt.timestamp.toDate())} - ${attempt.sendType}"),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () {
+                      AttemptRepo.getInstance().setAttempt(attempt, climb);
+                      BlocProvider.of<ClimbBloc>(context)
+                          .reconcileClimbStatus(climb);
+                    },
+                  ),
+                ));
+                AttemptRepo.getInstance().deleteAttempt(attempt.id, climb.id);
+                BlocProvider.of<ClimbBloc>(context).reconcileClimbStatus(climb);
+                return true;
+              } else {
+                _showEditAttemptDialog(context);
+                return false;
+              }
+            },
+            child: _buildAttempt(context)));
   }
 
   Widget _buildAttempt(BuildContext context) {
@@ -76,19 +86,28 @@ class AttemptItem extends StatelessWidget {
       ));
     }
 
-    return Padding(
-        padding: EdgeInsets.only(bottom: UIConstants.SMALLER_PADDING),
+    return Container(
+        margin:
+            EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING / 2),
+        decoration: BoxDecoration(
+          borderRadius:
+              BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+          color: SeriesConstants
+              .COLOURS[SendTypes.SEND_TYPES.indexOf(attempt.sendType)],
+        ),
         child: Container(
-            margin: EdgeInsets.symmetric(horizontal: UIConstants.SMALLER_PADDING / 2),
+            margin: EdgeInsets.only(left: UIConstants.SMALLER_PADDING / 2),
             padding: EdgeInsets.all(UIConstants.SMALLER_PADDING),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
+              borderRadius: BorderRadius.all(
+                  Radius.circular(UIConstants.CARD_BORDER_RADIUS)),
               color: Theme.of(context).cardColor,
             ),
             child: Row(children: <Widget>[
               Expanded(
-                  child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: columnTexts)),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: columnTexts)),
               Container(
                 padding: EdgeInsets.only(left: UIConstants.STANDARD_PADDING),
                 child: _showDownclimbedTick(context),
@@ -122,7 +141,8 @@ class AttemptItem extends StatelessWidget {
         builder: (BuildContext context) {
           return SimpleDialog(
               backgroundColor: Theme.of(context).cardColor,
-              title: Text("Edit attempt", style: Theme.of(context).accentTextTheme.headline5),
+              title: Text("Edit attempt",
+                  style: Theme.of(context).accentTextTheme.headline5),
               children: <Widget>[
                 EditAttemptScreen(
                   attempt: attempt,
