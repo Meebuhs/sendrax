@@ -98,7 +98,7 @@ class Deserializer {
   }
 
   static GradeSet deserializeGradeSet(DocumentSnapshot grade) {
-    return GradeSet(grade['displayName'], List.from(grade['grades']));
+    return GradeSet(grade['id'], List.from(grade['grades']));
   }
 
   static List<String> deserializeGradeSetIds(List<DocumentSnapshot> grades) {
