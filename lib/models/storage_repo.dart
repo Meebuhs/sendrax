@@ -26,7 +26,7 @@ class StorageRepo {
         .putFile(file)
         .then((res) {
       return res.metadata.fullPath;
-    }, onError: () {
+    }, onError: (error) {
       return null;
     });
   }
